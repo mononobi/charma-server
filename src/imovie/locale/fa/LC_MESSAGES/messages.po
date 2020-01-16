@@ -1,0 +1,60 @@
+# Persian translations for PROJECT.
+# Copyright (C) 2019 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2019-10-16 00:08+0330\n"
+"PO-Revision-Date: 2019-10-16 00:07+0330\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: fa\n"
+"Language-Team: fa <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.4.0\n"
+
+#: ../../src/pyrin/api/router/handlers/base.py:167
+msgid "Request content is too large."
+msgstr ""
+
+#: ../../src/pyrin/api/router/handlers/protected.py:225
+msgid "Fresh token is required to access the requested resource."
+msgstr ""
+
+#: ../../src/pyrin/security/manager.py:37
+msgid "Input password has invalid length."
+msgstr ""
+
+#: ../../src/pyrin/security/manager.py:59
+msgid "Input text has invalid length."
+msgstr ""
+
+#: ../../src/pyrin/security/manager.py:92
+msgid "Input user could not be None."
+msgstr ""
+
+#: ../../src/pyrin/security/authentication/manager.py:134
+msgid "Payload data could not be None."
+msgstr ""
+
+#: ../../src/pyrin/security/authentication/manager.py:138
+msgid "Access token is required for authentication."
+msgstr ""
+
+#: ../../src/pyrin/security/authorization/manager.py:39
+msgid "User has not been authenticated."
+msgstr ""
+
+#: ../../src/pyrin/security/authorization/manager.py:42
+msgid "User [{user}] is not active."
+msgstr ""
+
+#: ../../src/pyrin/security/authorization/manager.py:55
+msgid "User [{user}] has not required permission(s) [{permission_ids}]."
+msgstr ""
+

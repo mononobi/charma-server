@@ -1,0 +1,24 @@
+absolutely required:
+__init__.py
+
+===================================================================================================
+required (for most packages, but not all of them):
+
+api.py
+services.py
+component.py
+manager.py
+exceptions.py
+context.py
+
+===================================================================================================
+optional (depends on package type):
+
+enumerations.py
+models.py
+error_handlers.py
+request_handlers.py
+base.py
+decorators.py
+
+===================================================================================================
