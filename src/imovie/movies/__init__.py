@@ -14,3 +14,4 @@ class MoviesPackage(Package):
     NAME = __name__
     DEPENDS = []
     COMPONENT_NAME = 'movies.component'
+    CONFIG_STORE_NAMES = ['movies']
