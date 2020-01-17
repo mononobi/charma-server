@@ -1,26 +1,26 @@
 # -*- coding: utf-8 -*-
 """
-common models module.
+movies models module.
 """
 
-from sqlalchemy import BigInteger
+from sqlalchemy import Integer, Unicode, TIMESTAMP, Float, String
 
 from pyrin.core.context import DTO
 from pyrin.database.model.base import CoreEntity
 from pyrin.database.model.schema import CoreColumn
 
 
-class UserBaseEntity(CoreEntity):
+class MovieBaseEntity(CoreEntity):
     """
-    user base entity class.
+    movie base entity class.
     """
 
-    __tablename__ = 'user'
+    __tablename__ = 'movie'
 
-    id = CoreColumn(name='id', type_=BigInteger, autoincrement=False, primary_key=True)
+    id = CoreColumn(name='MovieID', type_=Integer, autoincrement=True, primary_key=True)
 
     def __eq__(self, other):
-        if isinstance(other, UserBaseEntity):
+        if isinstance(other, MovieBaseEntity):
             return self.id == other.id
         return False
 
@@ -36,9 +36,15 @@ class UserBaseEntity(CoreEntity):
         return str(self.id)
 
 
-class UserEntity(UserBaseEntity):
+class MovieEntity(MovieBaseEntity):
     """
-    user entity class.
+    movie entity class.
     """
 
     __table_args__ = DTO(extend_existing=True)
+
+    name = CoreColumn(name='MovieName', type_=Unicode)
+    release_year = CoreColumn(name='ProductYear', type_=Integer)
+    archive_date = CoreColumn(name='AddDate', type_=TIMESTAMP(timezone=False))
+    imdb_rate = CoreColumn(name='IMDBRate', type_=Float)
+    duration = CoreColumn(name='Duration', type_=String)
