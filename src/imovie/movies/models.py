@@ -3,7 +3,8 @@
 movies models module.
 """
 
-from sqlalchemy import Unicode, TIMESTAMP, Float, SmallInteger, Time, Boolean, CheckConstraint
+from sqlalchemy import Unicode, TIMESTAMP, Float, SmallInteger, Time, Boolean, CheckConstraint, \
+    ForeignKey
 
 import pyrin.globalization.datetime.services as datetime_services
 
@@ -59,10 +60,16 @@ class MovieEntity(MovieBaseEntity):
         FULL_HD = 4
         ULTRA_HD = 5
 
-    user_id = CoreColumn(name='user_id', type_=GUID, nullable=False, index=True)
+    user_id = CoreColumn(ForeignKey('user.id'),
+                         name='user_id', type_=GUID, nullable=False, index=True)
     name = CoreColumn(name='name', type_=Unicode(100), nullable=False)
-    release_year = CoreColumn(name='release_year', type_=SmallInteger)
-    imdb_rate = CoreColumn(name='imdb_rate', type_=Float, default=0)
+    release_year = CoreColumn(CheckConstraint('release_year >= 1900 and '
+                                              'release_year <= {year_upper}'
+                                              .format(year_upper=
+                                                      datetime_services.now().year + 1)),
+                              name='release_year', type_=SmallInteger)
+    imdb_rate = CoreColumn(CheckConstraint('imdb_rate >= 0 and imdb_rate <= 10'),
+                           name='imdb_rate', type_=Float, default=0)
     duration = CoreColumn(name='duration', type_=Time)
     poster_link = CoreColumn(name='poster_link', type_=Unicode(250))
     folder_link = CoreColumn(name='folder_link', type_=Unicode(250), nullable=False)

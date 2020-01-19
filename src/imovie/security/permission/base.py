@@ -9,28 +9,29 @@ from pyrin.security.permission.base import PermissionBase
 class CorePermission(PermissionBase):
     """
     core permission class.
-    all application permissions must be subclassed from this.
+    all application permissions must be an instance of this class.
     """
 
-    def __init__(self, permission_id, description, **options):
+    def __init__(self, subsystem_code, transaction_code, sub_transaction_code,
+                 description, locale_description, **options):
         """
-        initializes an instance of PermissionBase.
+        initializes an instance of CorePermission.
 
-        :param object permission_id: permission id.
-                                     it must be an immutable type to
-                                     be usable as dict key.
-
-        :param str description: permission description.
+        :param str subsystem_code: subsystem code.
+        :param int access_code:
+        :param sub_access_code:
+        :param description:
+        :param locale_description:
+        :param options:
         """
-
-        PermissionBase.__init__(self, permission_id, description, **options)
+        PermissionBase.__init__(self, subsystem_code, transaction_code,
+                                sub_transaction_code, description,
+                                locale_description, **options)
 
     def __hash__(self):
         """
         this method must be implemented in all subclasses to
         calculate the correct hash of current permission.
-
-        :raises CoreNotImplementedError: core not implemented error.
 
         :rtype: int
         """
@@ -42,12 +43,20 @@ class CorePermission(PermissionBase):
         this method must be implemented in all subclasses to
         get the correct string representation of current permission.
 
-        :raises CoreNotImplementedError: core not implemented error.
-
         :rtype: str
         """
 
         return self.get_name()
+
+    def __repr__(self):
+        """
+        this method must be implemented in all subclasses to
+        get the correct string representation of current permission.
+
+        :rtype: str
+        :return:
+        """
+        pass
 
     def get_id(self):
         """
@@ -57,13 +66,11 @@ class CorePermission(PermissionBase):
         :rtype: object
         """
 
-        return self._id
+        return 1
 
     def synchronize(self, **options):
         """
         synchronizes the current permission object with database.
-
-        :raises CoreNotImplementedError: core not implemented error.
         """
 
         return
