@@ -23,7 +23,7 @@ class AuthenticationManager(BaseAuthenticationManager):
 
         :param dict payload: payload data of authenticated token.
         :type payload: dict(str type: token type,
-                            int user_id: user id)
+                            str user_id: user id)
 
         :raises InvalidUserError: invalid user error.
         :raises CouldNotOverwriteCurrentUserError: could not overwrite current user error.
@@ -41,7 +41,7 @@ class AuthenticationManager(BaseAuthenticationManager):
 
         :param dict payload: payload data to be validated.
         :type payload: dict(str type: token type,
-                            int user_id: user id)
+                            str user_id: user id)
 
         :raises AuthenticationFailedError: authentication failed error.
         """

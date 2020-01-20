@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-common models module.
+users models module.
 """
 
 from sqlalchemy import Unicode, TIMESTAMP, CheckConstraint, SmallInteger
@@ -23,21 +23,14 @@ class UserBaseEntity(CoreEntity):
 
     id = CoreColumn(name='id', type_=GUID, primary_key=True, nullable=False, index=True)
 
-    def __eq__(self, other):
-        if isinstance(other, UserBaseEntity):
-            return self.id == other.id
-        return False
+    def primary_key(self):
+        """
+        gets the primary key of this instance.
 
-    def __hash__(self):
-        return hash(self.id)
+        :rtype: str
+        """
 
-    def __repr__(self):
-        return '<{module}.{class_} [{pk}]>'.format(module=self.__module__,
-                                                   class_=self.__class__.__name__,
-                                                   pk=str(self.id))
-
-    def __str__(self):
-        return str(self.id)
+        return self.id
 
 
 class UserEntity(UserBaseEntity):
@@ -53,11 +46,11 @@ class UserEntity(UserBaseEntity):
         """
 
         NOT_APPROVED = 0
-        APPROVED = 1
+        ACTIVE = 1
         SUSPENDED = 2
         DELETED = 3
 
-    user_name = CoreColumn(name='user_name', type_=Unicode(50), nullable=False, unique=True)
+    username = CoreColumn(name='username', type_=Unicode(50), nullable=False, unique=True)
     password_hash = CoreColumn(name='password_hash', type_=Unicode(250),
                                nullable=False, exposed=False)
     first_name = CoreColumn(name='first_name', type_=Unicode(50), nullable=False)

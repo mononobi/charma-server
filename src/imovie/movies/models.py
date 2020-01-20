@@ -24,21 +24,14 @@ class MovieBaseEntity(CoreEntity):
 
     id = CoreColumn(name='id', type_=GUID, primary_key=True, nullable=False, index=True)
 
-    def __eq__(self, other):
-        if isinstance(other, MovieBaseEntity):
-            return self.id == other.id
-        return False
+    def primary_key(self):
+        """
+        gets the primary key value of this table.
 
-    def __hash__(self):
-        return hash(self.id)
+        :rtype: str
+        """
 
-    def __repr__(self):
-        return '<{module}.{class_} [{pk}]>'.format(module=self.__module__,
-                                                   class_=self.__class__.__name__,
-                                                   pk=str(self.id))
-
-    def __str__(self):
-        return str(self.id)
+        return self.id
 
 
 class MovieEntity(MovieBaseEntity):
