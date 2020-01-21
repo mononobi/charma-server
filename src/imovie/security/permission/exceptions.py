@@ -21,9 +21,23 @@ class PermissionManagerBusinessException(CoreBusinessException,
     pass
 
 
-class InvalidPermissionSubsystemCodeError(PermissionManagerException):
+class PermissionSubsystemCodeNotProvidedError(PermissionManagerException):
     """
-    invalid permission subsystem code error.
+    permission subsystem code not provided error.
+    """
+    pass
+
+
+class PermissionSubsystemCodeLengthError(PermissionManagerException):
+    """
+    permission subsystem code length error.
+    """
+    pass
+
+
+class PermissionAccessCodeNotProvidedError(PermissionManagerException):
+    """
+    permission access code not provided error.
     """
     pass
 
@@ -35,6 +49,13 @@ class InvalidPermissionAccessCodeError(PermissionManagerException):
     pass
 
 
+class PermissionSubAccessCodeNotProvidedError(PermissionManagerException):
+    """
+    permission sub access code not provided error.
+    """
+    pass
+
+
 class InvalidPermissionSubAccessCodeError(PermissionManagerException):
     """
     invalid permission sub access code error.
@@ -42,8 +63,22 @@ class InvalidPermissionSubAccessCodeError(PermissionManagerException):
     pass
 
 
-class InvalidPermissionDescriptionError(PermissionManagerException):
+class PermissionDescriptionNotProvidedError(PermissionManagerException):
     """
-    invalid permission description error.
+    permission description not provided error.
+    """
+    pass
+
+
+class PermissionDescriptionLengthError(PermissionManagerException):
+    """
+    permission description length error.
+    """
+    pass
+
+
+class PermissionLocalizedDescriptionLengthError(PermissionManagerException):
+    """
+    permission localized description length error.
     """
     pass

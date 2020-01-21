@@ -6,9 +6,11 @@ permission base module.
 from pyrin.security.permission.base import PermissionBase
 
 from imovie.security.permission.models import PermissionEntity
-from imovie.security.permission.exceptions import InvalidPermissionSubsystemCodeError, \
+from imovie.security.permission.exceptions import PermissionDescriptionNotProvidedError, \
+    PermissionSubAccessCodeNotProvidedError, PermissionAccessCodeNotProvidedError, \
+    PermissionSubsystemCodeNotProvidedError, PermissionSubsystemCodeLengthError, \
     InvalidPermissionAccessCodeError, InvalidPermissionSubAccessCodeError, \
-    InvalidPermissionDescriptionError
+    PermissionDescriptionLengthError, PermissionLocalizedDescriptionLengthError
 from imovie.security.permission.utils import get_permission_info_string, get_permission_id, \
     get_permission_id_string
 
@@ -103,27 +105,75 @@ class CorePermission(PermissionBase):
 
     def _validate(self):
         """
-        validates permissions attributes.
+        validates permission attributes.
 
-        :raises InvalidPermissionSubsystemCodeError: invalid permission subsystem code error.
-        :raises InvalidPermissionAccessCodeError: invalid permission access code error.
-        :raises InvalidPermissionSubAccessCodeError: invalid permission sub access code error.
-        :raises InvalidPermissionDescriptionError: invalid permission description error.
+        :raises PermissionSubsystemCodeNotProvidedError: permission subsystem code
+                                                         not provided error.
+
+        :raises PermissionSubsystemCodeLengthError: permission subsystem
+                                                    code length error.
+
+        :raises PermissionAccessCodeNotProvidedError: permission access code
+                                                      not provided error.
+
+        :raises InvalidPermissionAccessCodeError: invalid permission
+                                                  access code error.
+
+        :raises PermissionSubAccessCodeNotProvidedError: permission sub access code
+                                                         not provided error.
+
+        :raises InvalidPermissionSubAccessCodeError: invalid permission sub
+                                                     access code error.
+
+        :raises PermissionDescriptionNotProvidedError: permission description
+                                                       not provided error.
+
+        :raises PermissionDescriptionLengthError: permission description
+                                                  length error.
+
+        :raises PermissionLocalizedDescriptionLengthError: permission localized
+                                                           description length error.
         """
 
         if self.subsystem_code in (None, '') or self.subsystem_code.isspace():
-            raise InvalidPermissionSubsystemCodeError('Permission subsystem '
-                                                      'code must be provided.')
+            raise PermissionSubsystemCodeNotProvidedError('Permission subsystem '
+                                                          'code must be provided.')
+
+        if len(self.subsystem_code) <= 0 or len(self.subsystem_code) > 5:
+            raise PermissionSubsystemCodeLengthError('Permission subsystem code '
+                                                     'has an invalid length.')
 
         if self.access_code is None:
-            raise InvalidPermissionAccessCodeError('Permission access code must be provided.')
+            raise PermissionAccessCodeNotProvidedError('Permission access code '
+                                                       'must be provided.')
+
+        if self.access_code < 1:
+            raise InvalidPermissionAccessCodeError('Permission access code [{code}] is '
+                                                   'invalid.'.format(code=self.access_code))
 
         if self.sub_access_code is None:
+            raise PermissionSubAccessCodeNotProvidedError('Permission sub access '
+                                                          'code must be provided.')
+
+        if self.sub_access_code < 1:
             raise InvalidPermissionSubAccessCodeError('Permission sub access '
-                                                      'code must be provided.')
+                                                      'code [{code}] is invalid.'
+                                                      .format(code=self.sub_access_code))
 
         if self.description in (None, '') or self.description.isspace():
-            raise InvalidPermissionDescriptionError('Permission description must be provided.')
+            raise PermissionDescriptionNotProvidedError('Permission description '
+                                                        'must be provided.')
+
+        if len(self.description) > 100:
+            raise PermissionDescriptionLengthError('Permission description '
+                                                   'has an invalid length.')
+
+        if self.localized_description not in (None, '') or \
+                not self.localized_description.isspace():
+            if len(self.localized_description) > 150:
+                raise PermissionLocalizedDescriptionLengthError('Permission localized '
+                                                                'description has an '
+                                                                'invalid length.')
 
     def get_id(self):
         """

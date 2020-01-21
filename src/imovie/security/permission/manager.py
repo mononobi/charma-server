@@ -5,14 +5,14 @@ permission manager module.
 
 import pyrin.utils.sqlalchemy as sqlalchemy_utils
 
-from pyrin.utils.sqlalchemy import add_like_clause, add_date_range_clause, entity_to_dict_list
+from pyrin.utils.sqlalchemy import add_like_clause, entity_to_dict_list
 from pyrin.database.services import get_current_store
-from pyrin.security.permission.manager import PermissionManager as PermissionManagerBase
+from pyrin.security.permission.manager import PermissionManager as BasePermissionManager
 
 from imovie.security.permission.models import PermissionEntity
 
 
-class PermissionManager(PermissionManagerBase):
+class PermissionManager(BasePermissionManager):
     """
     permission manager class.
     """
@@ -22,7 +22,7 @@ class PermissionManager(PermissionManagerBase):
         initializes an instance of PermissionManager.
         """
 
-        PermissionManagerBase.__init__(self)
+        BasePermissionManager.__init__(self)
 
     def synchronize_all(self, **options):
         """
@@ -67,17 +67,6 @@ class PermissionManager(PermissionManagerBase):
         :keyword int access_code: access code.
         :keyword int sub_access_code: sub access code.
         :keyword str description: description.
-        :keyword datetime create_date: create date.
-        :keyword datetime create_date_lower: create date lower.
-        :keyword datetime create_date_upper: create date upper.
-
-        :keyword bool consider_begin_of_day: consider begin of day for
-                                             all date value lower bounds.
-                                             defaults to True if not provided.
-
-        :keyword bool consider_end_of_day: consider end of day for
-                                           all date value upper bounds.
-                                           defaults to True if not provided.
 
         :rtype: list
         """
@@ -88,9 +77,6 @@ class PermissionManager(PermissionManagerBase):
         access_code = filters.get('access_code', None)
         sub_access_code = filters.get('sub_access_code', None)
         description = filters.get('description', None)
-        create_date = filters.get('create_date', None)
-        create_date_lower = filters.get('create_date_lower', None)
-        create_date_upper = filters.get('create_date_upper', None)
 
         if subsystem_code is not None:
             clauses.append(PermissionEntity.subsystem_code == subsystem_code)
@@ -104,21 +90,13 @@ class PermissionManager(PermissionManagerBase):
         if description is not None:
             add_like_clause(clauses, PermissionEntity.description, description)
 
-        if create_date is not None:
-            add_date_range_clause(clauses, PermissionEntity.create_date,
-                                  create_date, create_date)
-
-        if create_date_lower is not None or create_date_upper is not None:
-            add_date_range_clause(clauses, PermissionEntity.create_date,
-                                  create_date_lower, create_date_upper, **filters)
-
         return clauses
 
     def _bulk_insert(self, entities):
         """
         bulk inserts the given permission entities.
 
-        :param list[CorePermission] entities: permission entities to be inserted.
+        :param list[PermissionEntity] entities: permission entities to be inserted.
         """
 
         store = get_current_store()
@@ -129,7 +107,7 @@ class PermissionManager(PermissionManagerBase):
         """
         bulk updates the given permission entities.
 
-        :param list[CorePermission] entities: permission entities to be updated.
+        :param list[PermissionEntity] entities: permission entities to be updated.
         """
 
         store = get_current_store()
