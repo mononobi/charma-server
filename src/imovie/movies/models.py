@@ -65,7 +65,7 @@ class MovieEntity(MovieBaseEntity):
     duration = CoreColumn('duration', TIME(truncate_microseconds=True))
     imdb_page = CoreColumn('imdb_page', Unicode(150))
     poster_name = CoreColumn('poster_name', Unicode(250))
-    directory_name = CoreColumn('directory_name', Unicode(250))
+    directory_name = CoreColumn('directory_name', Unicode(250), nullable=False)
     is_watched = CoreColumn('is_watched', Boolean, nullable=False, default=False)
     storyline = CoreColumn('storyline', Unicode(5000))
     poster_url = CoreColumn('poster_url', Unicode(600))
@@ -75,4 +75,4 @@ class MovieEntity(MovieBaseEntity):
     resolution = CoreColumn('resolution', SmallInteger, nullable=False,
                             default=ResolutionEnum.UNKNOWN)
     archive_date = CoreColumn('archive_date', TIMESTAMP(timezone=True),
-                              nullable=False, default=datetime_services.now())
+                              nullable=False, default=datetime_services.now)
