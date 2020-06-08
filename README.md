@@ -4,16 +4,7 @@ Server side application for imovie, personal movie collection manager.
 
 # prerequisites
 
-to be able to run the application it is required to:
-
-1. create a directory or a symlink containing pyrin application main package, it should
-   be placed inside src directory beside imovie package and should be named as pyrin.
-
-2. create a .env file inside src directory containing all the configuration keys that have
-   null value in their corresponding settings file. a sample .env file is available in
-   samples/dotenv.
-
-3. create an entry in /etc/hosts with 'imovie.server' value.
+create an entry in /etc/hosts with 'imovie.server' value.
 
 # code editing in pycharm
 
