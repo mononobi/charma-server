@@ -1,8 +1,0 @@
-1. http method to operation map:
-   GET: read, search
-   POST: create
-   PUT: update
-   DELETE: delete
-
-2. api exposed urls must be the same as package hierarchy, for example:
-   imovie.security.users.get() -> security/users/get/
