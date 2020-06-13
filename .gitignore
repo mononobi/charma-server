@@ -108,6 +108,3 @@ venv.bak/
 
 # vscode stuff
 /.vscode
-
-# pyrin stuff
-/src/pyrin
