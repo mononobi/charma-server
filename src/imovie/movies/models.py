@@ -4,7 +4,7 @@ movies models module.
 """
 
 from sqlalchemy.dialects.sqlite import TIME
-from sqlalchemy import Integer, Unicode, TIMESTAMP, Float, Boolean, SmallInteger, CheckConstraint
+from sqlalchemy import Integer, Unicode, TIMESTAMP, Float, Boolean, SmallInteger
 
 import pyrin.globalization.datetime.services as datetime_services
 
@@ -12,7 +12,6 @@ from pyrin.core.structs import DTO
 from pyrin.core.enumerations import CoreEnum
 from pyrin.database.model.base import CoreEntity
 from pyrin.database.orm.sql.schema.base import CoreColumn
-from pyrin.database.orm.types.custom import GUID
 
 
 class MovieBaseEntity(CoreEntity):
@@ -22,7 +21,7 @@ class MovieBaseEntity(CoreEntity):
 
     __tablename__ = 'movie'
 
-    id = CoreColumn('id', GUID, index=True, primary_key=True)
+    id = CoreColumn('id', Integer, index=True, primary_key=True, autoincrement=True)
 
 
 class MovieEntity(MovieBaseEntity):
@@ -58,8 +57,7 @@ class MovieEntity(MovieBaseEntity):
 
     title = CoreColumn('title', Unicode(150), nullable=False)
     original_title = CoreColumn('original_title', Unicode(150))
-    production_year = CoreColumn('production_year', Integer,
-                                 CheckConstraint('production_year > 1900'))
+    production_year = CoreColumn('production_year', Integer)
     imdb_rate = CoreColumn('imdb_rate', Float, default=0)
     meta_score = CoreColumn('meta_score', SmallInteger, default=0)
     duration = CoreColumn('duration', TIME(truncate_microseconds=True))
@@ -75,4 +73,5 @@ class MovieEntity(MovieBaseEntity):
     resolution = CoreColumn('resolution', SmallInteger, nullable=False,
                             default=ResolutionEnum.UNKNOWN)
     archive_date = CoreColumn('archive_date', TIMESTAMP(timezone=True),
-                              nullable=False, default=datetime_services.now)
+                              nullable=False, index=True,
+                              default=datetime_services.now)
