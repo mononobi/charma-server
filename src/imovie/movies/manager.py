@@ -48,4 +48,3 @@ class MoviesManager(Manager):
         :returns: created movie id
         :rtype: int
         """
-
