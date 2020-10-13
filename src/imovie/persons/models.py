@@ -3,7 +3,7 @@
 persons models module.
 """
 
-from sqlalchemy import Unicode, Integer, ForeignKey, CheckConstraint, TIMESTAMP
+from sqlalchemy import Unicode, Integer, TIMESTAMP
 
 import pyrin.globalization.datetime.services as datetime_services
 
@@ -28,33 +28,10 @@ class PersonEntity(PersonBaseEntity):
 
     _extend_existing = True
 
-    # class ResolutionEnum(CoreEnum):
-    #     """
-    #     resolution enum.
-    #     """
-    #
-    #     UNKNOWN = 0
-    #     VCD = 1
-    #     DVD = 2
-    #     HD = 3
-    #     FHD = 4
-    #     UHD = 5
-    #
-    # class ContentRateEnum(CoreEnum):
-    #     """
-    #     content rate enum.
-    #     """
-    #
-    #     UNKNOWN = 0
-    #     G = 1
-    #     PG = 2
-    #     PG_13 = 3
-    #     R = 4
-    #     NC_17 = 5
-
+    identifier = CoreColumn('identifier', Unicode(150), unique=True)
     first_name = CoreColumn('first_name', Unicode(100))
     last_name = CoreColumn('last_name', Unicode(100), nullable=True)
     search_name = CoreColumn('search_name', Unicode(200))
-    imdb_page = CoreColumn('imdb_page', Unicode(150), nullable=True)
-    poster_url = CoreColumn('poster_url', Unicode(600), nullable=True)
+    imdb_page = CoreColumn('imdb_page', Unicode(150), nullable=True, unique=True)
+    photo_name = CoreColumn('photo_name', Unicode(250), nullable=True, unique=True)
     add_date = CoreColumn('add_date', TIMESTAMP(timezone=True), default=datetime_services.now)
