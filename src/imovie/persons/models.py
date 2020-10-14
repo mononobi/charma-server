@@ -28,10 +28,10 @@ class PersonEntity(PersonBaseEntity):
 
     _extend_existing = True
 
-    identifier = CoreColumn('identifier', Unicode(150), unique=True)
+    identifier = CoreColumn('identifier', Unicode(150), unique=True, exposed=False)
     first_name = CoreColumn('first_name', Unicode(100))
     last_name = CoreColumn('last_name', Unicode(100), nullable=True)
-    search_name = CoreColumn('search_name', Unicode(200))
+    search_name = CoreColumn('search_name', Unicode(200), exposed=False)
     imdb_page = CoreColumn('imdb_page', Unicode(150), nullable=True, unique=True)
     photo_name = CoreColumn('photo_name', Unicode(250), nullable=True, unique=True)
     add_date = CoreColumn('add_date', TIMESTAMP(timezone=True), default=datetime_services.now)

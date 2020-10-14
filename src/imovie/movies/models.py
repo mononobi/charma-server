@@ -62,11 +62,13 @@ class MovieEntity(MovieBaseEntity):
         R = 4
         NC_17 = 5
 
-    identifier = CoreColumn('identifier', Unicode(150), unique=True, nullable=True)
-    title = CoreColumn('title', Unicode(150))
+    identifier = CoreColumn('identifier', Unicode(150),
+                            unique=True, nullable=True, exposed=False)
+
+    title = CoreColumn('title', Unicode(150), nullable=True)
     original_title = CoreColumn('original_title', Unicode(150), nullable=True)
     library_title = CoreColumn('library_title', Unicode(150))
-    search_title = CoreColumn('search_title', Unicode(150))
+    search_title = CoreColumn('search_title', Unicode(150), exposed=False)
     production_year = CoreColumn('production_year', Integer, nullable=True)
     imdb_rate = CoreColumn('imdb_rate', Float, default=0)
     meta_score = CoreColumn('meta_score', SmallInteger, default=0)
@@ -76,6 +78,9 @@ class MovieEntity(MovieBaseEntity):
     directory_name = CoreColumn('directory_name', Unicode(250))
     is_watched = CoreColumn('is_watched', Boolean, default=False)
     storyline = CoreColumn('storyline', Unicode(5000), nullable=True)
+    search_storyline = CoreColumn('search_storyline', Unicode(5000),
+                                  nullable=True, exposed=False)
+
     watched_date = CoreColumn('watched_date', TIMESTAMP(timezone=True), nullable=True)
     content_rate = CoreColumn('content_rate', SmallInteger, nullable=True)
     resolution = CoreColumn('resolution', SmallInteger, default=ResolutionEnum.UNKNOWN)

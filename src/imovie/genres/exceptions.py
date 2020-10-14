@@ -18,3 +18,10 @@ class GenresBusinessException(CoreBusinessException, GenresException):
     genres business exception.
     """
     pass
+
+
+class GenreDoesNotExistError(GenresBusinessException):
+    """
+    genre does not exist error.
+    """
+    pass

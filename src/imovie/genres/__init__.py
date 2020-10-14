@@ -13,3 +13,4 @@ class GenresPackage(Package):
 
     NAME = __name__
     COMPONENT_NAME = 'genres.component'
+    CONFIG_STORE_NAMES = ['genres']
