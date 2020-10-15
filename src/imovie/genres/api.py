@@ -73,3 +73,17 @@ def get_all(**options):
     """
 
     return genres_services.get_all()
+
+
+@api('/genres/<int:id>', methods=HTTPMethodEnum.DELETE, authenticated=False)
+def delete(id, **options):
+    """
+    deletes a genre with given id.
+
+    :param int id: genre id.
+
+    :returns: count of deleted items.
+    :rtype: int
+    """
+
+    return genres_services.delete(id)

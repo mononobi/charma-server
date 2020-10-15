@@ -29,11 +29,11 @@ class GenresManager(Manager):
 
         super().__init__()
 
-        self._main_genres = self._load_main_genres()
+        self._main_genres = self._get_main_genres()
 
-    def _load_main_genres(self):
+    def _get_main_genres(self):
         """
-        loads list of main genres from config store.
+        gets list of main genres from config store.
 
         :rtype: list[str]
         """
@@ -137,7 +137,6 @@ class GenresManager(Manager):
 
         options.update(name=name)
         validator_services.validate_dict(GenreEntity, options)
-        name = name.strip()
         is_main = self._is_main(name)
         options.update(is_main=is_main)
         entity = GenreEntity(**options)
@@ -178,3 +177,30 @@ class GenresManager(Manager):
         """
 
         return self._get_all()
+
+    def delete(self, id):
+        """
+        deletes a genre with given id.
+
+        :param int id: genre id.
+
+        :returns: count of deleted items.
+        :rtype: int
+        """
+
+        store = get_current_store()
+        return store.query(GenreEntity.id).filter(GenreEntity.id == id).delete()
+
+    def get_by_name(self, name):
+        """
+        gets a genre by name.
+
+        it returns None if genre does not exist.
+
+        :param str name: genre name.
+
+        :rtype: GenreEntity
+        """
+
+        store = get_current_store()
+        return store.query(GenreEntity).filter(GenreEntity.name.ilike(name)).one_or_none()

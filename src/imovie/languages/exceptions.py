@@ -18,3 +18,10 @@ class LanguagesBusinessException(CoreBusinessException, LanguagesException):
     languages business exception.
     """
     pass
+
+
+class LanguageDoesNotExistError(LanguagesBusinessException):
+    """
+    language does not exist error.
+    """
+    pass

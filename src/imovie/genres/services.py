@@ -72,3 +72,30 @@ def get_all():
     """
 
     return get_component(GenresPackage.COMPONENT_NAME).get_all()
+
+
+def delete(id):
+    """
+    deletes a genre with given id.
+
+    :param int id: genre id.
+
+    :returns: count of deleted items.
+    :rtype: int
+    """
+
+    return get_component(GenresPackage.COMPONENT_NAME).delete(id)
+
+
+def get_by_name(name):
+    """
+    gets a genre by name.
+
+    it returns None if genre does not exist.
+
+    :param str name: genre name.
+
+    :rtype: GenreEntity
+    """
+
+    return get_component(GenresPackage.COMPONENT_NAME).get_by_name(name)
