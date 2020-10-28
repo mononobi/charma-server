@@ -140,7 +140,7 @@ class GenresManager(Manager):
         is_main = self._is_main(name)
         options.update(is_main=is_main)
         entity = GenreEntity(**options)
-        entity.save()
+        entity.save(flush=True)
         return entity.id
 
     def find(self, **filters):

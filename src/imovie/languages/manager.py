@@ -98,7 +98,7 @@ class LanguagesManager(Manager):
         options.update(name=name)
         validator_services.validate_dict(LanguageEntity, options)
         entity = LanguageEntity(**options)
-        entity.save()
+        entity.save(flush=True)
         return entity.id
 
     def find(self, **filters):

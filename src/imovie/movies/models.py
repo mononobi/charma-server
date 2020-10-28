@@ -170,6 +170,7 @@ class Movie2ActorEntity(Movie2ActorBaseEntity):
     _extend_existing = True
 
     is_star = CoreColumn('is_star', Boolean, default=False)
+    character = CoreColumn('character', Unicode(150), nullable=True)
 
 
 class Movie2DirectorBaseEntity(CoreEntity):
