@@ -65,27 +65,28 @@ class MovieEntity(MovieBaseEntity):
     identifier = CoreColumn('identifier', Unicode(150),
                             unique=True, nullable=True, exposed=False)
 
-    title = CoreColumn('title', Unicode(150), nullable=True)
-    original_title = CoreColumn('original_title', Unicode(150), nullable=True)
-    library_title = CoreColumn('library_title', Unicode(150))
-    search_title = CoreColumn('search_title', Unicode(150), exposed=False)
-    production_year = CoreColumn('production_year', Integer, nullable=True)
-    imdb_rate = CoreColumn('imdb_rate', Float, default=0)
-    meta_score = CoreColumn('meta_score', SmallInteger, default=0)
-    runtime = CoreColumn('runtime', SmallInteger, default=0)
-    imdb_page = CoreColumn('imdb_page', Unicode(150), nullable=True)
-    poster_name = CoreColumn('poster_name', Unicode(250), nullable=True)
-    directory_name = CoreColumn('directory_name', Unicode(250))
-    is_watched = CoreColumn('is_watched', Boolean, default=False)
-    storyline = CoreColumn('storyline', Unicode(5000), nullable=True)
-    search_storyline = CoreColumn('search_storyline', Unicode(5000),
-                                  nullable=True, exposed=False)
+    title = CoreColumn('title', Unicode(150))
+    original_title = CoreColumn('original_title', Unicode(150))
+    library_title = CoreColumn('library_title', Unicode(150), nullable=False)
+    search_title = CoreColumn('search_title', Unicode(150), exposed=False, nullable=False)
+    production_year = CoreColumn('production_year', Integer)
+    imdb_rate = CoreColumn('imdb_rate', Float, nullable=False, default=0)
+    meta_score = CoreColumn('meta_score', SmallInteger, nullable=False, default=0)
+    runtime = CoreColumn('runtime', SmallInteger, nullable=False, default=0)
+    imdb_page = CoreColumn('imdb_page', Unicode(150))
+    poster_name = CoreColumn('poster_name', Unicode(250))
+    directory_name = CoreColumn('directory_name', Unicode(250), nullable=False)
+    is_watched = CoreColumn('is_watched', Boolean, nullable=False, default=False)
+    storyline = CoreColumn('storyline', Unicode(5000))
+    search_storyline = CoreColumn('search_storyline', Unicode(5000), exposed=False)
+    watched_date = CoreColumn('watched_date', TIMESTAMP(timezone=True))
+    content_rate = CoreColumn('content_rate', SmallInteger)
 
-    watched_date = CoreColumn('watched_date', TIMESTAMP(timezone=True), nullable=True)
-    content_rate = CoreColumn('content_rate', SmallInteger, nullable=True)
-    resolution = CoreColumn('resolution', SmallInteger, default=ResolutionEnum.UNKNOWN)
-    archived_date = CoreColumn('archived_date', TIMESTAMP(timezone=True),
-                               index=True, default=datetime_services.now)
+    resolution = CoreColumn('resolution', SmallInteger, nullable=False,
+                            default=ResolutionEnum.UNKNOWN)
+
+    archived_date = CoreColumn('archived_date', TIMESTAMP(timezone=True), index=True,
+                               nullable=False, default=datetime_services.now)
 
     @classmethod
     def _customize_table_args(cls, table_args):
@@ -130,8 +131,9 @@ class FavoriteMovieEntity(FavoriteMovieBaseEntity):
     MIN_FAVORITE_RATE = 0
     MAX_FAVORITE_RATE = 10
 
-    favorite_rate = CoreColumn('favorite_rate', Integer)
-    add_date = CoreColumn('add_date', TIMESTAMP(timezone=True), default=datetime_services.now)
+    favorite_rate = CoreColumn('favorite_rate', Integer, nullable=False)
+    add_date = CoreColumn('add_date', TIMESTAMP(timezone=True),
+                          nullable=False, default=datetime_services.now)
 
     @classmethod
     def _customize_table_args(cls, table_args):
@@ -169,8 +171,8 @@ class Movie2ActorEntity(Movie2ActorBaseEntity):
 
     _extend_existing = True
 
-    is_star = CoreColumn('is_star', Boolean, default=False)
-    character = CoreColumn('character', Unicode(150), nullable=True)
+    is_star = CoreColumn('is_star', Boolean, nullable=False, default=False)
+    character = CoreColumn('character', Unicode(150))
 
 
 class Movie2DirectorBaseEntity(CoreEntity):
@@ -194,7 +196,7 @@ class Movie2DirectorEntity(Movie2DirectorBaseEntity):
 
     _extend_existing = True
 
-    is_main = CoreColumn('is_main', Boolean, default=False)
+    is_main = CoreColumn('is_main', Boolean, nullable=False, default=False)
 
 
 class MovieSuggestionCacheBaseEntity(CoreEntity):
@@ -234,7 +236,8 @@ class WatchLaterEntity(WatchLaterBaseEntity):
 
     _extend_existing = True
 
-    add_date = CoreColumn('add_date', TIMESTAMP(timezone=True), default=datetime_services.now)
+    add_date = CoreColumn('add_date', TIMESTAMP(timezone=True),
+                          nullable=False, default=datetime_services.now)
 
 
 class MovieRootPathBaseEntity(CoreEntity):
@@ -265,8 +268,8 @@ class MovieRootPathEntity(MovieRootPathBaseEntity):
         ANDROID = 3
         IOS = 4
 
-    path = CoreColumn('path', Unicode(250))
-    os = CoreColumn('os', SmallInteger)
+    path = CoreColumn('path', Unicode(250), nullable=False)
+    os = CoreColumn('os', SmallInteger, nullable=False)
 
     @classmethod
     def _customize_table_args(cls, table_args):
@@ -325,7 +328,7 @@ class Movie2GenreEntity(Movie2GenreBaseEntity):
 
     _extend_existing = True
 
-    is_main = CoreColumn('is_main', Boolean, default=False)
+    is_main = CoreColumn('is_main', Boolean, nullable=False, default=False)
 
 
 class Movie2LanguageBaseEntity(CoreEntity):

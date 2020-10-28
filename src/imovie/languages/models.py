@@ -26,4 +26,4 @@ class LanguageEntity(LanguageBaseEntity):
 
     _extend_existing = True
 
-    name = CoreColumn('name', Unicode(50), unique=True)
+    name = CoreColumn('name', Unicode(50), nullable=False, unique=True)

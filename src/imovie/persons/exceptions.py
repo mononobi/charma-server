@@ -18,3 +18,10 @@ class PersonsBusinessException(CoreBusinessException, PersonsException):
     persons business exception.
     """
     pass
+
+
+class PersonDoesNotExistError(PersonsBusinessException):
+    """
+    person does not exist error.
+    """
+    pass
