@@ -37,6 +37,9 @@ def create(first_name, **options):
     :keyword str imdb_page: imdb page link.
     :keyword str photo_name: photo file name.
 
+    :keyword str handler: person handler name to be used.
+                          defaults to None if not provided.
+
     :raises ValidationError: validation error.
 
     :returns: created person id.

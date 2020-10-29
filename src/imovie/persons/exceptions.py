@@ -25,3 +25,31 @@ class PersonDoesNotExistError(PersonsBusinessException):
     person does not exist error.
     """
     pass
+
+
+class InvalidPersonHandlerTypeError(PersonsException):
+    """
+    invalid person handler type error.
+    """
+    pass
+
+
+class PersonHandlerNameRequiredError(PersonsException):
+    """
+    person handler name required error.
+    """
+    pass
+
+
+class DuplicatedPersonHandlerError(PersonsException):
+    """
+    duplicated person handler error.
+    """
+    pass
+
+
+class PersonHandlerNotExistedError(PersonsException):
+    """
+    person handler not existed error.
+    """
+    pass

@@ -7,14 +7,16 @@ import pyrin.validator.services as validator_services
 import pyrin.utilities.string.normalizer.services as normalizer_services
 
 from pyrin.core.globals import _
-from pyrin.core.structs import Manager
+from pyrin.core.structs import Manager, Context
 from pyrin.database.services import get_current_store
 from pyrin.utils.sqlalchemy import add_datetime_range_clause
 from pyrin.utilities.string.normalizer.enumerations import NormalizerEnum
 
 from imovie.persons import PersonsPackage
+from imovie.persons.handler import AbstractPersonHandler
 from imovie.persons.models import PersonEntity
-from imovie.persons.exceptions import PersonDoesNotExistError
+from imovie.persons.exceptions import PersonDoesNotExistError, InvalidPersonHandlerTypeError, \
+    PersonHandlerNameRequiredError, DuplicatedPersonHandlerError, PersonHandlerNotExistedError
 
 
 class PersonsManager(Manager):
@@ -32,6 +34,34 @@ class PersonsManager(Manager):
                         NormalizerEnum.LATIN_LETTER,
                         NormalizerEnum.LOWERCASE,
                         NormalizerEnum.SPACE]
+
+    def __init__(self):
+        """
+        initializes an instance of PersonsManager.
+        """
+
+        super().__init__()
+
+        # a dict containing person handlers. in the form of:
+        # {str name: AbstractPersonHandler handler}
+        self._handlers = Context()
+
+    def _get_handler(self, name):
+        """
+        gets the person handler with given name.
+
+        :param str name: handler name to be get.
+
+        :raises PersonHandlerNotExistedError: person handler not existed error.
+
+        :rtype: AbstractPersonHandler
+        """
+
+        if name not in self._handlers:
+            raise PersonHandlerNotExistedError('Person handler [{name}] does not exist.'
+                                               .format(name=name))
+
+        return self._handlers.get(name)
 
     def _make_find_expressions(self, expressions, **filters):
         """
@@ -118,6 +148,36 @@ class PersonsManager(Manager):
         fullname = self.get_fullname(first_name, last_name)
         return normalizer_services.normalize(fullname, *self.NAME_NORMALIZERS)
 
+    def register_handler(self, instance, **options):
+        """
+        registers a person handler.
+
+        :param AbstractPersonHandler instance: handler instance.
+
+        :raises InvalidPersonHandlerTypeError: invalid person handler type error.
+        :raises PersonHandlerNameRequiredError: person handler name required error.
+        :raises DuplicatedPersonHandlerError: duplicated person handler error.
+        """
+
+        if not isinstance(instance, AbstractPersonHandler):
+            raise InvalidPersonHandlerTypeError('Input parameter [{instance}] is '
+                                                'not an instance of [{base}].'
+                                                .format(instance=instance,
+                                                        base=AbstractPersonHandler))
+
+        if instance.name in (None, '') or instance.name.isspace():
+            raise PersonHandlerNameRequiredError('Person handler name [{instance}] '
+                                                 'must be provided.'
+                                                 .format(instance=instance))
+
+        if instance.name is self._handlers:
+            raise DuplicatedPersonHandlerError('There is another registered person handler '
+                                               'with name [{name}], so new handler '
+                                               '[{instance}] could not be registered.'
+                                               .format(name=instance.name, instance=instance))
+
+        self._handlers[instance.name] = instance
+
     def get_fullname(self, first_name, last_name):
         """
         gets full name from given inputs.
@@ -171,6 +231,9 @@ class PersonsManager(Manager):
         :keyword str imdb_page: imdb page link.
         :keyword str photo_name: photo file name.
 
+        :keyword str handler: person handler name to be used.
+                              defaults to None if not provided.
+
         :raises ValidationError: validation error.
 
         :returns: created person id.
@@ -179,12 +242,17 @@ class PersonsManager(Manager):
 
         options.update(first_name=first_name)
         validator_services.validate_dict(PersonEntity, options)
-        last_name = options.get('last_name')
-        search_name = self._get_search_name(first_name, last_name)
+        search_name = self._get_search_name(first_name, options.get('last_name'))
         entity = PersonEntity(**options)
         entity.search_name = search_name
         entity.identifier = entity.imdb_page
         entity.save(flush=True)
+
+        handler_name = options.get('handler')
+        if handler_name is not None:
+            handler = self._get_handler(handler_name)
+            handler.create(entity.id, **options)
+
         return entity.id
 
     def find(self, **filters):
@@ -246,6 +314,9 @@ class PersonsManager(Manager):
         :returns: count of deleted items.
         :rtype: int
         """
+
+        for name, handler in self._handlers:
+            handler.delete(id)
 
         store = get_current_store()
         return store.query(PersonEntity.id).filter(PersonEntity.id == id).delete()

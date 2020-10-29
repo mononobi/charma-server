@@ -8,6 +8,20 @@ from pyrin.application.services import get_component
 from imovie.persons import PersonsPackage
 
 
+def register_handler(instance, **options):
+    """
+    registers a person handler.
+
+    :param AbstractPersonHandler instance: handler instance.
+
+    :raises InvalidPersonHandlerTypeError: invalid person handler type error.
+    :raises PersonHandlerNameRequiredError: person handler name required error.
+    :raises DuplicatedPersonHandlerError: duplicated person handler error.
+    """
+
+    return get_component(PersonsPackage.COMPONENT_NAME).register_handler(instance, **options)
+
+
 def get_fullname(first_name, last_name):
     """
     gets full name from given inputs.
@@ -46,6 +60,9 @@ def create(first_name, **options):
     :keyword str last_name: last name.
     :keyword str imdb_page: imdb page link.
     :keyword str photo_name: photo file name.
+
+    :keyword str handler: person handler name to be used.
+                          defaults to None if not provided.
 
     :raises ValidationError: validation error.
 
