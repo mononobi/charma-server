@@ -49,6 +49,28 @@ def create(first_name, **options):
     return persons_services.create(first_name, **options)
 
 
+@api('/persons', methods=HTTPMethodEnum.PATCH, authenticated=False)
+def update(id, **options):
+    """
+    updates a person with given id.
+
+    :param int id: person id.
+
+    :keyword str first_name: first name.
+    :keyword str last_name: last name.
+    :keyword str imdb_page: imdb page link.
+    :keyword str photo_name: photo file name.
+
+    :keyword str handler: person handler name to be used.
+                          defaults to None if not provided.
+
+    :raises ValidationError: validation error.
+    :raises PersonDoesNotExistError: person does not exist error.
+    """
+
+    return persons_services.update(id, **options)
+
+
 @api('/persons', authenticated=False)
 def find(**filters):
     """

@@ -73,6 +73,27 @@ def create(first_name, **options):
     return get_component(PersonsPackage.COMPONENT_NAME).create(first_name, **options)
 
 
+def update(id, **options):
+    """
+    updates a person with given id.
+
+    :param int id: person id.
+
+    :keyword str first_name: first name.
+    :keyword str last_name: last name.
+    :keyword str imdb_page: imdb page link.
+    :keyword str photo_name: photo file name.
+
+    :keyword str handler: person handler name to be used.
+                          defaults to None if not provided.
+
+    :raises ValidationError: validation error.
+    :raises PersonDoesNotExistError: person does not exist error.
+    """
+
+    return get_component(PersonsPackage.COMPONENT_NAME).update(id, **options)
+
+
 def find(**filters):
     """
     finds persons with given filters.

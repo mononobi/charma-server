@@ -28,9 +28,6 @@ class PersonEntity(PersonBaseEntity):
 
     _extend_existing = True
 
-    identifier = CoreColumn('identifier', Unicode(150), unique=True,
-                            nullable=False, exposed=False)
-
     first_name = CoreColumn('first_name', Unicode(100), nullable=False)
     last_name = CoreColumn('last_name', Unicode(100))
     search_name = CoreColumn('search_name', Unicode(200), exposed=False, nullable=False)

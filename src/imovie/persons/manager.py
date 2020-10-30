@@ -242,10 +242,8 @@ class PersonsManager(Manager):
 
         options.update(first_name=first_name)
         validator_services.validate_dict(PersonEntity, options)
-        search_name = self._get_search_name(first_name, options.get('last_name'))
         entity = PersonEntity(**options)
-        entity.search_name = search_name
-        entity.identifier = entity.imdb_page
+        entity.search_name = self._get_search_name(first_name, options.get('last_name'))
         entity.save(flush=True)
 
         handler_name = options.get('handler')
@@ -254,6 +252,34 @@ class PersonsManager(Manager):
             handler.create(entity.id, **options)
 
         return entity.id
+
+    def update(self, id, **options):
+        """
+        updates a person with given id.
+
+        :param int id: person id.
+
+        :keyword str first_name: first name.
+        :keyword str last_name: last name.
+        :keyword str imdb_page: imdb page link.
+        :keyword str photo_name: photo file name.
+
+        :keyword str handler: person handler name to be used.
+                              defaults to None if not provided.
+
+        :raises ValidationError: validation error.
+        :raises PersonDoesNotExistError: person does not exist error.
+        """
+
+        validator_services.validate_dict(PersonEntity, options)
+        entity = self.get(id)
+        entity.update(**options)
+        entity.search_name = self._get_search_name(entity.first_name, entity.last_name)
+
+        handler_name = options.get('handler')
+        if handler_name is not None:
+            handler = self._get_handler(handler_name)
+            handler.update(entity.id, **options)
 
     def find(self, **filters):
         """
