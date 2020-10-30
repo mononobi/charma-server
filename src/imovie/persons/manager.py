@@ -43,7 +43,7 @@ class PersonsManager(Manager):
         super().__init__()
 
         # a dict containing person handlers. in the form of:
-        # {str name: AbstractPersonHandler handler}
+        # {str name: AbstractPersonHandler instance}
         self._handlers = Context()
 
     def _get_handler(self, name):
