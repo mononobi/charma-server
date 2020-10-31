@@ -4,36 +4,25 @@ persons manager module.
 """
 
 import pyrin.validator.services as validator_services
-import pyrin.utilities.string.normalizer.services as normalizer_services
 
 from pyrin.core.globals import _
 from pyrin.core.structs import Manager, Context
 from pyrin.database.services import get_current_store
-from pyrin.utils.sqlalchemy import add_datetime_range_clause
-from pyrin.utilities.string.normalizer.enumerations import NormalizerEnum
 
 from imovie.persons import PersonsPackage
 from imovie.persons.handler import AbstractPersonHandler
 from imovie.persons.models import PersonEntity
+from imovie.persons.queries import PersonsQueries
 from imovie.persons.exceptions import PersonDoesNotExistError, InvalidPersonHandlerTypeError, \
     PersonHandlerNameRequiredError, DuplicatedPersonHandlerError, PersonHandlerNotExistedError
 
 
-class PersonsManager(Manager):
+class PersonsManager(Manager, PersonsQueries):
     """
     persons manager class.
     """
 
     package_class = PersonsPackage
-
-    NAME_NORMALIZERS = [NormalizerEnum.PERSIAN_SIGN,
-                        NormalizerEnum.LATIN_SIGN,
-                        NormalizerEnum.PERSIAN_NUMBER,
-                        NormalizerEnum.ARABIC_NUMBER,
-                        NormalizerEnum.PERSIAN_LETTER,
-                        NormalizerEnum.LATIN_LETTER,
-                        NormalizerEnum.LOWERCASE,
-                        NormalizerEnum.SPACE]
 
     def __init__(self):
         """
@@ -63,52 +52,6 @@ class PersonsManager(Manager):
 
         return self._handlers.get(name)
 
-    def _make_find_expressions(self, expressions, **filters):
-        """
-        makes find expressions with given filters.
-
-        :param list expressions: list of expressions to add
-                                 new expressions into it.
-
-        :keyword str first_name: first name.
-        :keyword str last_name: last name
-        :keyword str imdb_page: imdb page link
-        :keyword str photo_name: photo file name.
-        :keyword datetime from_add_date: from add date.
-        :keyword datetime to_add_date: to add date.
-
-        :keyword bool consider_begin_of_day: specifies that consider begin
-                                             of day for lower datetime.
-                                             defaults to True if not provided.
-
-        :keyword bool consider_end_of_day: specifies that consider end
-                                           of day for upper datetime.
-                                           defaults to True if not provided.
-
-        :rtype: list
-        """
-
-        first_name = filters.get('first_name')
-        last_name = filters.get('last_name')
-        imdb_page = filters.get('imdb_page')
-        photo_name = filters.get('photo_name')
-        from_add_date = filters.get('from_add_date')
-        to_add_date = filters.get('to_add_date')
-
-        if first_name is not None or last_name is not None:
-            search_name = self._get_search_name(first_name, last_name)
-            expressions.append(PersonEntity.search_name.icontains(search_name))
-
-        if imdb_page is not None:
-            expressions.append(PersonEntity.imdb_page.icontains(imdb_page))
-
-        if photo_name is not None:
-            expressions.append(PersonEntity.photo_name.icontains(photo_name))
-
-        if from_add_date is not None or to_add_date is not None:
-            add_datetime_range_clause(expressions, PersonEntity.add_date,
-                                      from_add_date, to_add_date, **filters)
-
     def _get(self, id):
         """
         gets person with given id.
@@ -122,31 +65,6 @@ class PersonsManager(Manager):
 
         store = get_current_store()
         return store.query(PersonEntity).get(id)
-
-    def _get_all(self, *expressions):
-        """
-        gets all persons using provided expressions.
-
-        :param object expressions: expressions to be applied by filter.
-
-        :rtype: list[PersonEntity]
-        """
-
-        store = get_current_store()
-        return store.query(PersonEntity).filter(*expressions).all()
-
-    def _get_search_name(self, first_name, last_name):
-        """
-        gets search name from given inputs.
-
-        :param str first_name: first name.
-        :param str last_name: last name.
-
-        :rtype: str
-        """
-
-        fullname = self.get_fullname(first_name, last_name)
-        return normalizer_services.normalize(fullname, *self.NAME_NORMALIZERS)
 
     def register_handler(self, instance, **options):
         """
@@ -177,30 +95,6 @@ class PersonsManager(Manager):
                                                .format(name=instance.name, instance=instance))
 
         self._handlers[instance.name] = instance
-
-    def get_fullname(self, first_name, last_name):
-        """
-        gets full name from given inputs.
-
-        :param str first_name: first name.
-        :param str last_name: last name.
-
-        :rtype: str
-        """
-
-        has_first_name = first_name not in (None, '') and not first_name.isspace()
-        has_last_name = last_name not in (None, '') and not last_name.isspace()
-
-        if has_first_name is True and has_last_name is True:
-            return '{first} {last}'.format(first=first_name, last=last_name)
-
-        if has_first_name is True:
-            return first_name
-
-        if has_last_name is True:
-            return last_name
-
-        return ''
 
     def get(self, id):
         """
@@ -281,56 +175,6 @@ class PersonsManager(Manager):
             handler = self._get_handler(handler_name)
             handler.update(entity.id, **options)
 
-    def find(self, **filters):
-        """
-        finds persons with given filters.
-
-        :keyword str first_name: first name.
-        :keyword str last_name: last name
-        :keyword str imdb_page: imdb page link
-        :keyword str photo_name: photo file name.
-        :keyword datetime from_add_date: from add date.
-        :keyword datetime to_add_date: to add date.
-
-        :keyword bool consider_begin_of_day: specifies that consider begin
-                                             of day for lower datetime.
-                                             defaults to True if not provided.
-
-        :keyword bool consider_end_of_day: specifies that consider end
-                                           of day for upper datetime.
-                                           defaults to True if not provided.
-
-        :rtype: list[PersonEntity]
-        """
-
-        expressions = []
-        self._make_find_expressions(expressions, **filters)
-        return self._get_all(*expressions)
-
-    def exists(self, first_name, last_name):
-        """
-        gets a value indicating that a person with given first and last name exists.
-
-        :param str first_name: first name.
-        :param str last_name: last name
-
-        :rtype: bool
-        """
-
-        search_name = self._get_search_name(first_name, last_name)
-        store = get_current_store()
-        return store.query(PersonEntity.id).filter(
-            PersonEntity.search_name.ilike(search_name)).existed()
-
-    def get_all(self):
-        """
-        gets all persons.
-
-        :rtype: list[PersonEntity]
-        """
-
-        return self._get_all()
-
     def delete(self, id):
         """
         deletes a person with given id.
@@ -346,20 +190,3 @@ class PersonsManager(Manager):
 
         store = get_current_store()
         return store.query(PersonEntity.id).filter(PersonEntity.id == id).delete()
-
-    def get_by_name(self, first_name, last_name):
-        """
-        gets a person by its first and last name.
-
-        it returns None if person does not exist.
-
-        :param str first_name: first name.
-        :param str last_name: last name
-
-        :rtype: PersonEntity
-        """
-
-        search_name = self._get_search_name(first_name, last_name)
-        store = get_current_store()
-        return store.query(PersonEntity).filter(
-            PersonEntity.search_name.ilike(search_name)).one_or_none()
