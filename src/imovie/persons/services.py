@@ -22,19 +22,6 @@ def register_handler(instance, **options):
     return get_component(PersonsPackage.COMPONENT_NAME).register_handler(instance, **options)
 
 
-def get_fullname(first_name, last_name):
-    """
-    gets full name from given inputs.
-
-    :param str first_name: first name.
-    :param str last_name: last name.
-
-    :rtype: str
-    """
-
-    return get_component(PersonsPackage.COMPONENT_NAME).get_fullname(first_name, last_name)
-
-
 def get(id):
     """
     gets person with given id.
@@ -51,13 +38,12 @@ def get(id):
     return get_component(PersonsPackage.COMPONENT_NAME).get(id)
 
 
-def create(first_name, **options):
+def create(fullname, **options):
     """
     creates a new person.
 
-    :param str first_name: first name.
+    :param str fullname: fullname.
 
-    :keyword str last_name: last name.
     :keyword str imdb_page: imdb page link.
     :keyword str photo_name: photo file name.
 
@@ -70,7 +56,7 @@ def create(first_name, **options):
     :rtype: int
     """
 
-    return get_component(PersonsPackage.COMPONENT_NAME).create(first_name, **options)
+    return get_component(PersonsPackage.COMPONENT_NAME).create(fullname, **options)
 
 
 def update(id, **options):
@@ -79,8 +65,7 @@ def update(id, **options):
 
     :param int id: person id.
 
-    :keyword str first_name: first name.
-    :keyword str last_name: last name.
+    :keyword str fullname: fullname.
     :keyword str imdb_page: imdb page link.
     :keyword str photo_name: photo file name.
 
@@ -98,9 +83,8 @@ def find(**filters):
     """
     finds persons with given filters.
 
-    :keyword str first_name: first name.
-    :keyword str last_name: last name
-    :keyword str imdb_page: imdb page link
+    :keyword str fullname: fullname.
+    :keyword str imdb_page: imdb page link.
     :keyword str photo_name: photo file name.
     :keyword datetime from_add_date: from add date.
     :keyword datetime to_add_date: to add date.
@@ -119,17 +103,20 @@ def find(**filters):
     return get_component(PersonsPackage.COMPONENT_NAME).find(**filters)
 
 
-def exists(first_name, last_name):
+def exists(**options):
     """
-    gets a value indicating that a person with given first and last name exists.
+    gets a value indicating that a person exists.
 
-    :param str first_name: first name.
-    :param str last_name: last name
+    it searches using given imdb page link but if it
+    fails, it searches with given name if provided.
+
+    :keyword str imdb_page: imdb page link.
+    :keyword str fullname: fullname.
 
     :rtype: bool
     """
 
-    return get_component(PersonsPackage.COMPONENT_NAME).exists(first_name, last_name)
+    return get_component(PersonsPackage.COMPONENT_NAME).exists(**options)
 
 
 def get_all():
@@ -155,16 +142,18 @@ def delete(id):
     return get_component(PersonsPackage.COMPONENT_NAME).delete(id)
 
 
-def get_by_name(first_name, last_name):
+def try_get(**options):
     """
-    gets a person by its first and last name.
+    gets a person with given imdb page link or fullname.
 
-    it returns None if person does not exist.
+    it searches using given imdb page link but if it
+    fails, it searches with given name if provided.
+    it returns None if person not found.
 
-    :param str first_name: first name.
-    :param str last_name: last name
+    :keyword str imdb_page: imdb page link.
+    :keyword str fullname: fullname.
 
     :rtype: PersonEntity
     """
 
-    return get_component(PersonsPackage.COMPONENT_NAME).get_by_name(first_name, last_name)
+    return get_component(PersonsPackage.COMPONENT_NAME).try_get(**options)

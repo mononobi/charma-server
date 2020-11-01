@@ -10,30 +10,17 @@ from pyrin.validator.handlers.string import StringValidator, HTTPSValidator
 from imovie.persons.models import PersonEntity
 
 
-@validator(PersonEntity, 'first_name')
-class PersonFirstNameValidator(StringValidator):
+@validator(PersonEntity, 'fullname')
+class PersonFullNameValidator(StringValidator):
     """
-    person first name validator class.
+    person fullname validator class.
     """
 
     default_minimum_length = 1
-    default_maximum_length = 100
+    default_maximum_length = 200
     default_allow_blank = False
     default_allow_whitespace = False
     default_nullable = False
-
-
-@validator(PersonEntity, 'last_name')
-class PersonLastNameValidator(StringValidator):
-    """
-    person last name validator class.
-    """
-
-    default_minimum_length = 1
-    default_maximum_length = 100
-    default_allow_blank = False
-    default_allow_whitespace = False
-    default_nullable = True
 
 
 @validator(PersonEntity, 'imdb_page')

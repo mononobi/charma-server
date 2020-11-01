@@ -10,7 +10,7 @@ import imovie.persons.services as persons_services
 
 
 @api('/persons/<int:id>', authenticated=False)
-def get(id):
+def get(id, **options):
     """
     gets person with given id.
 
@@ -27,13 +27,12 @@ def get(id):
 
 
 @api('/persons', methods=HTTPMethodEnum.POST, authenticated=False)
-def create(first_name, **options):
+def create(fullname, **options):
     """
     creates a new person.
 
-    :param str first_name: first name.
+    :param str fullname: fullname.
 
-    :keyword str last_name: last name.
     :keyword str imdb_page: imdb page link.
     :keyword str photo_name: photo file name.
 
@@ -46,18 +45,17 @@ def create(first_name, **options):
     :rtype: int
     """
 
-    return persons_services.create(first_name, **options)
+    return persons_services.create(fullname, **options)
 
 
-@api('/persons', methods=HTTPMethodEnum.PATCH, authenticated=False)
+@api('/persons/<int:id>', methods=HTTPMethodEnum.PATCH, authenticated=False)
 def update(id, **options):
     """
     updates a person with given id.
 
     :param int id: person id.
 
-    :keyword str first_name: first name.
-    :keyword str last_name: last name.
+    :keyword str fullname: fullname.
     :keyword str imdb_page: imdb page link.
     :keyword str photo_name: photo file name.
 
@@ -76,9 +74,8 @@ def find(**filters):
     """
     finds persons with given filters.
 
-    :keyword str first_name: first name.
-    :keyword str last_name: last name
-    :keyword str imdb_page: imdb page link
+    :keyword str fullname: fullname.
+    :keyword str imdb_page: imdb page link.
     :keyword str photo_name: photo file name.
     :keyword datetime from_add_date: from add date.
     :keyword datetime to_add_date: to add date.
@@ -98,7 +95,7 @@ def find(**filters):
 
 
 @api('/persons/all', authenticated=False)
-def get_all():
+def get_all(**options):
     """
     gets all persons.
 
@@ -109,7 +106,7 @@ def get_all():
 
 
 @api('/persons/<int:id>', methods=HTTPMethodEnum.DELETE, authenticated=False)
-def delete(id):
+def delete(id, **options):
     """
     deletes a person with given id.
 
@@ -120,3 +117,38 @@ def delete(id):
     """
 
     return persons_services.delete(id)
+
+
+@api('/persons/exists', methods=HTTPMethodEnum.GET, authenticated=False)
+def exists(**options):
+    """
+    gets a value indicating that a person exists.
+
+    it searches using given imdb page link but if it
+    fails, it searches with given name if provided.
+
+    :keyword str imdb_page: imdb page link.
+    :keyword str fullname: fullname.
+
+    :rtype: bool
+    """
+
+    return persons_services.exists(**options)
+
+
+@api('/persons/try', methods=HTTPMethodEnum.GET, authenticated=False)
+def try_get(**options):
+    """
+    gets a person with given imdb page link or fullname.
+
+    it searches using given imdb page link but if it
+    fails, it searches with given name if provided.
+    it returns None if person not found.
+
+    :keyword str imdb_page: imdb page link.
+    :keyword str fullname: fullname.
+
+    :rtype: PersonEntity
+    """
+
+    return persons_services.try_get(**options)

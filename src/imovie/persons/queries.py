@@ -3,6 +3,8 @@
 persons queries module.
 """
 
+from sqlalchemy import or_
+
 import pyrin.utilities.string.normalizer.services as normalizer_services
 
 from pyrin.core.structs import CoreObject
@@ -34,9 +36,8 @@ class PersonsQueries(CoreObject):
         :param list expressions: list of expressions to add
                                  new expressions into it.
 
-        :keyword str first_name: first name.
-        :keyword str last_name: last name
-        :keyword str imdb_page: imdb page link
+        :keyword str fullname: fullname.
+        :keyword str imdb_page: imdb page link.
         :keyword str photo_name: photo file name.
         :keyword datetime from_add_date: from add date.
         :keyword datetime to_add_date: to add date.
@@ -52,19 +53,19 @@ class PersonsQueries(CoreObject):
         :rtype: list
         """
 
-        first_name = filters.get('first_name')
-        last_name = filters.get('last_name')
+        fullname = filters.get('fullname')
         imdb_page = filters.get('imdb_page')
         photo_name = filters.get('photo_name')
         from_add_date = filters.get('from_add_date')
         to_add_date = filters.get('to_add_date')
 
-        if first_name is not None or last_name is not None:
-            search_name = self._get_search_name(first_name, last_name)
+        if fullname is not None:
+            search_name = self._get_search_name(fullname)
             expressions.append(PersonEntity.search_name.icontains(search_name))
 
         if imdb_page is not None:
-            expressions.append(PersonEntity.imdb_page.icontains(imdb_page))
+            identifier = self._get_identifier(imdb_page)
+            expressions.append(PersonEntity.identifier.icontains(identifier))
 
         if photo_name is not None:
             expressions.append(PersonEntity.photo_name.icontains(photo_name))
@@ -73,18 +74,27 @@ class PersonsQueries(CoreObject):
             add_datetime_range_clause(expressions, PersonEntity.add_date,
                                       from_add_date, to_add_date, **filters)
 
-    def _get_search_name(self, first_name, last_name):
+    def _get_search_name(self, fullname):
         """
-        gets search name from given inputs.
+        gets search name from given fullname.
 
-        :param str first_name: first name.
-        :param str last_name: last name.
+        :param str fullname: fullname.
 
         :rtype: str
         """
 
-        fullname = self.get_fullname(first_name, last_name)
         return normalizer_services.normalize(fullname, *self.NAME_NORMALIZERS)
+
+    def _get_identifier(self, imdb_page):
+        """
+        gets identifier from given imdb page link.
+
+        :param str imdb_page: imdb page link.
+
+        :rtype: str
+        """
+
+        return normalizer_services.normalize(imdb_page, *self.NAME_NORMALIZERS)
 
     def _get_all(self, *expressions, **options):
         """
@@ -113,43 +123,167 @@ class PersonsQueries(CoreObject):
         columns = options.get('columns') or [PersonEntity]
         store = get_current_store()
         query = store.query(*columns)
+
         if joins is not None:
-            for entity, criteria in joins:
-                query = query.join(entity, criteria)
+            query = self._perform_joins(query, joins)
 
         return query.filter(*expressions).all()
 
-    def get_fullname(self, first_name, last_name):
+    def _perform_joins(self, query, joins):
         """
-        gets full name from given inputs.
+        performs provided joins on given query and returns a new query object.
 
-        :param str first_name: first name.
-        :param str last_name: last name.
+        :param CoreQuery query: query instance.
 
-        :rtype: str
+        :param list[tuple] joins: list of all join expressions to be performed on query.
+                                  values must be provided as a list of tuples.
+                                  for example:
+                                  joins=[(ActorEntity,
+                                          ActorEntity.person_id == PersonEntity.id),
+                                         (DirectorEntity,
+                                          DirectorEntity.person_id == PersonEntity.id)]
+
+        :rtype: CoreQuery
         """
 
-        has_first_name = first_name not in (None, '') and not first_name.isspace()
-        has_last_name = last_name not in (None, '') and not last_name.isspace()
+        for entity, criteria in joins:
+            query = query.join(entity, criteria)
 
-        if has_first_name is True and has_last_name is True:
-            return '{first} {last}'.format(first=first_name, last=last_name)
+        return query
 
-        if has_first_name is True:
-            return first_name
+    def _exists_by_imdb_page(self, imdb_page, **options):
+        """
+        gets a value indicating a person with given imdb page exists.
 
-        if has_last_name is True:
-            return last_name
+        :param str imdb_page: imdb page link.
 
-        return ''
+        :keyword list[tuple] joins: list of all join expressions to be performed on query.
+                                    defaults to no join if not provided.
+                                    values must be provided as a list of tuples.
+                                    for example:
+                                    joins=[(ActorEntity,
+                                            ActorEntity.person_id == PersonEntity.id),
+                                           (DirectorEntity,
+                                            DirectorEntity.person_id == PersonEntity.id)]
+
+        :rtype: bool
+        """
+
+        if imdb_page in (None, ''):
+            return False
+
+        joins = options.get('joins')
+        store = get_current_store()
+        query = store.query(PersonEntity.id)
+        identifier = self._get_identifier(imdb_page)
+
+        if joins is not None:
+            query = self._perform_joins(query, joins)
+
+        return query.filter(PersonEntity.identifier.ilike(identifier)).existed()
+
+    def _exists_by_fullname(self, fullname, **options):
+        """
+        gets a value indicating a person with given fullname exists.
+
+        it only returns True if found person has no imdb page link.
+
+        :param str fullname: fullname.
+
+        :keyword list[tuple] joins: list of all join expressions to be performed on query.
+                                    defaults to no join if not provided.
+                                    values must be provided as a list of tuples.
+                                    for example:
+                                    joins=[(ActorEntity,
+                                            ActorEntity.person_id == PersonEntity.id),
+                                           (DirectorEntity,
+                                            DirectorEntity.person_id == PersonEntity.id)]
+
+        :rtype: bool
+        """
+
+        if fullname in (None, ''):
+            return False
+
+        joins = options.get('joins')
+        store = get_current_store()
+        query = store.query(PersonEntity.id)
+        search_name = self._get_search_name(fullname)
+
+        if joins is not None:
+            query = self._perform_joins(query, joins)
+
+        return query.filter(PersonEntity.search_name.ilike(search_name),
+                            or_(PersonEntity.imdb_page == None,
+                                PersonEntity.imdb_page == '')).existed()
+
+    def _get_by_imdb_page(self, imdb_page, **options):
+        """
+        gets a person by its imdb page link.
+
+        it returns None if person not found.
+
+        :param str imdb_page: imdb page link.
+
+        :keyword list[tuple] joins: list of all join expressions to be performed on query.
+                                    defaults to no join if not provided.
+                                    values must be provided as a list of tuples.
+                                    for example:
+                                    joins=[(ActorEntity,
+                                            ActorEntity.person_id == PersonEntity.id),
+                                           (DirectorEntity,
+                                            DirectorEntity.person_id == PersonEntity.id)]
+
+        :rtype: PersonEntity
+        """
+
+        identifier = self._get_identifier(imdb_page)
+        store = get_current_store()
+        query = store.query(PersonEntity)
+        joins = options.get('joins')
+        if joins is not None:
+            query = self._perform_joins(query, joins)
+
+        return query.filter(PersonEntity.identifier.ilike(identifier)).one_or_none()
+
+    def _get_by_fullname(self, fullname, **options):
+        """
+        gets a person by its fullname.
+
+        it returns None if person not found.
+        it only returns if found person has no imdb page link.
+
+        :param str fullname: fullname.
+
+        :keyword list[tuple] joins: list of all join expressions to be performed on query.
+                                    defaults to no join if not provided.
+                                    values must be provided as a list of tuples.
+                                    for example:
+                                    joins=[(ActorEntity,
+                                            ActorEntity.person_id == PersonEntity.id),
+                                           (DirectorEntity,
+                                            DirectorEntity.person_id == PersonEntity.id)]
+
+        :rtype: PersonEntity
+        """
+
+        search_name = self._get_search_name(fullname)
+        store = get_current_store()
+        query = store.query(PersonEntity)
+        joins = options.get('joins')
+        if joins is not None:
+            query = self._perform_joins(query, joins)
+
+        return query.filter(PersonEntity.search_name.ilike(search_name),
+                            or_(PersonEntity.imdb_page == None,
+                                PersonEntity.imdb_page == '')).first()
 
     def find(self, **filters):
         """
         finds persons with given filters.
 
-        :keyword str first_name: first name.
-        :keyword str last_name: last name
-        :keyword str imdb_page: imdb page link
+        :keyword str fullname: fullname.
+        :keyword str imdb_page: imdb page link.
         :keyword str photo_name: photo file name.
         :keyword datetime from_add_date: from add date.
         :keyword datetime to_add_date: to add date.
@@ -183,20 +317,35 @@ class PersonsQueries(CoreObject):
         self._make_find_expressions(expressions, **filters)
         return self._get_all(*expressions, **filters)
 
-    def exists(self, first_name, last_name):
+    def exists(self, **options):
         """
-        gets a value indicating that a person with given first and last name exists.
+        gets a value indicating that a person exists.
 
-        :param str first_name: first name.
-        :param str last_name: last name
+        it searches using given imdb page link but if it
+        fails, it searches with given name if provided.
+
+        :keyword str imdb_page: imdb page link.
+        :keyword str fullname: fullname.
+
+        :keyword list[tuple] joins: list of all join expressions to be performed on query.
+                                    defaults to no join if not provided.
+                                    values must be provided as a list of tuples.
+                                    for example:
+                                    joins=[(ActorEntity,
+                                            ActorEntity.person_id == PersonEntity.id),
+                                           (DirectorEntity,
+                                            DirectorEntity.person_id == PersonEntity.id)]
 
         :rtype: bool
         """
 
-        search_name = self._get_search_name(first_name, last_name)
-        store = get_current_store()
-        return store.query(PersonEntity.id).filter(
-            PersonEntity.search_name.ilike(search_name)).existed()
+        imdb_page = options.pop('imdb_page', None)
+        existed = self._exists_by_imdb_page(imdb_page, **options)
+        if existed is False:
+            fullname = options.pop('fullname', None)
+            existed = self._exists_by_fullname(fullname, **options)
+
+        return existed
 
     def get_all(self, **options):
         """
@@ -221,19 +370,33 @@ class PersonsQueries(CoreObject):
 
         return self._get_all(**options)
 
-    def get_by_name(self, first_name, last_name):
+    def try_get(self, **options):
         """
-        gets a person by its first and last name.
+        gets a person with given imdb page link or fullname.
 
-        it returns None if person does not exist.
+        it searches using given imdb page link but if it
+        fails, it searches with given name if provided.
+        it returns None if person not found.
 
-        :param str first_name: first name.
-        :param str last_name: last name
+        :keyword str imdb_page: imdb page link.
+        :keyword str fullname: fullname.
+
+        :keyword list[tuple] joins: list of all join expressions to be performed on query.
+                                    defaults to no join if not provided.
+                                    values must be provided as a list of tuples.
+                                    for example:
+                                    joins=[(ActorEntity,
+                                            ActorEntity.person_id == PersonEntity.id),
+                                           (DirectorEntity,
+                                            DirectorEntity.person_id == PersonEntity.id)]
 
         :rtype: PersonEntity
         """
 
-        search_name = self._get_search_name(first_name, last_name)
-        store = get_current_store()
-        return store.query(PersonEntity).filter(
-            PersonEntity.search_name.ilike(search_name)).one_or_none()
+        imdb_page = options.pop('imdb_page', None)
+        entity = self._get_by_imdb_page(imdb_page, **options)
+        if entity is None:
+            fullname = options.pop('fullname', None)
+            entity = self._get_by_fullname(fullname, **options)
+
+        return entity

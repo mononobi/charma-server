@@ -84,8 +84,8 @@ class PersonsManager(Manager, PersonsQueries):
                                                         base=AbstractPersonHandler))
 
         if instance.name in (None, '') or instance.name.isspace():
-            raise PersonHandlerNameRequiredError('Person handler name [{instance}] '
-                                                 'must be provided.'
+            raise PersonHandlerNameRequiredError('Person handler name for '
+                                                 '[{instance}] must be provided.'
                                                  .format(instance=instance))
 
         if instance.name is self._handlers:
@@ -115,13 +115,12 @@ class PersonsManager(Manager, PersonsQueries):
                                           .format(id=id))
         return entity
 
-    def create(self, first_name, **options):
+    def create(self, fullname, **options):
         """
         creates a new person.
 
-        :param str first_name: first name.
+        :param str fullname: fullname.
 
-        :keyword str last_name: last name.
         :keyword str imdb_page: imdb page link.
         :keyword str photo_name: photo file name.
 
@@ -134,10 +133,11 @@ class PersonsManager(Manager, PersonsQueries):
         :rtype: int
         """
 
-        options.update(first_name=first_name)
+        options.update(fullname=fullname)
         validator_services.validate_dict(PersonEntity, options)
         entity = PersonEntity(**options)
-        entity.search_name = self._get_search_name(first_name, options.get('last_name'))
+        entity.search_name = self._get_search_name(fullname)
+        entity.identifier = self._get_identifier(options.get('imdb_page')) or None
         entity.save(flush=True)
 
         handler_name = options.get('handler')
@@ -153,8 +153,7 @@ class PersonsManager(Manager, PersonsQueries):
 
         :param int id: person id.
 
-        :keyword str first_name: first name.
-        :keyword str last_name: last name.
+        :keyword str fullname: fullname.
         :keyword str imdb_page: imdb page link.
         :keyword str photo_name: photo file name.
 
@@ -168,7 +167,8 @@ class PersonsManager(Manager, PersonsQueries):
         validator_services.validate_dict(PersonEntity, options)
         entity = self.get(id)
         entity.update(**options)
-        entity.search_name = self._get_search_name(entity.first_name, entity.last_name)
+        entity.search_name = self._get_search_name(entity.fullname)
+        entity.identifier = self._get_identifier(entity.imdb_page) or None
 
         handler_name = options.get('handler')
         if handler_name is not None:
@@ -185,7 +185,7 @@ class PersonsManager(Manager, PersonsQueries):
         :rtype: int
         """
 
-        for name, handler in self._handlers:
+        for name, handler in self._handlers.items():
             handler.delete(id)
 
         store = get_current_store()
