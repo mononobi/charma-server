@@ -18,3 +18,10 @@ class ActorsBusinessException(CoreBusinessException, ActorsException):
     actors business exception.
     """
     pass
+
+
+class ActorDoesNotExistError(ActorsBusinessException):
+    """
+    actor does not exist error.
+    """
+    pass

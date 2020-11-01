@@ -49,6 +49,9 @@ class AbstractPersonHandler(CoreObject, metaclass=PersonHandlerSingletonMeta):
         :param int id: person id.
 
         :raises CoreNotImplementedError: core not implemented error.
+
+        :returns: count of deleted items.
+        :rtype: int
         """
 
         raise CoreNotImplementedError()

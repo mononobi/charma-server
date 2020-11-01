@@ -107,47 +107,27 @@ class PersonsQueries(CoreObject):
                                                         if not provided, `PersonEntity`
                                                         will be used.
 
-        :keyword list[tuple] joins: list of all join expressions to be performed on query.
-                                    defaults to no join if not provided.
-                                    values must be provided as a list of tuples.
-                                    for example:
-                                    joins=[(ActorEntity,
-                                            ActorEntity.person_id == PersonEntity.id),
-                                           (DirectorEntity,
-                                            DirectorEntity.person_id == PersonEntity.id)]
-
         :rtype: list[PersonEntity]
         """
 
-        joins = options.get('joins')
         columns = options.get('columns') or [PersonEntity]
         store = get_current_store()
         query = store.query(*columns)
-
-        if joins is not None:
-            query = self._perform_joins(query, joins)
+        query = self._prepare_query(query)
 
         return query.filter(*expressions).all()
 
-    def _perform_joins(self, query, joins):
+    def _prepare_query(self, query):
         """
-        performs provided joins on given query and returns a new query object.
+        prepares given query object.
 
-        :param CoreQuery query: query instance.
+        this method is intended to overridden in subclasses to
+        limit results to specific person type using join.
 
-        :param list[tuple] joins: list of all join expressions to be performed on query.
-                                  values must be provided as a list of tuples.
-                                  for example:
-                                  joins=[(ActorEntity,
-                                          ActorEntity.person_id == PersonEntity.id),
-                                         (DirectorEntity,
-                                          DirectorEntity.person_id == PersonEntity.id)]
+        :param CoreQuery query: query object to be prepared.
 
         :rtype: CoreQuery
         """
-
-        for entity, criteria in joins:
-            query = query.join(entity, criteria)
 
         return query
 
@@ -157,28 +137,16 @@ class PersonsQueries(CoreObject):
 
         :param str imdb_page: imdb page link.
 
-        :keyword list[tuple] joins: list of all join expressions to be performed on query.
-                                    defaults to no join if not provided.
-                                    values must be provided as a list of tuples.
-                                    for example:
-                                    joins=[(ActorEntity,
-                                            ActorEntity.person_id == PersonEntity.id),
-                                           (DirectorEntity,
-                                            DirectorEntity.person_id == PersonEntity.id)]
-
         :rtype: bool
         """
 
         if imdb_page in (None, ''):
             return False
 
-        joins = options.get('joins')
+        identifier = self._get_identifier(imdb_page)
         store = get_current_store()
         query = store.query(PersonEntity.id)
-        identifier = self._get_identifier(imdb_page)
-
-        if joins is not None:
-            query = self._perform_joins(query, joins)
+        query = self._prepare_query(query)
 
         return query.filter(PersonEntity.identifier.ilike(identifier)).existed()
 
@@ -190,28 +158,16 @@ class PersonsQueries(CoreObject):
 
         :param str fullname: fullname.
 
-        :keyword list[tuple] joins: list of all join expressions to be performed on query.
-                                    defaults to no join if not provided.
-                                    values must be provided as a list of tuples.
-                                    for example:
-                                    joins=[(ActorEntity,
-                                            ActorEntity.person_id == PersonEntity.id),
-                                           (DirectorEntity,
-                                            DirectorEntity.person_id == PersonEntity.id)]
-
         :rtype: bool
         """
 
         if fullname in (None, ''):
             return False
 
-        joins = options.get('joins')
+        search_name = self._get_search_name(fullname)
         store = get_current_store()
         query = store.query(PersonEntity.id)
-        search_name = self._get_search_name(fullname)
-
-        if joins is not None:
-            query = self._perform_joins(query, joins)
+        query = self._prepare_query(query)
 
         return query.filter(PersonEntity.search_name.ilike(search_name),
                             or_(PersonEntity.imdb_page == None,
@@ -225,24 +181,13 @@ class PersonsQueries(CoreObject):
 
         :param str imdb_page: imdb page link.
 
-        :keyword list[tuple] joins: list of all join expressions to be performed on query.
-                                    defaults to no join if not provided.
-                                    values must be provided as a list of tuples.
-                                    for example:
-                                    joins=[(ActorEntity,
-                                            ActorEntity.person_id == PersonEntity.id),
-                                           (DirectorEntity,
-                                            DirectorEntity.person_id == PersonEntity.id)]
-
         :rtype: PersonEntity
         """
 
         identifier = self._get_identifier(imdb_page)
         store = get_current_store()
         query = store.query(PersonEntity)
-        joins = options.get('joins')
-        if joins is not None:
-            query = self._perform_joins(query, joins)
+        query = self._prepare_query(query)
 
         return query.filter(PersonEntity.identifier.ilike(identifier)).one_or_none()
 
@@ -255,24 +200,13 @@ class PersonsQueries(CoreObject):
 
         :param str fullname: fullname.
 
-        :keyword list[tuple] joins: list of all join expressions to be performed on query.
-                                    defaults to no join if not provided.
-                                    values must be provided as a list of tuples.
-                                    for example:
-                                    joins=[(ActorEntity,
-                                            ActorEntity.person_id == PersonEntity.id),
-                                           (DirectorEntity,
-                                            DirectorEntity.person_id == PersonEntity.id)]
-
         :rtype: PersonEntity
         """
 
         search_name = self._get_search_name(fullname)
         store = get_current_store()
         query = store.query(PersonEntity)
-        joins = options.get('joins')
-        if joins is not None:
-            query = self._perform_joins(query, joins)
+        query = self._prepare_query(query)
 
         return query.filter(PersonEntity.search_name.ilike(search_name),
                             or_(PersonEntity.imdb_page == None,
@@ -301,15 +235,6 @@ class PersonsQueries(CoreObject):
                                                         if not provided, `PersonEntity`
                                                         will be used.
 
-        :keyword list[tuple] joins: list of all join expressions to be performed on query.
-                                    defaults to no join if not provided.
-                                    values must be provided as a list of tuples.
-                                    for example:
-                                    joins=[(ActorEntity,
-                                            ActorEntity.person_id == PersonEntity.id),
-                                           (DirectorEntity,
-                                            DirectorEntity.person_id == PersonEntity.id)]
-
         :rtype: list[PersonEntity]
         """
 
@@ -326,15 +251,6 @@ class PersonsQueries(CoreObject):
 
         :keyword str imdb_page: imdb page link.
         :keyword str fullname: fullname.
-
-        :keyword list[tuple] joins: list of all join expressions to be performed on query.
-                                    defaults to no join if not provided.
-                                    values must be provided as a list of tuples.
-                                    for example:
-                                    joins=[(ActorEntity,
-                                            ActorEntity.person_id == PersonEntity.id),
-                                           (DirectorEntity,
-                                            DirectorEntity.person_id == PersonEntity.id)]
 
         :rtype: bool
         """
@@ -356,15 +272,6 @@ class PersonsQueries(CoreObject):
                                                         if not provided, `PersonEntity`
                                                         will be used.
 
-        :keyword list[tuple] joins: list of all join expressions to be performed on query.
-                                    defaults to no join if not provided.
-                                    values must be provided as a list of tuples.
-                                    for example:
-                                    joins=[(ActorEntity,
-                                            ActorEntity.person_id == PersonEntity.id),
-                                           (DirectorEntity,
-                                            DirectorEntity.person_id == PersonEntity.id)]
-
         :rtype: list[PersonEntity]
         """
 
@@ -380,15 +287,6 @@ class PersonsQueries(CoreObject):
 
         :keyword str imdb_page: imdb page link.
         :keyword str fullname: fullname.
-
-        :keyword list[tuple] joins: list of all join expressions to be performed on query.
-                                    defaults to no join if not provided.
-                                    values must be provided as a list of tuples.
-                                    for example:
-                                    joins=[(ActorEntity,
-                                            ActorEntity.person_id == PersonEntity.id),
-                                           (DirectorEntity,
-                                            DirectorEntity.person_id == PersonEntity.id)]
 
         :rtype: PersonEntity
         """
