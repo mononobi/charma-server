@@ -4,14 +4,14 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+
+[packages]
+pyrin = "*"
 pytest = "*"
 pytest-cov = "*"
 pygments = "*"
 setuptools = "*"
 twine = "*"
-
-[packages]
-pyrin = "*"
 
 [requires]
 python_version = "3.8"
