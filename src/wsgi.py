@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-start module.
+wsgi module.
 """
 
 from imovie import IMovieApplication
@@ -10,4 +10,4 @@ app = IMovieApplication()
 
 
 if __name__ == '__main__':
-    app.run(use_reloader=False)
+    app.run()
