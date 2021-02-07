@@ -62,13 +62,14 @@ class MovieEntity(MovieBaseEntity):
         R = 4
         NC_17 = 5
 
-    identifier = CoreColumn('identifier', Unicode(150),
-                            unique=True, nullable=True, exposed=False)
+    identifier = CoreColumn('identifier', Unicode(150), unique=True,
+                            nullable=True, allow_read=False, allow_write=False)
 
     title = CoreColumn('title', Unicode(150))
     original_title = CoreColumn('original_title', Unicode(150))
     library_title = CoreColumn('library_title', Unicode(150), nullable=False)
-    search_title = CoreColumn('search_title', Unicode(150), exposed=False, nullable=False)
+    search_title = CoreColumn('search_title', Unicode(150), allow_read=False,
+                              allow_write=False, nullable=False)
     production_year = CoreColumn('production_year', Integer)
     imdb_rate = CoreColumn('imdb_rate', Float, nullable=False, default=0)
     meta_score = CoreColumn('meta_score', SmallInteger, nullable=False, default=0)
@@ -78,7 +79,8 @@ class MovieEntity(MovieBaseEntity):
     directory_name = CoreColumn('directory_name', Unicode(250), nullable=False)
     is_watched = CoreColumn('is_watched', Boolean, nullable=False, default=False)
     storyline = CoreColumn('storyline', Unicode(5000))
-    search_storyline = CoreColumn('search_storyline', Unicode(5000), exposed=False)
+    search_storyline = CoreColumn('search_storyline', Unicode(5000),
+                                  allow_read=False, allow_write=False)
     watched_date = CoreColumn('watched_date', TIMESTAMP(timezone=True))
     content_rate = CoreColumn('content_rate', SmallInteger)
 

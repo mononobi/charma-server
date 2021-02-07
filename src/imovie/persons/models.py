@@ -30,13 +30,13 @@ class PersonEntity(PersonBaseEntity):
 
     fullname = CoreColumn('fullname', Unicode(200), nullable=False)
 
-    search_name = CoreColumn('search_name', Unicode(200),
-                             exposed=False, nullable=False, index=True)
+    search_name = CoreColumn('search_name', Unicode(200), allow_read=False,
+                             allow_write=False, nullable=False, index=True)
 
     imdb_page = CoreColumn('imdb_page', Unicode(150), unique=True)
 
-    identifier = CoreColumn('identifier', Unicode(150),
-                            exposed=False, unique=True, index=True)
+    identifier = CoreColumn('identifier', Unicode(150), allow_read=False,
+                            allow_write=False, unique=True, index=True)
 
     photo_name = CoreColumn('photo_name', Unicode(250), unique=True)
 
