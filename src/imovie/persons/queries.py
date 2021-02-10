@@ -170,7 +170,7 @@ class PersonsQueries(CoreObject):
         query = self._prepare_query(query)
 
         return query.filter(PersonEntity.search_name.ilike(search_name),
-                            or_(PersonEntity.imdb_page == None,
+                            or_(PersonEntity.imdb_page is None,
                                 PersonEntity.imdb_page == '')).existed()
 
     def _get_by_imdb_page(self, imdb_page, **options):
@@ -209,7 +209,7 @@ class PersonsQueries(CoreObject):
         query = self._prepare_query(query)
 
         return query.filter(PersonEntity.search_name.ilike(search_name),
-                            or_(PersonEntity.imdb_page == None,
+                            or_(PersonEntity.imdb_page is None,
                                 PersonEntity.imdb_page == '')).first()
 
     def find(self, **filters):
