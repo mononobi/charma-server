@@ -58,7 +58,7 @@ class PersonsManager(Manager, PersonsQueries):
 
         it returns None if person does not exist.
 
-        :param int id: person id.
+        :param uuid.UUID id: person id.
 
         :rtype: PersonEntity
         """
@@ -102,7 +102,7 @@ class PersonsManager(Manager, PersonsQueries):
 
         it raises an error if person does not exist.
 
-        :param int id: person id.
+        :param uuid.UUID id: person id.
 
         :raises PersonDoesNotExistError: person does not exist error.
 
@@ -130,7 +130,7 @@ class PersonsManager(Manager, PersonsQueries):
         :raises ValidationError: validation error.
 
         :returns: created person id.
-        :rtype: int
+        :rtype: uuid.UUID
         """
 
         options.update(fullname=fullname)
@@ -138,7 +138,7 @@ class PersonsManager(Manager, PersonsQueries):
         entity = PersonEntity(**options)
         entity.search_name = self._get_search_name(fullname)
         entity.identifier = self._get_identifier(options.get('imdb_page')) or None
-        entity.save(flush=True)
+        entity.save()
 
         handler_name = options.get('handler')
         if handler_name is not None:
@@ -151,7 +151,7 @@ class PersonsManager(Manager, PersonsQueries):
         """
         updates a person with given id.
 
-        :param int id: person id.
+        :param uuid.UUID id: person id.
 
         :keyword str fullname: fullname.
         :keyword str imdb_page: imdb page link.
@@ -179,7 +179,7 @@ class PersonsManager(Manager, PersonsQueries):
         """
         deletes a person with given id.
 
-        :param int id: person id.
+        :param uuid.UUID id: person id.
 
         :returns: count of deleted items.
         :rtype: int

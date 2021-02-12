@@ -3,12 +3,13 @@
 persons models module.
 """
 
-from sqlalchemy import Unicode, Integer, TIMESTAMP
+from sqlalchemy import Unicode, TIMESTAMP
 
 import pyrin.globalization.datetime.services as datetime_services
 
 from pyrin.database.model.base import CoreEntity
 from pyrin.database.orm.sql.schema.base import CoreColumn
+from pyrin.database.orm.sql.schema.columns import GUIDPKColumn
 
 
 class PersonBaseEntity(CoreEntity):
@@ -18,7 +19,7 @@ class PersonBaseEntity(CoreEntity):
 
     _table = 'person'
 
-    id = CoreColumn('id', Integer, index=True, primary_key=True, autoincrement=True)
+    id = GUIDPKColumn(name='id')
 
 
 class PersonEntity(PersonBaseEntity):

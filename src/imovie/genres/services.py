@@ -14,7 +14,7 @@ def get(id):
 
     it raises an error if genre does not exist.
 
-    :param int id: genre id.
+    :param uuid.UUID id: genre id.
 
     :raises GenreDoesNotExistError: genre does not exist error.
 
@@ -33,7 +33,7 @@ def create(name, **options):
     :raises ValidationError: validation error.
 
     :returns: created genre id.
-    :rtype: int
+    :rtype: uuid.UUID
     """
 
     return get_component(GenresPackage.COMPONENT_NAME).create(name, **options)
@@ -78,7 +78,7 @@ def delete(id):
     """
     deletes a genre with given id.
 
-    :param int id: genre id.
+    :param uuid.UUID id: genre id.
 
     :returns: count of deleted items.
     :rtype: int

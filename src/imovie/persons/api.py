@@ -9,14 +9,14 @@ from pyrin.core.enumerations import HTTPMethodEnum
 import imovie.persons.services as persons_services
 
 
-@api('/persons/<int:id>', authenticated=False)
+@api('/persons/<uuid:id>', authenticated=False)
 def get(id, **options):
     """
     gets person with given id.
 
     it raises an error if person does not exist.
 
-    :param int id: person id.
+    :param uuid.UUID id: person id.
 
     :raises PersonDoesNotExistError: person does not exist error.
 
@@ -42,18 +42,18 @@ def create(fullname, **options):
     :raises ValidationError: validation error.
 
     :returns: created person id.
-    :rtype: int
+    :rtype: uuid.UUID
     """
 
     return persons_services.create(fullname, **options)
 
 
-@api('/persons/<int:id>', methods=HTTPMethodEnum.PATCH, authenticated=False)
+@api('/persons/<uuid:id>', methods=HTTPMethodEnum.PATCH, authenticated=False)
 def update(id, **options):
     """
     updates a person with given id.
 
-    :param int id: person id.
+    :param uuid.UUID id: person id.
 
     :keyword str fullname: fullname.
     :keyword str imdb_page: imdb page link.
@@ -105,12 +105,12 @@ def get_all(**options):
     return persons_services.get_all()
 
 
-@api('/persons/<int:id>', methods=HTTPMethodEnum.DELETE, authenticated=False)
+@api('/persons/<uuid:id>', methods=HTTPMethodEnum.DELETE, authenticated=False)
 def delete(id, **options):
     """
     deletes a person with given id.
 
-    :param int id: person id.
+    :param uuid.UUID id: person id.
 
     :returns: count of deleted items.
     :rtype: int

@@ -46,5 +46,5 @@ class MoviesManager(Manager):
             UHD = 5
 
         :returns: created movie id
-        :rtype: int
+        :rtype: uuid.UUID
         """

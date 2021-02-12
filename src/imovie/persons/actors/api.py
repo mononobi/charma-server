@@ -9,14 +9,14 @@ from pyrin.core.enumerations import HTTPMethodEnum
 import imovie.persons.actors.services as actors_services
 
 
-@api('/actors/<int:id>', authenticated=False)
+@api('/actors/<uuid:id>', authenticated=False)
 def get(id, **options):
     """
     gets actor with given id.
 
     it raises an error if actor does not exist.
 
-    :param int id: person id.
+    :param uuid.UUID id: person id.
 
     :raises ActorDoesNotExistError: actor does not exist error.
 
@@ -31,18 +31,18 @@ def create(id, **options):
     """
     creates a new actor.
 
-    :param int id: person id.
+    :param uuid.UUID id: person id.
     """
 
     return actors_services.create(id, **options)
 
 
-@api('/actors/<int:id>', methods=HTTPMethodEnum.DELETE, authenticated=False)
+@api('/actors/<uuid:id>', methods=HTTPMethodEnum.DELETE, authenticated=False)
 def delete(id, **options):
     """
     deletes an actor with given id.
 
-    :param int id: person id.
+    :param uuid.UUID id: person id.
 
     :returns: count of deleted items.
     :rtype: int

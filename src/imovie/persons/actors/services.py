@@ -14,7 +14,7 @@ def get(id):
 
     it raises an error if actor does not exist.
 
-    :param int id: person id.
+    :param uuid.UUID id: person id.
 
     :raises ActorDoesNotExistError: actor does not exist error.
 
@@ -28,7 +28,7 @@ def create(id, **options):
     """
     creates a new actor.
 
-    :param int id: person id.
+    :param uuid.UUID id: person id.
     """
 
     return get_component(ActorsPackage.COMPONENT_NAME).create(id, **options)
@@ -38,7 +38,7 @@ def delete(id):
     """
     deletes an actor with given id.
 
-    :param int id: person id.
+    :param uuid.UUID id: person id.
 
     :returns: count of deleted items.
     :rtype: int

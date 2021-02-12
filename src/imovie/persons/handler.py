@@ -34,7 +34,7 @@ class AbstractPersonHandler(CoreObject, metaclass=PersonHandlerSingletonMeta):
         """
         creates a person with given inputs.
 
-        :param int id: person id.
+        :param uuid.UUID id: person id.
 
         :raises CoreNotImplementedError: core not implemented error.
         """
@@ -46,7 +46,7 @@ class AbstractPersonHandler(CoreObject, metaclass=PersonHandlerSingletonMeta):
         """
         deletes the given person.
 
-        :param int id: person id.
+        :param uuid.UUID id: person id.
 
         :raises CoreNotImplementedError: core not implemented error.
 
@@ -60,6 +60,6 @@ class AbstractPersonHandler(CoreObject, metaclass=PersonHandlerSingletonMeta):
         """
         updates the given person.
 
-        :param int id: person id.
+        :param uuid.UUID id: person id.
         """
         pass

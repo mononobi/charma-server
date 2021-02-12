@@ -11,6 +11,7 @@ import pyrin.globalization.datetime.services as datetime_services
 from pyrin.core.enumerations import CoreEnum
 from pyrin.database.model.base import CoreEntity
 from pyrin.database.orm.sql.schema.base import CoreColumn
+from pyrin.database.orm.sql.schema.columns import GUIDPKColumn
 
 
 class MovieBaseEntity(CoreEntity):
@@ -20,7 +21,7 @@ class MovieBaseEntity(CoreEntity):
 
     _table = 'movie'
 
-    id = CoreColumn('id', Integer, index=True, primary_key=True, autoincrement=True)
+    id = GUIDPKColumn(name='id')
 
 
 class MovieEntity(MovieBaseEntity):
@@ -119,8 +120,7 @@ class FavoriteMovieBaseEntity(CoreEntity):
 
     _table = 'favorite_movie'
 
-    movie_id = CoreColumn('movie_id', Integer, ForeignKey('movie.id'),
-                          index=True, primary_key=True, autoincrement=False)
+    movie_id = GUIDPKColumn(ForeignKey('movie.id'), name='movie_id')
 
 
 class FavoriteMovieEntity(FavoriteMovieBaseEntity):
@@ -159,11 +159,8 @@ class Movie2ActorBaseEntity(CoreEntity):
 
     _table = 'movie_2_actor'
 
-    movie_id = CoreColumn('movie_id', Integer, ForeignKey('movie.id'),
-                          index=True, primary_key=True, autoincrement=False)
-
-    person_id = CoreColumn('person_id', Integer, ForeignKey('actor.person_id'),
-                           index=True, primary_key=True, autoincrement=False)
+    movie_id = GUIDPKColumn(ForeignKey('movie.id'), name='movie_id')
+    person_id = GUIDPKColumn(ForeignKey('actor.person_id'), name='person_id')
 
 
 class Movie2ActorEntity(Movie2ActorBaseEntity):
@@ -184,11 +181,8 @@ class Movie2DirectorBaseEntity(CoreEntity):
 
     _table = 'movie_2_director'
 
-    movie_id = CoreColumn('movie_id', Integer, ForeignKey('movie.id'),
-                          index=True, primary_key=True, autoincrement=False)
-
-    person_id = CoreColumn('person_id', Integer, ForeignKey('director.person_id'),
-                           index=True, primary_key=True, autoincrement=False)
+    movie_id = GUIDPKColumn(ForeignKey('movie.id'), name='movie_id')
+    person_id = GUIDPKColumn(ForeignKey('director.person_id'), name='person_id')
 
 
 class Movie2DirectorEntity(Movie2DirectorBaseEntity):
@@ -208,8 +202,7 @@ class MovieSuggestionCacheBaseEntity(CoreEntity):
 
     _table = 'movie_suggestion_cache'
 
-    movie_id = CoreColumn('movie_id', Integer, ForeignKey('movie.id'),
-                          index=True, primary_key=True, autoincrement=False)
+    movie_id = GUIDPKColumn(ForeignKey('movie.id'), name='movie_id')
 
 
 class MovieSuggestionCacheEntity(MovieSuggestionCacheBaseEntity):
@@ -227,8 +220,7 @@ class WatchLaterBaseEntity(CoreEntity):
 
     _table = 'watch_later'
 
-    movie_id = CoreColumn('movie_id', Integer, ForeignKey('movie.id'),
-                          index=True, primary_key=True, autoincrement=False)
+    movie_id = GUIDPKColumn(ForeignKey('movie.id'), name='movie_id')
 
 
 class WatchLaterEntity(WatchLaterBaseEntity):
@@ -249,7 +241,7 @@ class MovieRootPathBaseEntity(CoreEntity):
 
     _table = 'movie_root_path'
 
-    id = CoreColumn('id', Integer, index=True, primary_key=True, autoincrement=True)
+    id = GUIDPKColumn(name='id')
 
 
 class MovieRootPathEntity(MovieRootPathBaseEntity):
@@ -297,8 +289,7 @@ class CopyRequestedMovieBaseEntity(CoreEntity):
 
     _table = 'copy_requested_movie'
 
-    movie_id = CoreColumn('movie_id', Integer, ForeignKey('movie.id'),
-                          index=True, primary_key=True, autoincrement=False)
+    movie_id = GUIDPKColumn(ForeignKey('movie.id'), name='movie_id')
 
 
 class CopyRequestedMovieEntity(CopyRequestedMovieBaseEntity):
@@ -316,11 +307,8 @@ class Movie2GenreBaseEntity(CoreEntity):
 
     _table = 'movie_2_genre'
 
-    movie_id = CoreColumn('movie_id', Integer, ForeignKey('movie.id'),
-                          index=True, primary_key=True, autoincrement=False)
-
-    genre_id = CoreColumn('genre_id', Integer, ForeignKey('genre.id'),
-                          index=True, primary_key=True, autoincrement=False)
+    movie_id = GUIDPKColumn(ForeignKey('movie.id'), name='movie_id')
+    genre_id = GUIDPKColumn(ForeignKey('genre.id'), name='genre_id')
 
 
 class Movie2GenreEntity(Movie2GenreBaseEntity):
@@ -340,11 +328,8 @@ class Movie2LanguageBaseEntity(CoreEntity):
 
     _table = 'movie_2_language'
 
-    movie_id = CoreColumn('movie_id', Integer, ForeignKey('movie.id'),
-                          index=True, primary_key=True, autoincrement=False)
-
-    language_id = CoreColumn('language_id', Integer, ForeignKey('language.id'),
-                             index=True, primary_key=True, autoincrement=False)
+    movie_id = GUIDPKColumn(ForeignKey('movie.id'), name='movie_id')
+    language_id = GUIDPKColumn(ForeignKey('language.id'), name='language_id')
 
 
 class Movie2LanguageEntity(Movie2LanguageBaseEntity):

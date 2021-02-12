@@ -3,10 +3,11 @@
 genres models module.
 """
 
-from sqlalchemy import Integer, Unicode, Boolean
+from sqlalchemy import Unicode, Boolean
 
 from pyrin.database.model.base import CoreEntity
 from pyrin.database.orm.sql.schema.base import CoreColumn
+from pyrin.database.orm.sql.schema.columns import GUIDPKColumn
 
 
 class GenreBaseEntity(CoreEntity):
@@ -16,7 +17,7 @@ class GenreBaseEntity(CoreEntity):
 
     _table = 'genre'
 
-    id = CoreColumn('id', Integer, index=True, primary_key=True, autoincrement=True)
+    id = GUIDPKColumn(name='id')
 
 
 class GenreEntity(GenreBaseEntity):

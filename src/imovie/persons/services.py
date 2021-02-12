@@ -28,7 +28,7 @@ def get(id):
 
     it raises an error if person does not exist.
 
-    :param int id: person id.
+    :param uuid.UUID id: person id.
 
     :raises PersonDoesNotExistError: person does not exist error.
 
@@ -53,7 +53,7 @@ def create(fullname, **options):
     :raises ValidationError: validation error.
 
     :returns: created person id.
-    :rtype: int
+    :rtype: uuid.UUID
     """
 
     return get_component(PersonsPackage.COMPONENT_NAME).create(fullname, **options)
@@ -63,7 +63,7 @@ def update(id, **options):
     """
     updates a person with given id.
 
-    :param int id: person id.
+    :param uuid.UUID id: person id.
 
     :keyword str fullname: fullname.
     :keyword str imdb_page: imdb page link.
@@ -133,7 +133,7 @@ def delete(id):
     """
     deletes a person with given id.
 
-    :param int id: person id.
+    :param uuid.UUID id: person id.
 
     :returns: count of deleted items.
     :rtype: int

@@ -27,7 +27,7 @@ class ActorsManager(Manager, PersonsQueries):
 
         it returns None if actor does not exist.
 
-        :param int id: person id.
+        :param uuid.UUID id: person id.
 
         :rtype: ActorEntity
         """
@@ -42,7 +42,7 @@ class ActorsManager(Manager, PersonsQueries):
 
         the result of this method must be used inside a where clause of another query.
 
-        :param int id: person id.
+        :param uuid.UUID id: person id.
 
         :returns: exists expression.
         """
@@ -68,7 +68,7 @@ class ActorsManager(Manager, PersonsQueries):
 
         it raises an error if actor does not exist.
 
-        :param int id: person id.
+        :param uuid.UUID id: person id.
 
         :raises ActorDoesNotExistError: actor does not exist error.
 
@@ -85,7 +85,7 @@ class ActorsManager(Manager, PersonsQueries):
         """
         creates a new actor.
 
-        :param int id: person id.
+        :param uuid.UUID id: person id.
         """
 
         entity = ActorEntity()
@@ -96,7 +96,7 @@ class ActorsManager(Manager, PersonsQueries):
         """
         deletes an actor with given id.
 
-        :param int id: person id.
+        :param uuid.UUID id: person id.
 
         :returns: count of deleted items.
         :rtype: int

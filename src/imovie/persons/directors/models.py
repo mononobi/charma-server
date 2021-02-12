@@ -3,10 +3,10 @@
 directors models module.
 """
 
-from sqlalchemy import Integer, ForeignKey
+from sqlalchemy import ForeignKey
 
 from pyrin.database.model.base import CoreEntity
-from pyrin.database.orm.sql.schema.base import CoreColumn
+from pyrin.database.orm.sql.schema.columns import GUIDPKColumn
 
 
 class DirectorBaseEntity(CoreEntity):
@@ -16,8 +16,7 @@ class DirectorBaseEntity(CoreEntity):
 
     _table = 'director'
 
-    person_id = CoreColumn('person_id', Integer, ForeignKey('person.id'),
-                           index=True, primary_key=True, autoincrement=False)
+    person_id = GUIDPKColumn(ForeignKey('person.id'), name='person_id')
 
 
 class DirectorEntity(DirectorBaseEntity):

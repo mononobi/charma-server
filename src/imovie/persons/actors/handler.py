@@ -21,7 +21,7 @@ class ActorHandler(AbstractPersonHandler):
         """
         creates an actor with given inputs.
 
-        :param int id: person id.
+        :param uuid.UUID id: person id.
         """
 
         actors_services.create(id, **options)
@@ -30,7 +30,7 @@ class ActorHandler(AbstractPersonHandler):
         """
         deletes the given actor.
 
-        :param int id: person id.
+        :param uuid.UUID id: person id.
 
         :returns: count of deleted items.
         :rtype: int

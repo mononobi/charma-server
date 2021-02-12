@@ -84,7 +84,7 @@ class GenresManager(Manager):
 
         it returns None if genre does not exist.
 
-        :param int id: genre id.
+        :param uuid.UUID id: genre id.
 
         :rtype: GenreEntity
         """
@@ -110,7 +110,7 @@ class GenresManager(Manager):
 
         it raises an error if genre does not exist.
 
-        :param int id: genre id.
+        :param uuid.UUID id: genre id.
 
         :raises GenreDoesNotExistError: genre does not exist error.
 
@@ -132,7 +132,7 @@ class GenresManager(Manager):
         :raises ValidationError: validation error.
 
         :returns: created genre id.
-        :rtype: int
+        :rtype: uuid.UUID
         """
 
         options.update(name=name)
@@ -140,7 +140,7 @@ class GenresManager(Manager):
         is_main = self._is_main(name)
         options.update(is_main=is_main)
         entity = GenreEntity(**options)
-        entity.save(flush=True)
+        entity.save()
         return entity.id
 
     def find(self, **filters):
@@ -182,7 +182,7 @@ class GenresManager(Manager):
         """
         deletes a genre with given id.
 
-        :param int id: genre id.
+        :param uuid.UUID id: genre id.
 
         :returns: count of deleted items.
         :rtype: int
