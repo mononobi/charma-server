@@ -9,7 +9,7 @@ from pyrin.core.enumerations import HTTPMethodEnum
 import imovie.languages.services as languages_services
 
 
-@api('/languages/<int:id>', authenticated=False)
+@api('/languages/<uuid:id>', authenticated=False)
 def get(id, **options):
     """
     gets language with given id.
@@ -66,7 +66,7 @@ def get_all(**options):
     return languages_services.get_all()
 
 
-@api('/languages/<int:id>', methods=HTTPMethodEnum.DELETE, authenticated=False)
+@api('/languages/<uuid:id>', methods=HTTPMethodEnum.DELETE, authenticated=False)
 def delete(id, **options):
     """
     deletes a language with given id.

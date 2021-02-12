@@ -9,7 +9,7 @@ from pyrin.core.enumerations import HTTPMethodEnum
 import imovie.genres.services as genres_services
 
 
-@api('/genres/<int:id>', authenticated=False)
+@api('/genres/<uuid:id>', authenticated=False)
 def get(id, **options):
     """
     gets genre with given id.
@@ -75,7 +75,7 @@ def get_all(**options):
     return genres_services.get_all()
 
 
-@api('/genres/<int:id>', methods=HTTPMethodEnum.DELETE, authenticated=False)
+@api('/genres/<uuid:id>', methods=HTTPMethodEnum.DELETE, authenticated=False)
 def delete(id, **options):
     """
     deletes a genre with given id.
