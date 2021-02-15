@@ -44,7 +44,7 @@ class LanguagesManager(Manager):
 
         it returns None if language does not exist.
 
-        :param int id: language id.
+        :param uuid.UUID id: language id.
 
         :rtype: LanguageEntity
         """
@@ -70,7 +70,7 @@ class LanguagesManager(Manager):
 
         it raises an error if language does not exist.
 
-        :param int id: language id.
+        :param uuid.UUID id: language id.
 
         :raises LanguageDoesNotExistError: language does not exist error.
 
@@ -92,7 +92,7 @@ class LanguagesManager(Manager):
         :raises ValidationError: validation error.
 
         :returns: created language id.
-        :rtype: int
+        :rtype: uuid.UUID
         """
 
         options.update(name=name)
@@ -139,7 +139,7 @@ class LanguagesManager(Manager):
         """
         deletes a language with given id.
 
-        :param int id: language id.
+        :param uuid.UUID id: language id.
 
         :returns: count of deleted items.
         :rtype: int

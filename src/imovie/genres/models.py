@@ -27,5 +27,6 @@ class GenreEntity(GenreBaseEntity):
 
     _extend_existing = True
 
-    name = CoreColumn('name', Unicode(50), unique=True, nullable=False)
-    is_main = CoreColumn('is_main', Boolean, nullable=False, default=False)
+    name = CoreColumn(name='name', type_=Unicode(50), unique=True, nullable=False)
+    is_main = CoreColumn(name='is_main', type_=Boolean, nullable=False,
+                         default=False, allow_write=False)
