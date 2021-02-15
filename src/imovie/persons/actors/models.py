@@ -3,10 +3,9 @@
 actors models module.
 """
 
-from sqlalchemy import ForeignKey
-
+from pyrin.database.orm.types.custom import GUID
 from pyrin.database.model.base import CoreEntity
-from pyrin.database.orm.sql.schema.columns import GUIDPKColumn
+from pyrin.database.orm.sql.schema.columns import FKColumn
 
 
 class ActorBaseEntity(CoreEntity):
@@ -16,7 +15,7 @@ class ActorBaseEntity(CoreEntity):
 
     _table = 'actor'
 
-    person_id = GUIDPKColumn(ForeignKey('person.id'), name='person_id')
+    person_id = FKColumn('person.id', name='person_id', type_=GUID, primary_key=True)
 
 
 class ActorEntity(ActorBaseEntity):
