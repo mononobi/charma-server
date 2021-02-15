@@ -29,17 +29,17 @@ class PersonEntity(PersonBaseEntity):
 
     _extend_existing = True
 
-    fullname = CoreColumn('fullname', Unicode(200), nullable=False)
+    fullname = CoreColumn(name='fullname', type_=Unicode(200), nullable=False)
 
-    search_name = CoreColumn('search_name', Unicode(200), allow_read=False,
+    search_name = CoreColumn(name='search_name', type_=Unicode(200), allow_read=False,
                              allow_write=False, nullable=False, index=True)
 
-    imdb_page = CoreColumn('imdb_page', Unicode(150), unique=True)
+    imdb_page = CoreColumn(name='imdb_page', type_=Unicode(150), unique=True)
 
-    identifier = CoreColumn('identifier', Unicode(150), allow_read=False,
+    identifier = CoreColumn(name='identifier', type_=Unicode(150), allow_read=False,
                             allow_write=False, unique=True, index=True)
 
-    photo_name = CoreColumn('photo_name', Unicode(250), unique=True)
+    photo_name = CoreColumn(name='photo_name', type_=Unicode(250), unique=True)
 
-    add_date = CoreColumn('add_date', TIMESTAMP(timezone=True),
-                          nullable=False, default=datetime_services.now)
+    add_date = CoreColumn(name='add_date', type_=TIMESTAMP(timezone=True),
+                          nullable=False, default=datetime_services.now, allow_write=False)
