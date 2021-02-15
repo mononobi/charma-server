@@ -69,8 +69,8 @@ class GenresManager(Manager):
         :rtype: list
         """
 
-        name = filters.get('name', None)
-        is_main = filters.get('is_main', None)
+        name = filters.get('name')
+        is_main = filters.get('is_main')
 
         if name is not None:
             expressions.append(GenreEntity.name.icontains(name))

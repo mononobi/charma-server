@@ -33,7 +33,7 @@ class LanguagesManager(Manager):
         :rtype: list
         """
 
-        name = filters.get('name', None)
+        name = filters.get('name')
 
         if name is not None:
             expressions.append(LanguageEntity.name.icontains(name))
