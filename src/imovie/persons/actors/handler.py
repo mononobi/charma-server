@@ -6,6 +6,7 @@ actors handler module.
 import imovie.persons.actors.services as actors_services
 
 from imovie.persons.decorators import person_handler
+from imovie.persons.enumerations import PersonTypeEnum
 from imovie.persons.handler import AbstractPersonHandler
 
 
@@ -15,7 +16,7 @@ class ActorHandler(AbstractPersonHandler):
     actor handler class.
     """
 
-    name = 'actor'
+    name = PersonTypeEnum.ACTOR
 
     def create(self, id, **options):
         """

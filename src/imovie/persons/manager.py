@@ -47,7 +47,7 @@ class PersonsManager(Manager, PersonsQueries):
         """
 
         if name not in self._handlers:
-            raise PersonHandlerNotExistedError('Person handler [{name}] does not exist.'
+            raise PersonHandlerNotExistedError('Person type [{name}] does not exist.'
                                                .format(name=name))
 
         return self._handlers.get(name)
@@ -124,8 +124,8 @@ class PersonsManager(Manager, PersonsQueries):
         :keyword str imdb_page: imdb page link.
         :keyword str photo_name: photo file name.
 
-        :keyword str handler: person handler name to be used.
-                              defaults to None if not provided.
+        :keyword str type: person type to be used.
+                           defaults to None if not provided.
 
         :raises ValidationError: validation error.
 
@@ -140,7 +140,7 @@ class PersonsManager(Manager, PersonsQueries):
         entity.identifier = self._get_identifier(options.get('imdb_page')) or None
         entity.save()
 
-        handler_name = options.get('handler')
+        handler_name = options.get('type')
         if handler_name is not None:
             handler = self._get_handler(handler_name)
             handler.create(entity.id, **options)
@@ -157,8 +157,8 @@ class PersonsManager(Manager, PersonsQueries):
         :keyword str imdb_page: imdb page link.
         :keyword str photo_name: photo file name.
 
-        :keyword str handler: person handler name to be used.
-                              defaults to None if not provided.
+        :keyword str type: person type to be used.
+                           defaults to None if not provided.
 
         :raises ValidationError: validation error.
         :raises PersonDoesNotExistError: person does not exist error.
@@ -170,7 +170,7 @@ class PersonsManager(Manager, PersonsQueries):
         entity.search_name = self._get_search_name(entity.fullname)
         entity.identifier = self._get_identifier(entity.imdb_page) or None
 
-        handler_name = options.get('handler')
+        handler_name = options.get('type')
         if handler_name is not None:
             handler = self._get_handler(handler_name)
             handler.update(entity.id, **options)

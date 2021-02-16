@@ -48,7 +48,7 @@ class DuplicatedPersonHandlerError(PersonsException):
     pass
 
 
-class PersonHandlerNotExistedError(PersonsException):
+class PersonHandlerNotExistedError(PersonsBusinessException):
     """
     person handler not existed error.
     """
