@@ -4,6 +4,7 @@ persons manager module.
 """
 
 import pyrin.validator.services as validator_services
+import pyrin.utils.misc as misc_utils
 
 from pyrin.core.globals import _
 from pyrin.core.structs import Manager, Context
@@ -66,6 +67,21 @@ class PersonsManager(Manager, PersonsQueries):
         store = get_current_store()
         return store.query(PersonEntity).get(id)
 
+    def _prepare_handlers(self, options):
+        """
+        prepares person handlers to be usable as a list, if it is present in given inputs.
+
+        inputs will be modified in-place.
+
+        :keyword str | list[str] type: person type to be used.
+                                       defaults to None if not provided.
+        """
+
+        handler = options.get('type')
+        if handler is not None and not isinstance(handler, list):
+            result = misc_utils.make_iterable(handler, list)
+            options.update(type=result)
+
     def register_handler(self, instance, **options):
         """
         registers a person handler.
@@ -124,8 +140,8 @@ class PersonsManager(Manager, PersonsQueries):
         :keyword str imdb_page: imdb page link.
         :keyword str photo_name: photo file name.
 
-        :keyword str type: person type to be used.
-                           defaults to None if not provided.
+        :keyword str | list[str] type: person type to be used.
+                                       defaults to None if not provided.
 
         :raises ValidationError: validation error.
 
@@ -134,16 +150,18 @@ class PersonsManager(Manager, PersonsQueries):
         """
 
         options.update(fullname=fullname)
+        self._prepare_handlers(options)
         validator_services.validate_dict(PersonEntity, options)
         entity = PersonEntity(**options)
         entity.search_name = self._get_search_name(fullname)
         entity.identifier = self._get_identifier(options.get('imdb_page')) or None
         entity.save()
 
-        handler_name = options.get('type')
-        if handler_name is not None:
-            handler = self._get_handler(handler_name)
-            handler.create(entity.id, **options)
+        handlers = options.get('type')
+        if handlers is not None:
+            for name in handlers:
+                handler = self._get_handler(name)
+                handler.create(entity.id, **options)
 
         return entity.id
 
@@ -157,23 +175,25 @@ class PersonsManager(Manager, PersonsQueries):
         :keyword str imdb_page: imdb page link.
         :keyword str photo_name: photo file name.
 
-        :keyword str type: person type to be used.
-                           defaults to None if not provided.
+        :keyword str | list[str] type: person type to be used.
+                                       defaults to None if not provided.
 
         :raises ValidationError: validation error.
         :raises PersonDoesNotExistError: person does not exist error.
         """
 
+        self._prepare_handlers(options)
         validator_services.validate_dict(PersonEntity, options, for_update=True)
         entity = self.get(id)
         entity.update(**options)
         entity.search_name = self._get_search_name(entity.fullname)
         entity.identifier = self._get_identifier(entity.imdb_page) or None
 
-        handler_name = options.get('type')
-        if handler_name is not None:
-            handler = self._get_handler(handler_name)
-            handler.update(entity.id, **options)
+        handlers = options.get('type')
+        if handlers is not None:
+            for name in handlers:
+                handler = self._get_handler(name)
+                handler.update(entity.id, **options)
 
     def delete(self, id):
         """

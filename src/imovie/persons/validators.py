@@ -5,8 +5,10 @@ persons validators module.
 
 from pyrin.core.globals import _
 from pyrin.validator.decorators import validator
+from pyrin.validator.handlers.misc import InValidator
 from pyrin.validator.handlers.string import StringValidator, HTTPSValidator
 
+from imovie.persons.enumerations import PersonTypeEnum
 from imovie.persons.models import PersonEntity
 
 
@@ -51,3 +53,15 @@ class PersonPhotoNameValidator(StringValidator):
     default_allow_blank = False
     default_allow_whitespace = False
     default_nullable = True
+
+
+@validator(PersonEntity, 'type')
+class PersonTypeValidator(StringValidator, InValidator):
+    """
+    person type validator class.
+    """
+
+    default_nullable = True
+    default_is_list = True
+    default_null_items = False
+    default_valid_values = PersonTypeEnum.values()

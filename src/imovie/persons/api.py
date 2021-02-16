@@ -36,8 +36,8 @@ def create(fullname, **options):
     :keyword str imdb_page: imdb page link.
     :keyword str photo_name: photo file name.
 
-    :keyword str type: person type to be used.
-                       defaults to None if not provided.
+    :keyword str | list[str] type: person type to be used.
+                                   defaults to None if not provided.
 
     :raises ValidationError: validation error.
 
@@ -59,8 +59,8 @@ def update(id, **options):
     :keyword str imdb_page: imdb page link.
     :keyword str photo_name: photo file name.
 
-    :keyword str type: person type to be used.
-                       defaults to None if not provided.
+    :keyword str | list[str] type: person type to be used.
+                                   defaults to None if not provided.
 
     :raises ValidationError: validation error.
     :raises PersonDoesNotExistError: person does not exist error.

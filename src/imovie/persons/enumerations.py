@@ -13,5 +13,3 @@ class PersonTypeEnum(CoreEnum):
 
     ACTOR = 'actor'
     DIRECTOR = 'director'
-    WRITER = 'writer'
-    PRODUCER = 'producer'
