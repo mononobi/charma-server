@@ -12,7 +12,7 @@ from pyrin.core.enumerations import CoreEnum
 from pyrin.database.model.base import CoreEntity
 from pyrin.database.orm.types.custom import GUID
 from pyrin.database.orm.sql.schema.base import CoreColumn
-from pyrin.database.orm.sql.schema.columns import GUIDPKColumn, FKColumn
+from pyrin.database.orm.sql.schema.columns import GUIDPKColumn, FKColumn, HiddenColumn
 
 
 class MovieBaseEntity(CoreEntity):
@@ -64,14 +64,11 @@ class MovieEntity(MovieBaseEntity):
         R = 4
         NC_17 = 5
 
-    identifier = CoreColumn('identifier', Unicode(150), unique=True,
-                            nullable=True, allow_read=False, allow_write=False)
-
+    identifier = HiddenColumn('identifier', Unicode(150), unique=True, nullable=True)
     title = CoreColumn('title', Unicode(150))
     original_title = CoreColumn('original_title', Unicode(150))
     library_title = CoreColumn('library_title', Unicode(150), nullable=False)
-    search_title = CoreColumn('search_title', Unicode(150), allow_read=False,
-                              allow_write=False, nullable=False)
+    search_title = HiddenColumn('search_title', Unicode(150), nullable=False)
     production_year = CoreColumn('production_year', Integer)
     imdb_rate = CoreColumn('imdb_rate', Float, nullable=False, default=0)
     meta_score = CoreColumn('meta_score', SmallInteger, nullable=False, default=0)
@@ -81,8 +78,7 @@ class MovieEntity(MovieBaseEntity):
     directory_name = CoreColumn('directory_name', Unicode(250), nullable=False)
     is_watched = CoreColumn('is_watched', Boolean, nullable=False, default=False)
     storyline = CoreColumn('storyline', Unicode(5000))
-    search_storyline = CoreColumn('search_storyline', Unicode(5000),
-                                  allow_read=False, allow_write=False)
+    search_storyline = HiddenColumn('search_storyline', Unicode(5000))
     watched_date = CoreColumn('watched_date', TIMESTAMP(timezone=True))
     content_rate = CoreColumn('content_rate', SmallInteger)
 

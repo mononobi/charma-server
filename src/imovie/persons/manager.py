@@ -164,7 +164,7 @@ class PersonsManager(Manager, PersonsQueries):
         :raises PersonDoesNotExistError: person does not exist error.
         """
 
-        validator_services.validate_dict(PersonEntity, options)
+        validator_services.validate_dict(PersonEntity, options, for_update=True)
         entity = self.get(id)
         entity.update(**options)
         entity.search_name = self._get_search_name(entity.fullname)
