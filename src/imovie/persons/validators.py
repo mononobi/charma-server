@@ -56,7 +56,7 @@ class PersonPhotoNameValidator(StringValidator):
 
 
 @validator(PersonEntity, 'type')
-class PersonTypeValidator(StringValidator, InValidator):
+class PersonTypeValidator(InValidator):
     """
     person type validator class.
     """
@@ -64,4 +64,5 @@ class PersonTypeValidator(StringValidator, InValidator):
     default_nullable = True
     default_is_list = True
     default_null_items = False
+    default_allow_single = True
     default_valid_values = PersonTypeEnum.values()
