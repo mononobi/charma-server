@@ -51,7 +51,7 @@ def delete(id, **options):
     return actors_services.delete(id)
 
 
-@api('/actors', authenticated=False)
+@api('/actors', authenticated=False, paged=True, indexed=True)
 def find(**filters):
     """
     finds actors with given filters.
@@ -93,7 +93,7 @@ def exists(**options):
     return actors_services.exists(**options)
 
 
-@api('/actors/all', authenticated=False)
+@api('/actors/all', authenticated=False, paged=True, indexed=True)
 def get_all(**options):
     """
     gets all actors.

@@ -51,7 +51,7 @@ def delete(id, **options):
     return directors_services.delete(id)
 
 
-@api('/directors', authenticated=False)
+@api('/directors', authenticated=False, paged=True, indexed=True)
 def find(**filters):
     """
     finds directors with given filters.
@@ -93,7 +93,7 @@ def exists(**options):
     return directors_services.exists(**options)
 
 
-@api('/directors/all', authenticated=False)
+@api('/directors/all', authenticated=False, paged=True, indexed=True)
 def get_all(**options):
     """
     gets all directors.

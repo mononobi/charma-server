@@ -7,6 +7,7 @@ from sqlalchemy import or_
 
 import pyrin.utilities.string.normalizer.services as normalizer_services
 
+from pyrin.core.globals import SECURE_TRUE
 from pyrin.core.structs import CoreObject
 from pyrin.database.services import get_current_store
 from pyrin.utils.sqlalchemy import add_datetime_range_clause
@@ -104,7 +105,7 @@ class PersonsQueries(CoreObject):
         query = store.query(*columns)
         query = self._prepare_query(query)
 
-        return query.filter(*expressions).all()
+        return query.filter(*expressions).paginate(inject_total=SECURE_TRUE, **options).all()
 
     def _prepare_query(self, query):
         """

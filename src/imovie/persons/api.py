@@ -69,7 +69,7 @@ def update(id, **options):
     return persons_services.update(id, **options)
 
 
-@api('/persons', authenticated=False)
+@api('/persons', authenticated=False, paged=True, indexed=True)
 def find(**filters):
     """
     finds persons with given filters.
@@ -94,7 +94,7 @@ def find(**filters):
     return persons_services.find(**filters)
 
 
-@api('/persons/all', authenticated=False)
+@api('/persons/all', authenticated=False, paged=True, indexed=True)
 def get_all(**options):
     """
     gets all persons.
