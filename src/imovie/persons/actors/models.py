@@ -15,7 +15,7 @@ class ActorBaseEntity(CoreEntity):
 
     _table = 'actor'
 
-    person_id = FKColumn('person.id', name='person_id', type_=GUID, primary_key=True)
+    person_id = FKColumn(fk='person.id', name='person_id', type_=GUID, primary_key=True)
 
 
 class ActorEntity(ActorBaseEntity):
