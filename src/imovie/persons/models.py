@@ -3,7 +3,7 @@
 persons models module.
 """
 
-from sqlalchemy import Unicode, TIMESTAMP
+from sqlalchemy import Unicode, DateTime
 
 import pyrin.globalization.datetime.services as datetime_services
 
@@ -35,5 +35,5 @@ class PersonEntity(PersonBaseEntity):
     identifier = HiddenColumn(name='identifier', type_=Unicode(150), unique=True, index=True)
     photo_name = CoreColumn(name='photo_name', type_=Unicode(250), unique=True)
 
-    add_date = CoreColumn(name='add_date', type_=TIMESTAMP(timezone=True),
+    add_date = CoreColumn(name='add_date', type_=DateTime(timezone=True),
                           nullable=False, default=datetime_services.now, allow_write=False)
