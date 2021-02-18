@@ -15,7 +15,7 @@ class DirectorBaseEntity(CoreEntity):
 
     _table = 'director'
 
-    person_id = FKColumn('person.id', name='person_id', type_=GUID, primary_key=True)
+    person_id = FKColumn(fk='person.id', name='person_id', type_=GUID, primary_key=True)
 
 
 class DirectorEntity(DirectorBaseEntity):
