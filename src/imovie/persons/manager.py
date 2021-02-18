@@ -137,8 +137,8 @@ class PersonsManager(Manager, PersonsQueries):
         options.update(fullname=fullname)
         validator_services.validate_dict(PersonEntity, options)
         entity = PersonEntity(**options)
-        entity.search_name = self._get_search_name(fullname)
-        entity.identifier = self._get_identifier(options.get('imdb_page')) or None
+        entity.search_name = self._get_normalized(fullname)
+        entity.identifier = self._get_normalized(options.get('imdb_page')) or None
         entity.save()
 
         handlers = options.get('type')
@@ -170,8 +170,8 @@ class PersonsManager(Manager, PersonsQueries):
         validator_services.validate_dict(PersonEntity, options, for_update=True)
         entity = self.get(id)
         entity.update(**options)
-        entity.search_name = self._get_search_name(entity.fullname)
-        entity.identifier = self._get_identifier(entity.imdb_page) or None
+        entity.search_name = self._get_normalized(entity.fullname)
+        entity.identifier = self._get_normalized(entity.imdb_page) or None
 
         handlers = options.get('type')
         if handlers is not None:

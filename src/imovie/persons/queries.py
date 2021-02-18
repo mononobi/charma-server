@@ -60,11 +60,11 @@ class PersonsQueries(CoreObject):
         to_add_date = filters.get('to_add_date')
 
         if fullname is not None:
-            search_name = self._get_search_name(fullname)
+            search_name = self._get_normalized(fullname)
             expressions.append(PersonEntity.search_name.icontains(search_name))
 
         if imdb_page is not None:
-            identifier = self._get_identifier(imdb_page)
+            identifier = self._get_normalized(imdb_page)
             expressions.append(PersonEntity.identifier.icontains(identifier))
 
         if photo_name is not None:
@@ -74,27 +74,16 @@ class PersonsQueries(CoreObject):
             add_datetime_range_clause(expressions, PersonEntity.add_date,
                                       from_add_date, to_add_date, **filters)
 
-    def _get_search_name(self, fullname):
+    def _get_normalized(self, value):
         """
-        gets search name from given fullname.
+        gets normalized value from given value.
 
-        :param str fullname: fullname.
+        :param str value: value to be normalized.
 
         :rtype: str
         """
 
-        return normalizer_services.normalize(fullname, *self.NAME_NORMALIZERS)
-
-    def _get_identifier(self, imdb_page):
-        """
-        gets identifier from given imdb page link.
-
-        :param str imdb_page: imdb page link.
-
-        :rtype: str
-        """
-
-        return normalizer_services.normalize(imdb_page, *self.NAME_NORMALIZERS)
+        return normalizer_services.normalize(value, *self.NAME_NORMALIZERS)
 
     def _get_all(self, *expressions, **options):
         """
@@ -143,7 +132,7 @@ class PersonsQueries(CoreObject):
         if imdb_page in (None, ''):
             return False
 
-        identifier = self._get_identifier(imdb_page)
+        identifier = self._get_normalized(imdb_page)
         store = get_current_store()
         query = store.query(PersonEntity.id)
         query = self._prepare_query(query)
@@ -164,7 +153,7 @@ class PersonsQueries(CoreObject):
         if fullname in (None, ''):
             return False
 
-        search_name = self._get_search_name(fullname)
+        search_name = self._get_normalized(fullname)
         store = get_current_store()
         query = store.query(PersonEntity.id)
         query = self._prepare_query(query)
@@ -184,7 +173,7 @@ class PersonsQueries(CoreObject):
         :rtype: PersonEntity
         """
 
-        identifier = self._get_identifier(imdb_page)
+        identifier = self._get_normalized(imdb_page)
         store = get_current_store()
         query = store.query(PersonEntity)
         query = self._prepare_query(query)
@@ -203,7 +192,7 @@ class PersonsQueries(CoreObject):
         :rtype: PersonEntity
         """
 
-        search_name = self._get_search_name(fullname)
+        search_name = self._get_normalized(fullname)
         store = get_current_store()
         query = store.query(PersonEntity)
         query = self._prepare_query(query)
