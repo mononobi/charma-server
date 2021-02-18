@@ -18,3 +18,10 @@ class DirectorsBusinessException(CoreBusinessException, DirectorsException):
     directors business exception.
     """
     pass
+
+
+class DirectorDoesNotExistError(DirectorsBusinessException):
+    """
+    director does not exist error.
+    """
+    pass
