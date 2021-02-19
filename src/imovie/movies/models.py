@@ -4,13 +4,12 @@ movies models module.
 """
 
 from sqlalchemy import Integer, Unicode, Float, Boolean, SmallInteger, \
-    CheckConstraint, and_, UniqueConstraint, DateTime
-
-import pyrin.globalization.datetime.services as datetime_services
+    CheckConstraint, and_, UniqueConstraint, TIMESTAMP
 
 from pyrin.core.enumerations import CoreEnum
 from pyrin.database.model.base import CoreEntity
 from pyrin.database.orm.types.custom import GUID
+from pyrin.database.model.mixin import CreateHistoryMixin
 from pyrin.database.orm.sql.schema.base import CoreColumn
 from pyrin.database.orm.sql.schema.columns import GUIDPKColumn, FKColumn, HiddenColumn
 
@@ -25,7 +24,7 @@ class MovieBaseEntity(CoreEntity):
     id = GUIDPKColumn(name='id')
 
 
-class MovieEntity(MovieBaseEntity):
+class MovieEntity(MovieBaseEntity, CreateHistoryMixin):
     """
     movie entity class.
     """
@@ -82,12 +81,10 @@ class MovieEntity(MovieBaseEntity):
     is_watched = CoreColumn(name='is_watched', type_=Boolean, nullable=False, default=False)
     storyline = CoreColumn(name='storyline', type_=Unicode(5000))
     search_storyline = HiddenColumn(name='search_storyline', type_=Unicode(5000))
-    watched_date = CoreColumn(name='watched_date', type_=DateTime(timezone=True))
+    watched_date = CoreColumn(name='watched_date', type_=TIMESTAMP(timezone=True))
     content_rate = CoreColumn(name='content_rate', type_=SmallInteger)
     resolution = CoreColumn(name='resolution', type_=SmallInteger,
                             nullable=False, default=ResolutionEnum.UNKNOWN)
-    archived_date = CoreColumn(name='archived_date', type_=DateTime(timezone=True),
-                               index=True, nullable=False, default=datetime_services.now)
 
     @classmethod
     def _customize_table_args(cls, table_args):
@@ -121,7 +118,7 @@ class FavoriteMovieBaseEntity(CoreEntity):
     movie_id = FKColumn(fk='movie.id', name='movie_id', type_=GUID, primary_key=True)
 
 
-class FavoriteMovieEntity(FavoriteMovieBaseEntity):
+class FavoriteMovieEntity(FavoriteMovieBaseEntity, CreateHistoryMixin):
     """
     favorite movie entity class.
     """
@@ -132,8 +129,6 @@ class FavoriteMovieEntity(FavoriteMovieBaseEntity):
     MAX_FAVORITE_RATE = 10
 
     favorite_rate = CoreColumn(name='favorite_rate', type_=Integer, nullable=False)
-    add_date = CoreColumn(name='add_date', type_=DateTime(timezone=True),
-                          nullable=False, default=datetime_services.now)
 
     @classmethod
     def _customize_table_args(cls, table_args):
@@ -222,15 +217,12 @@ class WatchLaterBaseEntity(CoreEntity):
     movie_id = FKColumn(fk='movie.id', name='movie_id', type_=GUID, primary_key=True)
 
 
-class WatchLaterEntity(WatchLaterBaseEntity):
+class WatchLaterEntity(WatchLaterBaseEntity, CreateHistoryMixin):
     """
     watch later entity class.
     """
 
     _extend_existing = True
-
-    add_date = CoreColumn(name='add_date', type_=DateTime(timezone=True),
-                          nullable=False, default=datetime_services.now)
 
 
 class MovieRootPathBaseEntity(CoreEntity):
