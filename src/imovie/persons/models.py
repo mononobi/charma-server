@@ -3,11 +3,10 @@
 persons models module.
 """
 
-from sqlalchemy import Unicode, DateTime
-
-import pyrin.globalization.datetime.services as datetime_services
+from sqlalchemy import Unicode
 
 from pyrin.database.model.base import CoreEntity
+from pyrin.database.model.mixin import CreateHistoryMixin
 from pyrin.database.orm.sql.schema.base import CoreColumn
 from pyrin.database.orm.sql.schema.columns import GUIDPKColumn, HiddenColumn
 
@@ -22,7 +21,7 @@ class PersonBaseEntity(CoreEntity):
     id = GUIDPKColumn(name='id')
 
 
-class PersonEntity(PersonBaseEntity):
+class PersonEntity(PersonBaseEntity, CreateHistoryMixin):
     """
     person entity class.
     """
@@ -34,6 +33,3 @@ class PersonEntity(PersonBaseEntity):
     imdb_page = CoreColumn(name='imdb_page', type_=Unicode(150), unique=True)
     identifier = HiddenColumn(name='identifier', type_=Unicode(150), unique=True, index=True)
     photo_name = CoreColumn(name='photo_name', type_=Unicode(250), unique=True)
-
-    add_date = CoreColumn(name='add_date', type_=DateTime(timezone=True),
-                          nullable=False, default=datetime_services.now, allow_write=False)
