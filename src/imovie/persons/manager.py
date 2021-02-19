@@ -137,8 +137,8 @@ class PersonsManager(Manager, PersonsQueries):
         options.update(fullname=fullname)
         validator_services.validate_dict(PersonEntity, options)
         entity = PersonEntity(**options)
-        entity.search_name = self._get_normalized(fullname)
-        entity.identifier = self._get_normalized(options.get('imdb_page'))
+        entity.search_name = self._get_normalized(entity.fullname)
+        entity.identifier = self._get_normalized(entity.imdb_page)
         entity.save()
 
         handlers = options.get('type')
