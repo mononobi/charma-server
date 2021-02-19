@@ -160,9 +160,6 @@ class PersonsManager(Manager, PersonsQueries):
         :keyword str imdb_page: imdb page link.
         :keyword str photo_name: photo file name.
 
-        :keyword str | list[str] type: person type to be used.
-                                       defaults to None if not provided.
-
         :raises ValidationError: validation error.
         :raises PersonDoesNotExistError: person does not exist error.
         """
@@ -174,12 +171,8 @@ class PersonsManager(Manager, PersonsQueries):
         entity.identifier = self._get_normalized(entity.imdb_page)
         entity.save()
 
-        handlers = options.get('type')
-        if handlers is not None:
-            handlers = misc_utils.make_iterable(handlers, list)
-            for name in handlers:
-                handler = self._get_handler(name)
-                handler.update(entity.id, **options)
+        for name, handler in self._handlers.items():
+            handler.update(entity.id, **options)
 
     def delete(self, id):
         """
