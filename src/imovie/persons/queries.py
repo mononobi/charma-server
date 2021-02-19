@@ -72,7 +72,7 @@ class PersonsQueries(CoreObject):
             expressions.append(PersonEntity.photo_name.icontains(photo_name))
 
         if from_created_on is not None or to_created_on is not None:
-            add_datetime_range_clause(expressions, PersonEntity.add_date,
+            add_datetime_range_clause(expressions, PersonEntity.created_on,
                                       from_created_on, to_created_on, **filters)
 
     def _get_normalized(self, value):
