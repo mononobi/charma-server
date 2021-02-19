@@ -172,6 +172,7 @@ class PersonsManager(Manager, PersonsQueries):
         entity.update(**options)
         entity.search_name = self._get_normalized(entity.fullname)
         entity.identifier = self._get_normalized(entity.imdb_page)
+        entity.save()
 
         handlers = options.get('type')
         if handlers is not None:
