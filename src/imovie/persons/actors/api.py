@@ -59,8 +59,8 @@ def find(**filters):
     :keyword str fullname: fullname.
     :keyword str imdb_page: imdb page link.
     :keyword str photo_name: photo file name.
-    :keyword datetime from_add_date: from add date.
-    :keyword datetime to_add_date: to add date.
+    :keyword datetime from_created_on: from created on.
+    :keyword datetime to_created_on: to created on.
 
     :keyword bool consider_begin_of_day: specifies that consider begin
                                          of day for lower datetime.

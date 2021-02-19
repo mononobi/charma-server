@@ -40,8 +40,8 @@ class PersonsQueries(CoreObject):
         :keyword str fullname: fullname.
         :keyword str imdb_page: imdb page link.
         :keyword str photo_name: photo file name.
-        :keyword datetime from_add_date: from add date.
-        :keyword datetime to_add_date: to add date.
+        :keyword datetime from_created_on: from created on.
+        :keyword datetime to_created_on: to created on.
 
         :keyword bool consider_begin_of_day: specifies that consider begin
                                              of day for lower datetime.
@@ -57,8 +57,8 @@ class PersonsQueries(CoreObject):
         fullname = filters.get('fullname')
         imdb_page = filters.get('imdb_page')
         photo_name = filters.get('photo_name')
-        from_add_date = filters.get('from_add_date')
-        to_add_date = filters.get('to_add_date')
+        from_created_on = filters.get('from_created_on')
+        to_created_on = filters.get('to_created_on')
 
         if fullname is not None:
             search_name = self._get_normalized(fullname)
@@ -71,9 +71,9 @@ class PersonsQueries(CoreObject):
         if photo_name is not None:
             expressions.append(PersonEntity.photo_name.icontains(photo_name))
 
-        if from_add_date is not None or to_add_date is not None:
+        if from_created_on is not None or to_created_on is not None:
             add_datetime_range_clause(expressions, PersonEntity.add_date,
-                                      from_add_date, to_add_date, **filters)
+                                      from_created_on, to_created_on, **filters)
 
     def _get_normalized(self, value):
         """
@@ -209,8 +209,8 @@ class PersonsQueries(CoreObject):
         :keyword str fullname: fullname.
         :keyword str imdb_page: imdb page link.
         :keyword str photo_name: photo file name.
-        :keyword datetime from_add_date: from add date.
-        :keyword datetime to_add_date: to add date.
+        :keyword datetime from_created_on: from created on.
+        :keyword datetime to_created_on: to created on.
 
         :keyword bool consider_begin_of_day: specifies that consider begin
                                              of day for lower datetime.
