@@ -3,8 +3,7 @@
 movies models module.
 """
 
-from sqlalchemy import Integer, Unicode, Float, Boolean, SmallInteger, \
-    UniqueConstraint, TIMESTAMP
+from sqlalchemy import Integer, Unicode, Float, Boolean, SmallInteger, TIMESTAMP
 
 import pyrin.globalization.datetime.services as datetime_services
 
