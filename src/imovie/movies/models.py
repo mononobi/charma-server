@@ -227,18 +227,7 @@ class MovieRootPathEntity(MovieRootPathBaseEntity):
     os = CoreColumn(name='os', type_=SmallInteger, nullable=False,
                     validated=True, check_in=OSEnum.values())
 
-    @classmethod
-    def _customize_table_args(cls, table_args):
-        """
-        customizes different table args for current entity type.
-
-        :param dict table_args: a dict containing different table args.
-                                any changes to this dict must be done in-place.
-
-        :rtype: tuple | object
-        """
-
-        return UniqueConstraint(cls.os, cls.path)
+    _unique_on = os, path
 
 
 class CopyRequestedMovieBaseEntity(CoreEntity):
