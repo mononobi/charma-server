@@ -18,3 +18,10 @@ class MoviesBusinessException(CoreBusinessException, MoviesException):
     movies business exception.
     """
     pass
+
+
+class MovieDoesNotExistError(MoviesBusinessException):
+    """
+    movie does not exist error.
+    """
+    pass
