@@ -7,8 +7,7 @@ from sqlalchemy import Unicode
 
 from pyrin.database.model.base import CoreEntity
 from pyrin.database.model.mixin import CreateHistoryMixin
-from pyrin.database.orm.sql.schema.base import CoreColumn
-from pyrin.database.orm.sql.schema.columns import GUIDPKColumn, HiddenColumn
+from pyrin.database.orm.sql.schema.columns import GUIDPKColumn, HiddenColumn, StringColumn
 
 
 class PersonBaseEntity(CoreEntity):
@@ -28,8 +27,9 @@ class PersonEntity(PersonBaseEntity, CreateHistoryMixin):
 
     _extend_existing = True
 
-    fullname = CoreColumn(name='fullname', type_=Unicode(200), nullable=False)
+    fullname = StringColumn(name='fullname', max_length=200, nullable=False, validated=True)
     search_name = HiddenColumn(name='search_name', type_=Unicode(200), nullable=False, index=True)
-    imdb_page = CoreColumn(name='imdb_page', type_=Unicode(150), unique=True)
+    imdb_page = StringColumn(name='imdb_page', min_length=30, max_length=150,
+                             unique=True, validated=True)
     identifier = HiddenColumn(name='identifier', type_=Unicode(150), unique=True, index=True)
-    photo_name = CoreColumn(name='photo_name', type_=Unicode(250), unique=True)
+    photo_name = StringColumn(name='photo_name', max_length=250, unique=True, validated=True)

@@ -4,14 +4,17 @@ movies models module.
 """
 
 from sqlalchemy import Integer, Unicode, Float, Boolean, SmallInteger, \
-    CheckConstraint, and_, UniqueConstraint, TIMESTAMP
+    UniqueConstraint, TIMESTAMP
+
+import pyrin.globalization.datetime.services as datetime_services
 
 from pyrin.core.enumerations import CoreEnum
 from pyrin.database.model.base import CoreEntity
 from pyrin.database.orm.types.custom import GUID
 from pyrin.database.model.mixin import CreateHistoryMixin
 from pyrin.database.orm.sql.schema.base import CoreColumn
-from pyrin.database.orm.sql.schema.columns import GUIDPKColumn, FKColumn, HiddenColumn
+from pyrin.database.orm.sql.schema.columns import GUIDPKColumn, FKColumn, HiddenColumn, \
+    StringColumn
 
 
 class MovieBaseEntity(CoreEntity):
@@ -30,14 +33,6 @@ class MovieEntity(MovieBaseEntity, CreateHistoryMixin):
     """
 
     _extend_existing = True
-
-    MIN_PRODUCTION_YEAR = 1900
-
-    MIN_IMDB_RATE = 0
-    MAX_IMDB_RATE = 10
-
-    MIN_META_SCORE = 0
-    MAX_META_SCORE = 100
 
     class ResolutionEnum(CoreEnum):
         """
@@ -64,48 +59,37 @@ class MovieEntity(MovieBaseEntity, CreateHistoryMixin):
         NC_17 = 5
 
     identifier = HiddenColumn(name='identifier', type_=Unicode(150), unique=True)
-    title = CoreColumn(name='title', type_=Unicode(150))
+    title = StringColumn(name='title', max_length=150, validated=True)
     search_title = HiddenColumn(name='search_title', type_=Unicode(150))
-    original_title = CoreColumn(name='original_title', type_=Unicode(150))
+    original_title = StringColumn(name='original_title', max_length=150, validated=True)
     search_original_title = HiddenColumn(name='search_original_title', type_=Unicode(150))
-    library_title = CoreColumn(name='library_title', type_=Unicode(150), nullable=False)
+    library_title = StringColumn(name='library_title', max_length=150,
+                                 nullable=False, validated=True)
     search_library_title = HiddenColumn(name='search_library_title',
                                         type_=Unicode(150), nullable=False)
-    production_year = CoreColumn(name='production_year', type_=Integer)
-    imdb_rate = CoreColumn(name='imdb_rate', type_=Float, nullable=False, default=0)
-    meta_score = CoreColumn(name='meta_score', type_=SmallInteger, nullable=False, default=0)
-    runtime = CoreColumn(name='runtime', type_=SmallInteger, nullable=False, default=0)
-    imdb_page = CoreColumn(name='imdb_page', type_=Unicode(150))
-    poster_name = CoreColumn(name='poster_name', type_=Unicode(250))
-    directory_name = CoreColumn(name='directory_name', type_=Unicode(250), nullable=False)
-    is_watched = CoreColumn(name='is_watched', type_=Boolean, nullable=False, default=False)
-    storyline = CoreColumn(name='storyline', type_=Unicode(5000))
+    production_year = CoreColumn(name='production_year', type_=Integer, min_value=1900,
+                                 max_value=datetime_services.current_year, validated=True)
+    imdb_rate = CoreColumn(name='imdb_rate', type_=Float, nullable=False, default=0,
+                           min_value=0, max_value=10, validated=True)
+    meta_score = CoreColumn(name='meta_score', type_=SmallInteger, nullable=False,
+                            default=0, min_value=0, max_value=100, validated=True)
+    runtime = CoreColumn(name='runtime', type_=SmallInteger, nullable=False,
+                         default=0, min_value=0, max_value=1200, validated=True)
+    imdb_page = StringColumn(name='imdb_page', max_length=150, validated=True)
+    poster_name = StringColumn(name='poster_name', max_length=250, validated=True)
+    directory_name = StringColumn(name='directory_name', max_length=250,
+                                  nullable=False, validated=True)
+    is_watched = CoreColumn(name='is_watched', type_=Boolean, nullable=False,
+                            default=False, validated=True)
+    storyline = StringColumn(name='storyline', max_length=5000, validated=True)
     search_storyline = HiddenColumn(name='search_storyline', type_=Unicode(5000))
-    watched_date = CoreColumn(name='watched_date', type_=TIMESTAMP(timezone=True))
-    content_rate = CoreColumn(name='content_rate', type_=SmallInteger)
+    watched_date = CoreColumn(name='watched_date', type_=TIMESTAMP(timezone=True), validated=True)
+    content_rate = CoreColumn(name='content_rate', type_=SmallInteger,
+                              validated=True, default=ContentRateEnum.UNKNOWN,
+                              nullable=False, check_in=ContentRateEnum.values())
     resolution = CoreColumn(name='resolution', type_=SmallInteger,
-                            nullable=False, default=ResolutionEnum.UNKNOWN)
-
-    @classmethod
-    def _customize_table_args(cls, table_args):
-        """
-        customizes different table args for current entity type.
-
-        :param dict table_args: a dict containing different table args.
-                                any changes to this dict must be done in-place.
-
-        :rtype: tuple | object
-        """
-
-        constraints = (CheckConstraint(cls.production_year >= cls.MIN_PRODUCTION_YEAR),
-                       CheckConstraint(and_(cls.imdb_rate <= cls.MAX_IMDB_RATE,
-                                            cls.imdb_rate >= cls.MIN_IMDB_RATE)),
-                       CheckConstraint(and_(cls.meta_score <= cls.MAX_META_SCORE,
-                                            cls.meta_score >= cls.MIN_META_SCORE)),
-                       CheckConstraint(cls.content_rate.in_(cls.ContentRateEnum.values())),
-                       CheckConstraint(cls.resolution.in_(cls.ResolutionEnum.values())))
-
-        return constraints
+                            nullable=False, default=ResolutionEnum.UNKNOWN,
+                            check_in=ResolutionEnum.values(), validated=True)
 
 
 class FavoriteMovieBaseEntity(CoreEntity):
@@ -125,24 +109,8 @@ class FavoriteMovieEntity(FavoriteMovieBaseEntity, CreateHistoryMixin):
 
     _extend_existing = True
 
-    MIN_FAVORITE_RATE = 0
-    MAX_FAVORITE_RATE = 10
-
-    favorite_rate = CoreColumn(name='favorite_rate', type_=Integer, nullable=False)
-
-    @classmethod
-    def _customize_table_args(cls, table_args):
-        """
-        customizes different table args for current entity type.
-
-        :param dict table_args: a dict containing different table args.
-                                any changes to this dict must be done in-place.
-
-        :rtype: tuple | object
-        """
-
-        return CheckConstraint(and_(cls.favorite_rate <= cls.MAX_FAVORITE_RATE,
-                                    cls.favorite_rate >= cls.MIN_FAVORITE_RATE))
+    favorite_rate = CoreColumn(name='favorite_rate', type_=Integer, nullable=False,
+                               min_value=0, max_value=10, validated=True)
 
 
 class Movie2ActorBaseEntity(CoreEntity):
@@ -163,8 +131,9 @@ class Movie2ActorEntity(Movie2ActorBaseEntity):
 
     _extend_existing = True
 
-    is_star = CoreColumn(name='is_star', type_=Boolean, nullable=False, default=False)
-    character = CoreColumn(name='character', type_=Unicode(150))
+    is_star = CoreColumn(name='is_star', type_=Boolean, nullable=False,
+                         default=False, validated=True)
+    character = StringColumn(name='character', max_length=150, validated=True)
     search_character = HiddenColumn(name='search_character', type_=Unicode(150))
 
 
@@ -186,7 +155,8 @@ class Movie2DirectorEntity(Movie2DirectorBaseEntity):
 
     _extend_existing = True
 
-    is_main = CoreColumn(name='is_main', type_=Boolean, nullable=False, default=False)
+    is_main = CoreColumn(name='is_main', type_=Boolean, nullable=False,
+                         default=False, validated=True)
 
 
 class MovieSuggestionCacheBaseEntity(CoreEntity):
@@ -253,8 +223,9 @@ class MovieRootPathEntity(MovieRootPathBaseEntity):
         ANDROID = 3
         IOS = 4
 
-    path = CoreColumn(name='path', type_=Unicode(250), nullable=False)
-    os = CoreColumn(name='os', type_=SmallInteger, nullable=False)
+    path = StringColumn(name='path', max_length=250, nullable=False, validated=True)
+    os = CoreColumn(name='os', type_=SmallInteger, nullable=False,
+                    validated=True, check_in=OSEnum.values())
 
     @classmethod
     def _customize_table_args(cls, table_args):
@@ -267,10 +238,7 @@ class MovieRootPathEntity(MovieRootPathBaseEntity):
         :rtype: tuple | object
         """
 
-        constraints = (CheckConstraint(cls.os.in_(cls.OSEnum.values())),
-                       UniqueConstraint(cls.os, cls.path))
-
-        return constraints
+        return UniqueConstraint(cls.os, cls.path)
 
 
 class CopyRequestedMovieBaseEntity(CoreEntity):
@@ -309,7 +277,8 @@ class Movie2GenreEntity(Movie2GenreBaseEntity):
 
     _extend_existing = True
 
-    is_main = CoreColumn(name='is_main', type_=Boolean, nullable=False, default=False)
+    is_main = CoreColumn(name='is_main', type_=Boolean, nullable=False,
+                         default=False, validated=True)
 
 
 class Movie2LanguageBaseEntity(CoreEntity):

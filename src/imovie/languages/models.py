@@ -3,11 +3,8 @@
 languages models module.
 """
 
-from sqlalchemy import Unicode
-
 from pyrin.database.model.base import CoreEntity
-from pyrin.database.orm.sql.schema.base import CoreColumn
-from pyrin.database.orm.sql.schema.columns import GUIDPKColumn
+from pyrin.database.orm.sql.schema.columns import GUIDPKColumn, StringColumn
 
 
 class LanguageBaseEntity(CoreEntity):
@@ -27,4 +24,4 @@ class LanguageEntity(LanguageBaseEntity):
 
     _extend_existing = True
 
-    name = CoreColumn(name='name', type_=Unicode(50), nullable=False, unique=True)
+    name = StringColumn(name='name', max_length=50, nullable=False, unique=True, validated=True)
