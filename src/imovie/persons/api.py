@@ -117,38 +117,3 @@ def delete(id, **options):
     """
 
     return persons_services.delete(id)
-
-
-@api('/persons/exists', authenticated=False)
-def exists(**options):
-    """
-    gets a value indicating that a person exists.
-
-    it searches using given imdb page link but if it
-    fails, it searches with given name if provided.
-
-    :keyword str imdb_page: imdb page link.
-    :keyword str fullname: fullname.
-
-    :rtype: bool
-    """
-
-    return persons_services.exists(**options)
-
-
-@api('/persons/try', authenticated=False)
-def try_get(**options):
-    """
-    gets a person with given imdb page link or fullname.
-
-    it searches using given imdb page link but if it
-    fails, it searches with given name if provided.
-    it returns None if person not found.
-
-    :keyword str imdb_page: imdb page link.
-    :keyword str fullname: fullname.
-
-    :rtype: PersonEntity
-    """
-
-    return persons_services.try_get(**options)
