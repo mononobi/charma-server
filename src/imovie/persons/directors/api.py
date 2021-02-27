@@ -76,7 +76,7 @@ def find(**filters):
     return directors_services.find(**filters)
 
 
-@api('/directors/exists', methods=HTTPMethodEnum.GET, authenticated=False)
+@api('/directors/exists', authenticated=False)
 def exists(**options):
     """
     gets a value indicating that a director exists.
@@ -104,7 +104,7 @@ def get_all(**options):
     return directors_services.get_all()
 
 
-@api('/directors/try', methods=HTTPMethodEnum.GET, authenticated=False)
+@api('/directors/try', authenticated=False)
 def try_get(**options):
     """
     gets a director with given imdb page link or fullname.
