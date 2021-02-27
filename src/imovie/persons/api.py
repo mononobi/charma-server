@@ -119,7 +119,7 @@ def delete(id, **options):
     return persons_services.delete(id)
 
 
-@api('/persons/exists', methods=HTTPMethodEnum.GET, authenticated=False)
+@api('/persons/exists', authenticated=False)
 def exists(**options):
     """
     gets a value indicating that a person exists.
@@ -136,7 +136,7 @@ def exists(**options):
     return persons_services.exists(**options)
 
 
-@api('/persons/try', methods=HTTPMethodEnum.GET, authenticated=False)
+@api('/persons/try', authenticated=False)
 def try_get(**options):
     """
     gets a person with given imdb page link or fullname.
