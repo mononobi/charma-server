@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-movies services module.
+movies api module.
 """
 
-from pyrin.application.services import get_component
+from pyrin.api.router.decorators import api
+from pyrin.core.enumerations import HTTPMethodEnum
 
-from imovie.movies import MoviesPackage
+import imovie.movies.services as movies_services
 
 
-def get(id):
+@api('/movies/<uuid:id>', authenticated=False)
+def get(id, **options):
     """
     gets movie with given id.
 
@@ -21,9 +23,10 @@ def get(id):
     :rtype: MovieEntity
     """
 
-    return get_component(MoviesPackage.COMPONENT_NAME).get(id)
+    return movies_services.get(id)
 
 
+@api('/movies', methods=HTTPMethodEnum.POST, authenticated=False)
 def create(library_title, directory_name, **options):
     """
     creates a new movie.
@@ -47,10 +50,10 @@ def create(library_title, directory_name, **options):
     :rtype: uuid.UUID
     """
 
-    return get_component(MoviesPackage.COMPONENT_NAME).create(library_title,
-                                                              directory_name, **options)
+    return movies_services.create(library_title, directory_name, **options)
 
 
+@api('/movies/<uuid:id>', methods=HTTPMethodEnum.PATCH, authenticated=False)
 def update(id, **options):
     """
     updates a movie with given id.
@@ -75,10 +78,11 @@ def update(id, **options):
     :raises MovieDoesNotExistError: movie does not exist error.
     """
 
-    return get_component(MoviesPackage.COMPONENT_NAME).update(id, **options)
+    return movies_services.update(id, **options)
 
 
-def delete(id):
+@api('/movies/<uuid:id>', methods=HTTPMethodEnum.DELETE, authenticated=False)
+def delete(id, **options):
     """
     deletes a movie with given id.
 
@@ -88,9 +92,10 @@ def delete(id):
     :rtype: int
     """
 
-    return get_component(MoviesPackage.COMPONENT_NAME).delete(id)
+    return movies_services.delete(id)
 
 
+@api('/movies', authenticated=False, paged=True, indexed=True)
 def find(**filters):
     """
     finds movies with given filters.
@@ -137,25 +142,10 @@ def find(**filters):
     :rtype: list[MovieEntity]
     """
 
-    return get_component(MoviesPackage.COMPONENT_NAME).find(**filters)
+    return movies_services.find(**filters)
 
 
-def exists(**options):
-    """
-    gets a value indicating that a movie exists.
-
-    it searches using given imdb page link but if it
-    fails, it searches with given title if provided.
-
-    :keyword str imdb_page: imdb page link.
-    :keyword str title: title.
-
-    :rtype: bool
-    """
-
-    return get_component(MoviesPackage.COMPONENT_NAME).exists(**options)
-
-
+@api('/movies/all', authenticated=False, paged=True, indexed=True)
 def get_all(**options):
     """
     gets all movies.
@@ -168,21 +158,4 @@ def get_all(**options):
     :rtype: list[MovieEntity]
     """
 
-    return get_component(MoviesPackage.COMPONENT_NAME).get_all(**options)
-
-
-def try_get(**options):
-    """
-    gets a movie with given imdb page link or title.
-
-    it searches using given imdb page link but if it
-    fails, it searches with given title if provided.
-    it returns None if movie not found.
-
-    :keyword str imdb_page: imdb page link.
-    :keyword str title: title.
-
-    :rtype: MovieEntity
-    """
-
-    return get_component(MoviesPackage.COMPONENT_NAME).try_get(**options)
+    return movies_services.get_all(**options)
