@@ -76,23 +76,6 @@ def find(**filters):
     return actors_services.find(**filters)
 
 
-@api('/actors/exists', authenticated=False)
-def exists(**options):
-    """
-    gets a value indicating that an actor exists.
-
-    it searches using given imdb page link but if it
-    fails, it searches with given name if provided.
-
-    :keyword str imdb_page: imdb page link.
-    :keyword str fullname: fullname.
-
-    :rtype: bool
-    """
-
-    return actors_services.exists(**options)
-
-
 @api('/actors/all', authenticated=False, paged=True, indexed=True)
 def get_all(**options):
     """
@@ -102,21 +85,3 @@ def get_all(**options):
     """
 
     return actors_services.get_all()
-
-
-@api('/actors/try', authenticated=False)
-def try_get(**options):
-    """
-    gets an actor with given imdb page link or fullname.
-
-    it searches using given imdb page link but if it
-    fails, it searches with given name if provided.
-    it returns None if actor not found.
-
-    :keyword str imdb_page: imdb page link.
-    :keyword str fullname: fullname.
-
-    :rtype: PersonEntity
-    """
-
-    return actors_services.try_get(**options)
