@@ -76,7 +76,7 @@ def find(**filters):
     return actors_services.find(**filters)
 
 
-@api('/actors/exists', methods=HTTPMethodEnum.GET, authenticated=False)
+@api('/actors/exists', authenticated=False)
 def exists(**options):
     """
     gets a value indicating that an actor exists.
@@ -104,7 +104,7 @@ def get_all(**options):
     return actors_services.get_all()
 
 
-@api('/actors/try', methods=HTTPMethodEnum.GET, authenticated=False)
+@api('/actors/try', authenticated=False)
 def try_get(**options):
     """
     gets an actor with given imdb page link or fullname.
