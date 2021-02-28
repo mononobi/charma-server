@@ -104,8 +104,9 @@ class PersonsQueries(CoreObject):
         store = get_current_store()
         query = store.query(*columns)
         query = self._prepare_query(query)
+        options.update(inject_total=SECURE_TRUE)
 
-        return query.filter(*expressions).paginate(inject_total=SECURE_TRUE, **options).all()
+        return query.filter(*expressions).paginate(**options).all()
 
     def _prepare_query(self, query):
         """
