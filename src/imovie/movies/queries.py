@@ -190,6 +190,8 @@ class MoviesQueries(CoreObject):
                                                         if not provided, `MovieEntity`
                                                         will be used.
 
+        :keyword list[str] | str order_by: order by columns.
+
         :rtype: list[MovieEntity]
         """
 
@@ -199,7 +201,9 @@ class MoviesQueries(CoreObject):
         query = self._prepare_query(query)
         options.update(inject_total=SECURE_TRUE)
 
-        return query.filter(*expressions).paginate(**options).all()
+        return query.filter(*expressions)\
+            .safe_order_by(MovieEntity, '-created_on', **options)\
+            .paginate(**options).all()
 
     def _prepare_query(self, query):
         """
@@ -340,6 +344,8 @@ class MoviesQueries(CoreObject):
                                                         if not provided, `MovieEntity`
                                                         will be used.
 
+        :keyword list[str] | str order_by: order by columns.
+
         :rtype: list[MovieEntity]
         """
 
@@ -376,6 +382,8 @@ class MoviesQueries(CoreObject):
                                                         to be used in select list.
                                                         if not provided, `MovieEntity`
                                                         will be used.
+
+        :keyword list[str] | str order_by: order by columns.
 
         :rtype: list[MovieEntity]
         """

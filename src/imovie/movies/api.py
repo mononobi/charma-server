@@ -139,6 +139,8 @@ def find(**filters):
                                                     if not provided, `MovieEntity`
                                                     will be used.
 
+    :keyword list[str] | str order_by: order by columns.
+
     :rtype: list[MovieEntity]
     """
 
@@ -154,6 +156,8 @@ def get_all(**options):
                                                     to be used in select list.
                                                     if not provided, `MovieEntity`
                                                     will be used.
+
+    :keyword list[str] | str order_by: order by columns.
 
     :rtype: list[MovieEntity]
     """
