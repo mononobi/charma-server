@@ -97,6 +97,13 @@ def find(**filters):
                                        of day for upper datetime.
                                        defaults to True if not provided.
 
+    :keyword list[CoreColumn | CoreEntity] columns: list of columns or entity types
+                                                    to be used in select list.
+                                                    if not provided, `PersonEntity`
+                                                    will be used.
+
+    :keyword list[str] | str order_by: order by columns.
+
     :rtype: list[PersonEntity]
     """
 
@@ -119,14 +126,21 @@ def exists(**options):
     return get_component(PersonsPackage.COMPONENT_NAME).exists(**options)
 
 
-def get_all():
+def get_all(**options):
     """
     gets all persons.
+
+    :keyword list[CoreColumn | CoreEntity] columns: list of columns or entity types
+                                                    to be used in select list.
+                                                    if not provided, `PersonEntity`
+                                                    will be used.
+
+    :keyword list[str] | str order_by: order by columns.
 
     :rtype: list[PersonEntity]
     """
 
-    return get_component(PersonsPackage.COMPONENT_NAME).get_all()
+    return get_component(PersonsPackage.COMPONENT_NAME).get_all(**options)
 
 
 def delete(id):

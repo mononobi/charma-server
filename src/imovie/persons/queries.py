@@ -97,6 +97,8 @@ class PersonsQueries(CoreObject):
                                                         if not provided, `PersonEntity`
                                                         will be used.
 
+        :keyword list[str] | str order_by: order by columns.
+
         :rtype: list[PersonEntity]
         """
 
@@ -106,7 +108,9 @@ class PersonsQueries(CoreObject):
         query = self._prepare_query(query)
         options.update(inject_total=SECURE_TRUE)
 
-        return query.filter(*expressions).paginate(**options).all()
+        return query.filter(*expressions)\
+            .safe_order_by(PersonEntity, 'created_on', **options)\
+            .paginate(**options).all()
 
     def _prepare_query(self, query):
         """
@@ -226,6 +230,8 @@ class PersonsQueries(CoreObject):
                                                         if not provided, `PersonEntity`
                                                         will be used.
 
+        :keyword list[str] | str order_by: order by columns.
+
         :rtype: list[PersonEntity]
         """
 
@@ -262,6 +268,8 @@ class PersonsQueries(CoreObject):
                                                         to be used in select list.
                                                         if not provided, `PersonEntity`
                                                         will be used.
+
+        :keyword list[str] | str order_by: order by columns.
 
         :rtype: list[PersonEntity]
         """

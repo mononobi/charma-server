@@ -88,6 +88,13 @@ def find(**filters):
                                        of day for upper datetime.
                                        defaults to True if not provided.
 
+    :keyword list[CoreColumn | CoreEntity] columns: list of columns or entity types
+                                                    to be used in select list.
+                                                    if not provided, `PersonEntity`
+                                                    will be used.
+
+    :keyword list[str] | str order_by: order by columns.
+
     :rtype: list[PersonEntity]
     """
 
@@ -99,10 +106,17 @@ def get_all(**options):
     """
     gets all persons.
 
+    :keyword list[CoreColumn | CoreEntity] columns: list of columns or entity types
+                                                    to be used in select list.
+                                                    if not provided, `PersonEntity`
+                                                    will be used.
+
+    :keyword list[str] | str order_by: order by columns.
+
     :rtype: list[PersonEntity]
     """
 
-    return persons_services.get_all()
+    return persons_services.get_all(**options)
 
 
 @api('/persons/<uuid:id>', methods=HTTPMethodEnum.DELETE, authenticated=False)
