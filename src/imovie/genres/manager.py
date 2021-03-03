@@ -102,7 +102,8 @@ class GenresManager(Manager):
         """
 
         store = get_current_store()
-        return store.query(GenreEntity).filter(*expressions).all()
+        return store.query(GenreEntity).filter(*expressions)\
+            .order_by(GenreEntity.name).all()
 
     def get(self, id):
         """

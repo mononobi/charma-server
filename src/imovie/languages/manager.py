@@ -62,7 +62,8 @@ class LanguagesManager(Manager):
         """
 
         store = get_current_store()
-        return store.query(LanguageEntity).filter(*expressions).all()
+        return store.query(LanguageEntity).filter(*expressions)\
+            .order_by(LanguageEntity.name).all()
 
     def get(self, id):
         """
