@@ -59,11 +59,11 @@ def find(**filters):
 
     :keyword bool consider_begin_of_day: specifies that consider begin
                                          of day for lower datetime.
-                                         defaults to True if not provided.
+                                         defaults to False if not provided.
 
     :keyword bool consider_end_of_day: specifies that consider end
                                        of day for upper datetime.
-                                       defaults to True if not provided.
+                                       defaults to False if not provided.
 
     :rtype: list[PersonEntity]
     """
