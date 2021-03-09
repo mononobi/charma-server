@@ -26,15 +26,3 @@ class DirectorHandler(AbstractPersonHandler):
         """
 
         directors_services.create(id, **options)
-
-    def delete(self, id, **options):
-        """
-        deletes the given director.
-
-        :param uuid.UUID id: person id.
-
-        :returns: count of deleted items.
-        :rtype: int
-        """
-
-        directors_services.delete(id)

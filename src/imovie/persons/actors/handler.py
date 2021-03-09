@@ -26,15 +26,3 @@ class ActorHandler(AbstractPersonHandler):
         """
 
         actors_services.create(id, **options)
-
-    def delete(self, id, **options):
-        """
-        deletes the given actor.
-
-        :param uuid.UUID id: person id.
-
-        :returns: count of deleted items.
-        :rtype: int
-        """
-
-        actors_services.delete(id)

@@ -7,6 +7,7 @@ import pyrin.validator.services as validator_services
 import pyrin.utils.misc as misc_utils
 
 from pyrin.core.globals import _
+from pyrin.core.mixin import HookMixin
 from pyrin.core.structs import Manager, Context
 from pyrin.database.services import get_current_store
 
@@ -18,7 +19,7 @@ from imovie.persons.exceptions import PersonDoesNotExistError, InvalidPersonHand
     PersonHandlerNameRequiredError, DuplicatedPersonHandlerError, PersonHandlerNotExistedError
 
 
-class PersonsManager(Manager, PersonsQueries):
+class PersonsManager(Manager, PersonsQueries, HookMixin):
     """
     persons manager class.
     """
@@ -171,9 +172,6 @@ class PersonsManager(Manager, PersonsQueries):
         entity.identifier = self._get_normalized(entity.imdb_page)
         entity.save()
 
-        for name, handler in self._handlers.items():
-            handler.update(entity.id, **options)
-
     def delete(self, id):
         """
         deletes a person with given id.
@@ -184,8 +182,8 @@ class PersonsManager(Manager, PersonsQueries):
         :rtype: int
         """
 
-        for name, handler in self._handlers.items():
-            handler.delete(id)
+        for hook in self._get_hooks():
+            hook.before_delete(id)
 
         store = get_current_store()
         return store.query(PersonEntity.id).filter(PersonEntity.id == id).delete()

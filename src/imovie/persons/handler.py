@@ -40,26 +40,3 @@ class AbstractPersonHandler(CoreObject, metaclass=PersonHandlerSingletonMeta):
         """
 
         raise CoreNotImplementedError()
-
-    @abstractmethod
-    def delete(self, id, **options):
-        """
-        deletes the given person.
-
-        :param uuid.UUID id: person id.
-
-        :raises CoreNotImplementedError: core not implemented error.
-
-        :returns: count of deleted items.
-        :rtype: int
-        """
-
-        raise CoreNotImplementedError()
-
-    def update(self, id, **options):
-        """
-        updates the given person.
-
-        :param uuid.UUID id: person id.
-        """
-        pass
