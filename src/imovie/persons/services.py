@@ -22,6 +22,18 @@ def register_handler(instance, **options):
     return get_component(PersonsPackage.COMPONENT_NAME).register_handler(instance, **options)
 
 
+def register_hook(instance):
+    """
+    registers the given instance into person hooks.
+
+    :param PersonHookBase instance: person hook instance to be registered.
+
+    :raises InvalidPersonHookTypeError: invalid person hook type error.
+    """
+
+    return get_component(PersonsPackage.COMPONENT_NAME).register_hook(instance)
+
+
 def get(id):
     """
     gets person with given id.

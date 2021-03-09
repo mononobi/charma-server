@@ -38,3 +38,32 @@ def person_handler(*args, **kwargs):
         return cls
 
     return decorator
+
+
+def person_hook():
+    """
+    decorator to register a person hook.
+
+    :raises InvalidPersonHookTypeError: invalid person hook type error.
+
+    :returns: person hook class.
+    :rtype: type
+    """
+
+    def decorator(cls):
+        """
+        decorates the given class and registers an instance
+        of it into available person hooks.
+
+        :param type cls: person hook class.
+
+        :returns: person hook class.
+        :rtype: type
+        """
+
+        instance = cls()
+        person_services.register_hook(instance)
+
+        return cls
+
+    return decorator

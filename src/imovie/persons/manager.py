@@ -13,10 +13,12 @@ from pyrin.database.services import get_current_store
 
 from imovie.persons import PersonsPackage
 from imovie.persons.handler import AbstractPersonHandler
+from imovie.persons.hooks import PersonHookBase
 from imovie.persons.models import PersonEntity
 from imovie.persons.queries import PersonsQueries
 from imovie.persons.exceptions import PersonDoesNotExistError, InvalidPersonHandlerTypeError, \
-    PersonHandlerNameRequiredError, DuplicatedPersonHandlerError, PersonHandlerNotExistedError
+    PersonHandlerNameRequiredError, DuplicatedPersonHandlerError, PersonHandlerNotExistedError, \
+    InvalidPersonHookTypeError
 
 
 class PersonsManager(Manager, PersonsQueries, HookMixin):
@@ -25,6 +27,8 @@ class PersonsManager(Manager, PersonsQueries, HookMixin):
     """
 
     package_class = PersonsPackage
+    hook_type = PersonHookBase
+    invalid_hook_type_error = InvalidPersonHookTypeError
 
     def __init__(self):
         """

@@ -53,3 +53,10 @@ class PersonHandlerNotExistedError(PersonsBusinessException):
     person handler not existed error.
     """
     pass
+
+
+class InvalidPersonHookTypeError(PersonsException):
+    """
+    invalid person hook type error.
+    """
+    pass

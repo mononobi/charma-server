@@ -8,6 +8,18 @@ from pyrin.application.services import get_component
 from imovie.movies import MoviesPackage
 
 
+def register_hook(instance):
+    """
+    registers the given instance into movie hooks.
+
+    :param MovieHookBase instance: movie hook instance to be registered.
+
+    :raises InvalidMovieHookTypeError: invalid movie hook type error.
+    """
+
+    return get_component(MoviesPackage.COMPONENT_NAME).register_hook(instance)
+
+
 def get(id):
     """
     gets movie with given id.

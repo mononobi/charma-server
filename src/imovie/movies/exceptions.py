@@ -25,3 +25,10 @@ class MovieDoesNotExistError(MoviesBusinessException):
     movie does not exist error.
     """
     pass
+
+
+class InvalidMovieHookTypeError(MoviesException):
+    """
+    invalid movie hook type error.
+    """
+    pass

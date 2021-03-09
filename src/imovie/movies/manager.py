@@ -14,7 +14,7 @@ from imovie.movies import MoviesPackage
 from imovie.movies.hooks import MovieHookBase
 from imovie.movies.models import MovieEntity
 from imovie.movies.queries import MoviesQueries
-from imovie.movies.exceptions import MovieDoesNotExistError
+from imovie.movies.exceptions import MovieDoesNotExistError, InvalidMovieHookTypeError
 
 
 class MoviesManager(Manager, MoviesQueries, HookMixin):
@@ -24,6 +24,7 @@ class MoviesManager(Manager, MoviesQueries, HookMixin):
 
     package_class = MoviesPackage
     hook_type = MovieHookBase
+    invalid_hook_type_error = InvalidMovieHookTypeError
 
     def _get(self, id):
         """
