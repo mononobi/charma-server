@@ -118,8 +118,11 @@ class Movie2ActorBaseEntity(CoreEntity):
 
     _table = 'movie_2_actor'
 
-    movie_id = FKColumn(fk='movie.id', name='movie_id', type_=GUID, primary_key=True)
-    person_id = FKColumn(fk='actor.person_id', name='person_id', type_=GUID, primary_key=True)
+    movie_id = FKColumn(fk='movie.id', name='movie_id', type_=GUID,
+                        primary_key=True, validated=True)
+
+    person_id = FKColumn(fk='actor.person_id', name='person_id',
+                         type_=GUID, primary_key=True, validated=True)
 
 
 class Movie2ActorEntity(Movie2ActorBaseEntity):

@@ -138,7 +138,7 @@ class MoviesManager(Manager, MoviesQueries, HookMixin):
         """
 
         for hook in self._get_hooks():
-            hook.delete(id)
+            hook.before_delete(id)
 
         store = get_current_store()
         return store.query(MovieEntity.id).filter(MovieEntity.id == id).delete()

@@ -14,9 +14,9 @@ class MovieHookBase(Hook):
     this class and register an instance of it in movie hooks.
     """
 
-    def delete(self, id):
+    def before_delete(self, id):
         """
-        deletes a movie with given id.
+        this method will be get called whenever a movie is going to be deleted.
 
         :param uuid.UUID id: movie id.
         """
