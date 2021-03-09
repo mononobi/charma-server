@@ -10,7 +10,7 @@ class MovieHookBase(Hook):
     """
     movie hook base class.
 
-    all packages that need to be hooked in movie business, must implement
+    all packages that need to be hooked in movies business, must implement
     this class and register an instance of it in movie hooks.
     """
 
