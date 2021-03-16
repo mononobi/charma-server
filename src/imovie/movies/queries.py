@@ -5,30 +5,20 @@ movies queries module.
 
 from sqlalchemy import or_
 
-import pyrin.utilities.string.normalizer.services as normalizer_services
+import pyrin.validator.services as validator_services
 
 from pyrin.core.globals import SECURE_TRUE
-from pyrin.core.structs import CoreObject
 from pyrin.database.services import get_current_store
 from pyrin.utils.sqlalchemy import add_datetime_range_clause, add_range_clause
-from pyrin.utilities.string.normalizer.enumerations import NormalizerEnum
 
+from imovie.common.normalizer.mixin import NormalizerMixin
 from imovie.movies.models import MovieEntity
 
 
-class MoviesQueries(CoreObject):
+class MoviesQueries(NormalizerMixin):
     """
     movies queries class.
     """
-
-    NAME_NORMALIZERS = [NormalizerEnum.PERSIAN_SIGN,
-                        NormalizerEnum.LATIN_SIGN,
-                        NormalizerEnum.PERSIAN_NUMBER,
-                        NormalizerEnum.ARABIC_NUMBER,
-                        NormalizerEnum.PERSIAN_LETTER,
-                        NormalizerEnum.LATIN_LETTER,
-                        NormalizerEnum.LOWERCASE,
-                        NormalizerEnum.SPACE]
 
     def _make_find_expressions(self, expressions, **filters):
         """
@@ -74,6 +64,8 @@ class MoviesQueries(CoreObject):
         :rtype: list
         """
 
+        validator_services.validate_for_find(MovieEntity, filters)
+
         title = filters.get('title')
         original_title = filters.get('original_title')
         library_title = filters.get('library_title')
@@ -101,15 +93,15 @@ class MoviesQueries(CoreObject):
         to_created_on = filters.get('to_created_on')
 
         if title is not None:
-            search_title = self._get_normalized(title)
+            search_title = self.get_normalized(title)
             expressions.append(MovieEntity.search_title.icontains(search_title))
 
         if original_title is not None:
-            search_original_title = self._get_normalized(original_title)
+            search_original_title = self.get_normalized(original_title)
             expressions.append(MovieEntity.search_original_title.icontains(search_original_title))
 
         if library_title is not None:
-            search_library_title = self._get_normalized(library_title)
+            search_library_title = self.get_normalized(library_title)
             expressions.append(MovieEntity.search_library_title.icontains(search_library_title))
 
         if production_year is not None:
@@ -138,7 +130,7 @@ class MoviesQueries(CoreObject):
                              from_runtime, to_runtime, **filters)
 
         if imdb_page is not None:
-            identifier = self._get_normalized(imdb_page)
+            identifier = self.get_normalized(imdb_page)
             expressions.append(MovieEntity.identifier.icontains(identifier))
 
         if poster_name is not None:
@@ -151,7 +143,7 @@ class MoviesQueries(CoreObject):
             expressions.append(MovieEntity.is_watched == is_watched)
 
         if storyline is not None:
-            search_storyline = self._get_normalized(storyline)
+            search_storyline = self.get_normalized(storyline)
             expressions.append(MovieEntity.search_storyline.icontains(search_storyline))
 
         if from_watched_date is not None or to_watched_date is not None:
@@ -167,17 +159,6 @@ class MoviesQueries(CoreObject):
         if from_created_on is not None or to_created_on is not None:
             add_datetime_range_clause(expressions, MovieEntity.created_on,
                                       from_created_on, to_created_on, **filters)
-
-    def _get_normalized(self, value):
-        """
-        gets normalized value from given value.
-
-        :param str value: value to be normalized.
-
-        :rtype: str
-        """
-
-        return normalizer_services.normalize(value, *self.NAME_NORMALIZERS)
 
     def _get_all(self, *expressions, **options):
         """
@@ -232,7 +213,7 @@ class MoviesQueries(CoreObject):
         if imdb_page in (None, ''):
             return False
 
-        identifier = self._get_normalized(imdb_page)
+        identifier = self.get_normalized(imdb_page)
         store = get_current_store()
         query = store.query(MovieEntity.id)
         query = self._prepare_query(query)
@@ -253,7 +234,7 @@ class MoviesQueries(CoreObject):
         if title in (None, ''):
             return False
 
-        search_title = self._get_normalized(title)
+        search_title = self.get_normalized(title)
         store = get_current_store()
         query = store.query(MovieEntity.id)
         query = self._prepare_query(query)
@@ -273,7 +254,7 @@ class MoviesQueries(CoreObject):
         :rtype: MovieEntity
         """
 
-        identifier = self._get_normalized(imdb_page)
+        identifier = self.get_normalized(imdb_page)
         store = get_current_store()
         query = store.query(MovieEntity)
         query = self._prepare_query(query)
@@ -292,7 +273,7 @@ class MoviesQueries(CoreObject):
         :rtype: MovieEntity
         """
 
-        search_title = self._get_normalized(title)
+        search_title = self.get_normalized(title)
         store = get_current_store()
         query = store.query(MovieEntity)
         query = self._prepare_query(query)

@@ -5,30 +5,20 @@ persons queries module.
 
 from sqlalchemy import or_
 
-import pyrin.utilities.string.normalizer.services as normalizer_services
+import pyrin.validator.services as validator_services
 
 from pyrin.core.globals import SECURE_TRUE
-from pyrin.core.structs import CoreObject
 from pyrin.database.services import get_current_store
 from pyrin.utils.sqlalchemy import add_datetime_range_clause
-from pyrin.utilities.string.normalizer.enumerations import NormalizerEnum
 
+from imovie.common.normalizer.mixin import NormalizerMixin
 from imovie.persons.models import PersonEntity
 
 
-class PersonsQueries(CoreObject):
+class PersonsQueries(NormalizerMixin):
     """
     persons queries class.
     """
-
-    NAME_NORMALIZERS = [NormalizerEnum.PERSIAN_SIGN,
-                        NormalizerEnum.LATIN_SIGN,
-                        NormalizerEnum.PERSIAN_NUMBER,
-                        NormalizerEnum.ARABIC_NUMBER,
-                        NormalizerEnum.PERSIAN_LETTER,
-                        NormalizerEnum.LATIN_LETTER,
-                        NormalizerEnum.LOWERCASE,
-                        NormalizerEnum.SPACE]
 
     def _make_find_expressions(self, expressions, **filters):
         """
@@ -54,6 +44,8 @@ class PersonsQueries(CoreObject):
         :rtype: list
         """
 
+        validator_services.validate_for_find(PersonEntity, filters)
+
         fullname = filters.get('fullname')
         imdb_page = filters.get('imdb_page')
         photo_name = filters.get('photo_name')
@@ -61,11 +53,11 @@ class PersonsQueries(CoreObject):
         to_created_on = filters.get('to_created_on')
 
         if fullname is not None:
-            search_name = self._get_normalized(fullname)
+            search_name = self.get_normalized(fullname)
             expressions.append(PersonEntity.search_name.icontains(search_name))
 
         if imdb_page is not None:
-            identifier = self._get_normalized(imdb_page)
+            identifier = self.get_normalized(imdb_page)
             expressions.append(PersonEntity.identifier.icontains(identifier))
 
         if photo_name is not None:
@@ -74,17 +66,6 @@ class PersonsQueries(CoreObject):
         if from_created_on is not None or to_created_on is not None:
             add_datetime_range_clause(expressions, PersonEntity.created_on,
                                       from_created_on, to_created_on, **filters)
-
-    def _get_normalized(self, value):
-        """
-        gets normalized value from given value.
-
-        :param str value: value to be normalized.
-
-        :rtype: str
-        """
-
-        return normalizer_services.normalize(value, *self.NAME_NORMALIZERS)
 
     def _get_all(self, *expressions, **options):
         """
@@ -138,7 +119,7 @@ class PersonsQueries(CoreObject):
         if imdb_page in (None, ''):
             return False
 
-        identifier = self._get_normalized(imdb_page)
+        identifier = self.get_normalized(imdb_page)
         store = get_current_store()
         query = store.query(PersonEntity.id)
         query = self._prepare_query(query)
@@ -159,7 +140,7 @@ class PersonsQueries(CoreObject):
         if fullname in (None, ''):
             return False
 
-        search_name = self._get_normalized(fullname)
+        search_name = self.get_normalized(fullname)
         store = get_current_store()
         query = store.query(PersonEntity.id)
         query = self._prepare_query(query)
@@ -179,7 +160,7 @@ class PersonsQueries(CoreObject):
         :rtype: PersonEntity
         """
 
-        identifier = self._get_normalized(imdb_page)
+        identifier = self.get_normalized(imdb_page)
         store = get_current_store()
         query = store.query(PersonEntity)
         query = self._prepare_query(query)
@@ -198,7 +179,7 @@ class PersonsQueries(CoreObject):
         :rtype: PersonEntity
         """
 
-        search_name = self._get_normalized(fullname)
+        search_name = self.get_normalized(fullname)
         store = get_current_store()
         query = store.query(PersonEntity)
         query = self._prepare_query(query)

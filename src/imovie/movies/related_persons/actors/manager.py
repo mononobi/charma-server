@@ -4,33 +4,23 @@ movies related actors manager module.
 """
 
 import pyrin.validator.services as validator_services
-import pyrin.utilities.string.normalizer.services as normalizer_services
 
 from pyrin.core.globals import _
 from pyrin.core.structs import Manager
 from pyrin.database.services import get_current_store
-from pyrin.utilities.string.normalizer.enumerations import NormalizerEnum
 
+from imovie.common.normalizer.mixin import NormalizerMixin
 from imovie.movies.models import Movie2ActorEntity
 from imovie.movies.related_persons.actors import RelatedActorsPackage
 from imovie.movies.related_persons.actors.exceptions import Movie2ActorDoesNotExistError
 
 
-class RelatedActorsManager(Manager):
+class RelatedActorsManager(Manager, NormalizerMixin):
     """
     movies related actors manager class.
     """
 
     package_class = RelatedActorsPackage
-
-    NAME_NORMALIZERS = [NormalizerEnum.PERSIAN_SIGN,
-                        NormalizerEnum.LATIN_SIGN,
-                        NormalizerEnum.PERSIAN_NUMBER,
-                        NormalizerEnum.ARABIC_NUMBER,
-                        NormalizerEnum.PERSIAN_LETTER,
-                        NormalizerEnum.LATIN_LETTER,
-                        NormalizerEnum.LOWERCASE,
-                        NormalizerEnum.SPACE]
 
     def _get(self, movie_id, person_id):
         """
@@ -46,17 +36,6 @@ class RelatedActorsManager(Manager):
 
         store = get_current_store()
         return store.query(Movie2ActorEntity).get((movie_id, person_id))
-
-    def _get_normalized(self, value):
-        """
-        gets normalized value from given value.
-
-        :param str value: value to be normalized.
-
-        :rtype: str
-        """
-
-        return normalizer_services.normalize(value, *self.NAME_NORMALIZERS)
 
     def get(self, movie_id, person_id):
         """
@@ -95,5 +74,5 @@ class RelatedActorsManager(Manager):
         entity = Movie2ActorEntity(**options)
         entity.movie_id = movie_id
         entity.person_id = person_id
-        entity.search_character = self._get_normalized(entity.character)
+        entity.search_character = self.get_normalized(entity.character)
         entity.save()
