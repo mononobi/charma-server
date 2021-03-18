@@ -3,7 +3,7 @@
 movies models module.
 """
 
-from sqlalchemy import Unicode
+from sqlalchemy import Unicode, UnicodeText
 
 import pyrin.globalization.datetime.services as datetime_services
 
@@ -80,8 +80,9 @@ class MovieEntity(MovieBaseEntity, CreateHistoryMixin):
                                   nullable=False, validated=True)
     is_watched = BooleanColumn(name='is_watched', nullable=False, default=False, validated=True)
     storyline = TextColumn(name='storyline', validated=True)
-    search_storyline = HiddenColumn(name='search_storyline', type_=Unicode(5000))
-    watched_date = TimeStampColumn(name='watched_date', validated=True)
+    search_storyline = HiddenColumn(name='search_storyline', type_=UnicodeText)
+    watched_date = TimeStampColumn(name='watched_date', validated=True,
+                                   validated_find=False, validated_range=True)
     content_rate = SmallIntegerColumn(name='content_rate', validated=True, nullable=False,
                                       default=ContentRateEnum.UNKNOWN,
                                       check_in=ContentRateEnum.values())
