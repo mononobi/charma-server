@@ -73,7 +73,7 @@ class MovieEntity(MovieBaseEntity, CreateHistoryMixin):
     meta_score = SmallIntegerColumn(name='meta_score', nullable=False, default=0,
                                     min_value=0, max_value=100, validated=True)
     runtime = SmallIntegerColumn(name='runtime', nullable=False, default=0,
-                                 min_value=0, max_value=1200, validated=True)
+                                 min_value=0, max_value=1400, validated=True)
     imdb_page = StringColumn(name='imdb_page', min_length=31, max_length=150, validated=True)
     poster_name = StringColumn(name='poster_name', max_length=250, validated=True)
     directory_name = StringColumn(name='directory_name', max_length=250,
