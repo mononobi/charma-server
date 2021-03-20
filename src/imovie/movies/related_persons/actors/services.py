@@ -71,7 +71,7 @@ def delete_by_movie(movie_id, **options):
                                                                               **options)
 
 
-def delete_by_person(person_id, **options):
+def delete_by_actor(person_id, **options):
     """
     deletes all movie to actor records of given person id.
 
@@ -82,5 +82,5 @@ def delete_by_person(person_id, **options):
     :rtype: int
     """
 
-    return get_component(RelatedActorsPackage.COMPONENT_NAME).delete_by_person(person_id,
-                                                                               **options)
+    return get_component(RelatedActorsPackage.COMPONENT_NAME).delete_by_actor(person_id,
+                                                                              **options)

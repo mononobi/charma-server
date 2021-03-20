@@ -13,3 +13,4 @@ class RelatedActorsPackage(Package):
 
     NAME = __name__
     COMPONENT_NAME = 'movies.related_persons.actors.component'
+    DEPENDS = ['imovie.persons.actors']

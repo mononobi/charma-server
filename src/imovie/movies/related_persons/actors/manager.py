@@ -88,7 +88,7 @@ class RelatedActorsManager(Manager, NormalizerMixin):
         """
 
         store = get_current_store()
-        return store.query(Movie2ActorEntity.id)\
+        return store.query(Movie2ActorEntity.person_id)\
             .filter(Movie2ActorEntity.movie_id == movie_id,
                     Movie2ActorEntity.person_id == person_id).delete()
 
@@ -104,10 +104,10 @@ class RelatedActorsManager(Manager, NormalizerMixin):
         """
 
         store = get_current_store()
-        return store.query(Movie2ActorEntity.id)\
+        return store.query(Movie2ActorEntity.person_id)\
             .filter(Movie2ActorEntity.movie_id == movie_id).delete()
 
-    def delete_by_person(self, person_id, **options):
+    def delete_by_actor(self, person_id, **options):
         """
         deletes all movie to actor records of given person id.
 
@@ -119,5 +119,5 @@ class RelatedActorsManager(Manager, NormalizerMixin):
         """
 
         store = get_current_store()
-        return store.query(Movie2ActorEntity.id)\
+        return store.query(Movie2ActorEntity.person_id)\
             .filter(Movie2ActorEntity.person_id == person_id).delete()

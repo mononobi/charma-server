@@ -18,3 +18,10 @@ class RelatedDirectorsBusinessException(CoreBusinessException, RelatedDirectorsE
     movies related directors business exception.
     """
     pass
+
+
+class Movie2DirectorDoesNotExistError(RelatedDirectorsBusinessException):
+    """
+    movie 2 director does not exist error.
+    """
+    pass
