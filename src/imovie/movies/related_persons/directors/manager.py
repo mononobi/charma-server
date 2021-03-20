@@ -10,13 +10,12 @@ from pyrin.core.globals import SECURE_FALSE
 from pyrin.core.structs import Manager
 from pyrin.database.services import get_current_store
 
-from imovie.common.normalizer.mixin import NormalizerMixin
 from imovie.movies.models import Movie2DirectorEntity
 from imovie.movies.related_persons.directors import RelatedDirectorsPackage
 from imovie.movies.related_persons.directors.exceptions import Movie2DirectorDoesNotExistError
 
 
-class RelatedDirectorsManager(Manager, NormalizerMixin):
+class RelatedDirectorsManager(Manager):
     """
     movies related directors manager class.
     """
