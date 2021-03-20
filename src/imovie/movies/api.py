@@ -6,7 +6,7 @@ movies api module.
 from pyrin.api.router.decorators import api
 from pyrin.core.enumerations import HTTPMethodEnum
 
-import imovie.movies.services as movies_services
+import imovie.movies.services as movie_services
 
 
 @api('/movies/<uuid:id>', authenticated=False)
@@ -23,7 +23,7 @@ def get(id, **options):
     :rtype: MovieEntity
     """
 
-    return movies_services.get(id)
+    return movie_services.get(id)
 
 
 @api('/movies', methods=HTTPMethodEnum.POST, authenticated=False)
@@ -50,7 +50,7 @@ def create(library_title, directory_name, **options):
     :rtype: uuid.UUID
     """
 
-    return movies_services.create(library_title, directory_name, **options)
+    return movie_services.create(library_title, directory_name, **options)
 
 
 @api('/movies/<uuid:id>', methods=HTTPMethodEnum.PATCH, authenticated=False)
@@ -78,7 +78,7 @@ def update(id, **options):
     :raises MovieDoesNotExistError: movie does not exist error.
     """
 
-    return movies_services.update(id, **options)
+    return movie_services.update(id, **options)
 
 
 @api('/movies/<uuid:id>', methods=HTTPMethodEnum.DELETE, authenticated=False)
@@ -92,7 +92,7 @@ def delete(id, **options):
     :rtype: int
     """
 
-    return movies_services.delete(id)
+    return movie_services.delete(id)
 
 
 @api('/movies', authenticated=False, paged=True, indexed=True)
@@ -144,7 +144,7 @@ def find(**filters):
     :rtype: list[MovieEntity]
     """
 
-    return movies_services.find(**filters)
+    return movie_services.find(**filters)
 
 
 @api('/movies/all', authenticated=False, paged=True, indexed=True)
@@ -162,4 +162,4 @@ def get_all(**options):
     :rtype: list[MovieEntity]
     """
 
-    return movies_services.get_all(**options)
+    return movie_services.get_all(**options)
