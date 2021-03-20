@@ -4,22 +4,27 @@ directors manager module.
 """
 
 from pyrin.core.globals import _
+from pyrin.core.mixin import HookMixin
 from pyrin.core.structs import Manager
 from pyrin.database.services import get_current_store
 
 from imovie.persons.directors import DirectorsPackage
+from imovie.persons.directors.hooks import DirectorHookBase
 from imovie.persons.directors.models import DirectorEntity
 from imovie.persons.models import PersonEntity
 from imovie.persons.queries import PersonsQueries
-from imovie.persons.directors.exceptions import DirectorDoesNotExistError
+from imovie.persons.directors.exceptions import DirectorDoesNotExistError, \
+    InvalidDirectorHookTypeError
 
 
-class DirectorsManager(Manager, PersonsQueries):
+class DirectorsManager(Manager, PersonsQueries, HookMixin):
     """
     directors manager class.
     """
 
     package_class = DirectorsPackage
+    hook_type = DirectorHookBase
+    invalid_hook_type_error = InvalidDirectorHookTypeError
 
     def _get(self, id):
         """
@@ -101,6 +106,9 @@ class DirectorsManager(Manager, PersonsQueries):
         :returns: count of deleted items.
         :rtype: int
         """
+
+        for hook in self._get_hooks():
+            hook.before_delete(id)
 
         store = get_current_store()
         return store.query(DirectorEntity.person_id)\

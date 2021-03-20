@@ -6,7 +6,7 @@ directors api module.
 from pyrin.api.router.decorators import api
 from pyrin.core.enumerations import HTTPMethodEnum
 
-import imovie.persons.directors.services as directors_services
+import imovie.persons.directors.services as director_services
 
 
 @api('/directors/<uuid:id>', authenticated=False)
@@ -23,7 +23,7 @@ def get(id, **options):
     :rtype: PersonEntity
     """
 
-    return directors_services.get(id)
+    return director_services.get(id)
 
 
 @api('/directors', methods=HTTPMethodEnum.POST, authenticated=False)
@@ -34,7 +34,7 @@ def create(id, **options):
     :param uuid.UUID id: person id.
     """
 
-    return directors_services.create(id, **options)
+    return director_services.create(id, **options)
 
 
 @api('/directors/<uuid:id>', methods=HTTPMethodEnum.DELETE, authenticated=False)
@@ -48,7 +48,7 @@ def delete(id, **options):
     :rtype: int
     """
 
-    return directors_services.delete(id)
+    return director_services.delete(id)
 
 
 @api('/directors', authenticated=False, paged=True, indexed=True)
@@ -73,7 +73,7 @@ def find(**filters):
     :rtype: list[PersonEntity]
     """
 
-    return directors_services.find(**filters)
+    return director_services.find(**filters)
 
 
 @api('/directors/all', authenticated=False, paged=True, indexed=True)
@@ -84,4 +84,4 @@ def get_all(**options):
     :rtype: list[PersonEntity]
     """
 
-    return directors_services.get_all()
+    return director_services.get_all()

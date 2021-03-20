@@ -5,8 +5,8 @@ movies related actors manager module.
 
 import pyrin.validator.services as validator_services
 
-from pyrin.core.globals import _
 from pyrin.core.structs import Manager
+from pyrin.core.globals import _, SECURE_FALSE
 from pyrin.database.services import get_current_store
 
 from imovie.common.normalizer.mixin import NormalizerMixin
@@ -69,10 +69,55 @@ class RelatedActorsManager(Manager, NormalizerMixin):
         :keyword str character: character name.
         """
 
-        options.update(movie_id=movie_id, person_id=person_id)
+        options.update(movie_id=movie_id, person_id=person_id, ignore_pk=SECURE_FALSE)
         validator_services.validate_dict(Movie2ActorEntity, options)
         entity = Movie2ActorEntity(**options)
-        entity.movie_id = movie_id
-        entity.person_id = person_id
-        entity.search_character = self.get_normalized(entity.character)
+        entity.search_character = self.get_normalized_name(entity.character)
         entity.save()
+
+    def delete(self, movie_id, person_id, **options):
+        """
+        deletes a movie to actor record.
+
+        it returns the count of deleted records.
+
+        :param uuid.UUID movie_id: movie id.
+        :param uuid.UUID person_id: person id.
+
+        :rtype: int
+        """
+
+        store = get_current_store()
+        return store.query(Movie2ActorEntity.id)\
+            .filter(Movie2ActorEntity.movie_id == movie_id,
+                    Movie2ActorEntity.person_id == person_id).delete()
+
+    def delete_by_movie(self, movie_id, **options):
+        """
+        deletes all movie to actor records of given movie id.
+
+        it returns the count of deleted records.
+
+        :param uuid.UUID movie_id: movie id.
+
+        :rtype: int
+        """
+
+        store = get_current_store()
+        return store.query(Movie2ActorEntity.id)\
+            .filter(Movie2ActorEntity.movie_id == movie_id).delete()
+
+    def delete_by_person(self, person_id, **options):
+        """
+        deletes all movie to actor records of given person id.
+
+        it returns the count of deleted records.
+
+        :param uuid.UUID person_id: person id.
+
+        :rtype: int
+        """
+
+        store = get_current_store()
+        return store.query(Movie2ActorEntity.id)\
+            .filter(Movie2ActorEntity.person_id == person_id).delete()

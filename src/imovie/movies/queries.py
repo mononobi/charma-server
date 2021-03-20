@@ -93,15 +93,15 @@ class MoviesQueries(NormalizerMixin):
         to_created_on = filters.get('to_created_on')
 
         if title is not None:
-            search_title = self.get_normalized(title)
+            search_title = self.get_normalized_name(title)
             expressions.append(MovieEntity.search_title.icontains(search_title))
 
         if original_title is not None:
-            search_original_title = self.get_normalized(original_title)
+            search_original_title = self.get_normalized_name(original_title)
             expressions.append(MovieEntity.search_original_title.icontains(search_original_title))
 
         if library_title is not None:
-            search_library_title = self.get_normalized(library_title)
+            search_library_title = self.get_normalized_name(library_title)
             expressions.append(MovieEntity.search_library_title.icontains(search_library_title))
 
         if production_year is not None:
@@ -130,7 +130,7 @@ class MoviesQueries(NormalizerMixin):
                              from_runtime, to_runtime, **filters)
 
         if imdb_page is not None:
-            identifier = self.get_normalized(imdb_page)
+            identifier = self.get_normalized_name(imdb_page)
             expressions.append(MovieEntity.identifier.icontains(identifier))
 
         if poster_name is not None:
@@ -143,7 +143,7 @@ class MoviesQueries(NormalizerMixin):
             expressions.append(MovieEntity.is_watched == is_watched)
 
         if storyline is not None:
-            search_storyline = self.get_normalized(storyline)
+            search_storyline = self.get_normalized_name(storyline)
             expressions.append(MovieEntity.search_storyline.icontains(search_storyline))
 
         if from_watched_date is not None or to_watched_date is not None:
@@ -213,7 +213,7 @@ class MoviesQueries(NormalizerMixin):
         if imdb_page in (None, ''):
             return False
 
-        identifier = self.get_normalized(imdb_page)
+        identifier = self.get_normalized_name(imdb_page)
         store = get_current_store()
         query = store.query(MovieEntity.id)
         query = self._prepare_query(query)
@@ -234,7 +234,7 @@ class MoviesQueries(NormalizerMixin):
         if title in (None, ''):
             return False
 
-        search_title = self.get_normalized(title)
+        search_title = self.get_normalized_name(title)
         store = get_current_store()
         query = store.query(MovieEntity.id)
         query = self._prepare_query(query)
@@ -254,7 +254,7 @@ class MoviesQueries(NormalizerMixin):
         :rtype: MovieEntity
         """
 
-        identifier = self.get_normalized(imdb_page)
+        identifier = self.get_normalized_name(imdb_page)
         store = get_current_store()
         query = store.query(MovieEntity)
         query = self._prepare_query(query)
@@ -273,7 +273,7 @@ class MoviesQueries(NormalizerMixin):
         :rtype: MovieEntity
         """
 
-        search_title = self.get_normalized(title)
+        search_title = self.get_normalized_name(title)
         store = get_current_store()
         query = store.query(MovieEntity)
         query = self._prepare_query(query)

@@ -14,16 +14,16 @@ class NormalizerMixin(CoreObject):
     normalizer mixin class.
     """
 
-    NORMALIZERS = [NormalizerEnum.PERSIAN_SIGN,
-                   NormalizerEnum.LATIN_SIGN,
-                   NormalizerEnum.PERSIAN_NUMBER,
-                   NormalizerEnum.ARABIC_NUMBER,
-                   NormalizerEnum.PERSIAN_LETTER,
-                   NormalizerEnum.LATIN_LETTER,
-                   NormalizerEnum.LOWERCASE,
-                   NormalizerEnum.SPACE]
+    SEARCH_NAME_NORMALIZERS = [NormalizerEnum.PERSIAN_SIGN,
+                               NormalizerEnum.LATIN_SIGN,
+                               NormalizerEnum.PERSIAN_NUMBER,
+                               NormalizerEnum.ARABIC_NUMBER,
+                               NormalizerEnum.PERSIAN_LETTER,
+                               NormalizerEnum.LATIN_LETTER,
+                               NormalizerEnum.LOWERCASE,
+                               NormalizerEnum.SPACE]
 
-    def get_normalized(self, value, **options):
+    def get_normalized_name(self, value, **options):
         """
         gets normalized value from given value.
 
@@ -46,4 +46,4 @@ class NormalizerMixin(CoreObject):
         :rtype: str
         """
 
-        return normalizer_services.normalize(value, *self.NORMALIZERS, **options)
+        return normalizer_services.normalize(value, *self.SEARCH_NAME_NORMALIZERS, **options)

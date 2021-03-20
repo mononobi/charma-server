@@ -8,6 +8,18 @@ from pyrin.application.services import get_component
 from imovie.persons.directors import DirectorsPackage
 
 
+def register_hook(instance):
+    """
+    registers the given instance into director hooks.
+
+    :param DirectorHookBase instance: director hook instance to be registered.
+
+    :raises InvalidDirectorHookTypeError: invalid director hook type error.
+    """
+
+    return get_component(DirectorsPackage.COMPONENT_NAME).register_hook(instance)
+
+
 def get(id):
     """
     gets director with given id.

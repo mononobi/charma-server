@@ -85,11 +85,11 @@ class MoviesManager(Manager, MoviesQueries, HookMixin):
         options.update(library_title=library_title, directory_name=directory_name)
         validator_services.validate_dict(MovieEntity, options)
         entity = MovieEntity(**options)
-        entity.search_library_title = self.get_normalized(entity.library_title)
-        entity.identifier = self.get_normalized(entity.imdb_page)
-        entity.search_title = self.get_normalized(entity.title)
-        entity.search_original_title = self.get_normalized(entity.original_title)
-        entity.search_storyline = self.get_normalized(entity.storyline)
+        entity.search_library_title = self.get_normalized_name(entity.library_title)
+        entity.identifier = self.get_normalized_name(entity.imdb_page)
+        entity.search_title = self.get_normalized_name(entity.title)
+        entity.search_original_title = self.get_normalized_name(entity.original_title)
+        entity.search_storyline = self.get_normalized_name(entity.storyline)
         entity.save()
 
         return entity.id
@@ -121,11 +121,11 @@ class MoviesManager(Manager, MoviesQueries, HookMixin):
         validator_services.validate_dict(MovieEntity, options, for_update=True)
         entity = self.get(id)
         entity.update(**options)
-        entity.search_library_title = self.get_normalized(entity.library_title)
-        entity.identifier = self.get_normalized(entity.imdb_page)
-        entity.search_title = self.get_normalized(entity.title)
-        entity.search_original_title = self.get_normalized(entity.original_title)
-        entity.search_storyline = self.get_normalized(entity.storyline)
+        entity.search_library_title = self.get_normalized_name(entity.library_title)
+        entity.identifier = self.get_normalized_name(entity.imdb_page)
+        entity.search_title = self.get_normalized_name(entity.title)
+        entity.search_original_title = self.get_normalized_name(entity.original_title)
+        entity.search_storyline = self.get_normalized_name(entity.storyline)
         entity.save()
 
     def delete(self, id):

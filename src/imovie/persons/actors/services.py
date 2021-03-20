@@ -8,6 +8,18 @@ from pyrin.application.services import get_component
 from imovie.persons.actors import ActorsPackage
 
 
+def register_hook(instance):
+    """
+    registers the given instance into actor hooks.
+
+    :param ActorHookBase instance: actor hook instance to be registered.
+
+    :raises InvalidActorHookTypeError: invalid actor hook type error.
+    """
+
+    return get_component(ActorsPackage.COMPONENT_NAME).register_hook(instance)
+
+
 def get(id):
     """
     gets actor with given id.

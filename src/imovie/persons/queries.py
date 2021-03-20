@@ -53,11 +53,11 @@ class PersonsQueries(NormalizerMixin):
         to_created_on = filters.get('to_created_on')
 
         if fullname is not None:
-            search_name = self.get_normalized(fullname)
+            search_name = self.get_normalized_name(fullname)
             expressions.append(PersonEntity.search_name.icontains(search_name))
 
         if imdb_page is not None:
-            identifier = self.get_normalized(imdb_page)
+            identifier = self.get_normalized_name(imdb_page)
             expressions.append(PersonEntity.identifier.icontains(identifier))
 
         if photo_name is not None:
@@ -119,7 +119,7 @@ class PersonsQueries(NormalizerMixin):
         if imdb_page in (None, ''):
             return False
 
-        identifier = self.get_normalized(imdb_page)
+        identifier = self.get_normalized_name(imdb_page)
         store = get_current_store()
         query = store.query(PersonEntity.id)
         query = self._prepare_query(query)
@@ -140,7 +140,7 @@ class PersonsQueries(NormalizerMixin):
         if fullname in (None, ''):
             return False
 
-        search_name = self.get_normalized(fullname)
+        search_name = self.get_normalized_name(fullname)
         store = get_current_store()
         query = store.query(PersonEntity.id)
         query = self._prepare_query(query)
@@ -160,7 +160,7 @@ class PersonsQueries(NormalizerMixin):
         :rtype: PersonEntity
         """
 
-        identifier = self.get_normalized(imdb_page)
+        identifier = self.get_normalized_name(imdb_page)
         store = get_current_store()
         query = store.query(PersonEntity)
         query = self._prepare_query(query)
@@ -179,7 +179,7 @@ class PersonsQueries(NormalizerMixin):
         :rtype: PersonEntity
         """
 
-        search_name = self.get_normalized(fullname)
+        search_name = self.get_normalized_name(fullname)
         store = get_current_store()
         query = store.query(PersonEntity)
         query = self._prepare_query(query)

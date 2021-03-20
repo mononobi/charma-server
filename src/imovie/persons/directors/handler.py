@@ -3,7 +3,7 @@
 directors handler module.
 """
 
-import imovie.persons.directors.services as directors_services
+import imovie.persons.directors.services as director_services
 
 from imovie.persons.decorators import person_handler
 from imovie.persons.enumerations import PersonTypeEnum
@@ -25,4 +25,4 @@ class DirectorHandler(AbstractPersonHandler):
         :param uuid.UUID id: person id.
         """
 
-        directors_services.create(id, **options)
+        director_services.create(id, **options)

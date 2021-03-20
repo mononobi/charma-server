@@ -6,7 +6,7 @@ genres api module.
 from pyrin.api.router.decorators import api
 from pyrin.core.enumerations import HTTPMethodEnum
 
-import imovie.genres.services as genres_services
+import imovie.genres.services as genre_services
 
 
 @api('/genres/<uuid:id>', authenticated=False)
@@ -25,7 +25,7 @@ def get(id, **options):
                  bool is_main)
     """
 
-    return genres_services.get(id)
+    return genre_services.get(id)
 
 
 @api('/genres', methods=HTTPMethodEnum.POST, authenticated=False)
@@ -41,7 +41,7 @@ def create(name, **options):
     :rtype: int
     """
 
-    return genres_services.create(name, **options)
+    return genre_services.create(name, **options)
 
 
 @api('/genres', authenticated=False)
@@ -58,7 +58,7 @@ def find(**filters):
     :rtype: list[dict]
     """
 
-    return genres_services.find(**filters)
+    return genre_services.find(**filters)
 
 
 @api('/genres/all', authenticated=False)
@@ -72,7 +72,7 @@ def get_all(**options):
     :rtype: list[dict]
     """
 
-    return genres_services.get_all()
+    return genre_services.get_all()
 
 
 @api('/genres/<uuid:id>', methods=HTTPMethodEnum.DELETE, authenticated=False)
@@ -86,4 +86,4 @@ def delete(id, **options):
     :rtype: int
     """
 
-    return genres_services.delete(id)
+    return genre_services.delete(id)

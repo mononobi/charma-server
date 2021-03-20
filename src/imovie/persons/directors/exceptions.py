@@ -25,3 +25,10 @@ class DirectorDoesNotExistError(DirectorsBusinessException):
     director does not exist error.
     """
     pass
+
+
+class InvalidDirectorHookTypeError(DirectorsException):
+    """
+    invalid director hook type error.
+    """
+    pass

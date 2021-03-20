@@ -6,7 +6,7 @@ languages api module.
 from pyrin.api.router.decorators import api
 from pyrin.core.enumerations import HTTPMethodEnum
 
-import imovie.languages.services as languages_services
+import imovie.languages.services as language_services
 
 
 @api('/languages/<uuid:id>', authenticated=False)
@@ -23,7 +23,7 @@ def get(id, **options):
     :rtype: LanguageEntity
     """
 
-    return languages_services.get(id)
+    return language_services.get(id)
 
 
 @api('/languages', methods=HTTPMethodEnum.POST, authenticated=False)
@@ -39,7 +39,7 @@ def create(name, **options):
     :rtype: int
     """
 
-    return languages_services.create(name, **options)
+    return language_services.create(name, **options)
 
 
 @api('/languages', authenticated=False)
@@ -52,7 +52,7 @@ def find(**filters):
     :rtype: list[LanguageEntity]
     """
 
-    return languages_services.find(**filters)
+    return language_services.find(**filters)
 
 
 @api('/languages/all', authenticated=False)
@@ -63,7 +63,7 @@ def get_all(**options):
     :rtype: list[LanguageEntity]
     """
 
-    return languages_services.get_all()
+    return language_services.get_all()
 
 
 @api('/languages/<uuid:id>', methods=HTTPMethodEnum.DELETE, authenticated=False)
@@ -77,4 +77,4 @@ def delete(id, **options):
     :rtype: int
     """
 
-    return languages_services.delete(id)
+    return language_services.delete(id)

@@ -12,3 +12,4 @@ class RelatedPersonsPackage(Package):
     """
 
     NAME = __name__
+    DEPENDS = ['imovie.persons']

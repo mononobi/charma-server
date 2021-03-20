@@ -6,7 +6,7 @@ actors api module.
 from pyrin.api.router.decorators import api
 from pyrin.core.enumerations import HTTPMethodEnum
 
-import imovie.persons.actors.services as actors_services
+import imovie.persons.actors.services as actor_services
 
 
 @api('/actors/<uuid:id>', authenticated=False)
@@ -23,7 +23,7 @@ def get(id, **options):
     :rtype: PersonEntity
     """
 
-    return actors_services.get(id)
+    return actor_services.get(id)
 
 
 @api('/actors', methods=HTTPMethodEnum.POST, authenticated=False)
@@ -34,7 +34,7 @@ def create(id, **options):
     :param uuid.UUID id: person id.
     """
 
-    return actors_services.create(id, **options)
+    return actor_services.create(id, **options)
 
 
 @api('/actors/<uuid:id>', methods=HTTPMethodEnum.DELETE, authenticated=False)
@@ -48,7 +48,7 @@ def delete(id, **options):
     :rtype: int
     """
 
-    return actors_services.delete(id)
+    return actor_services.delete(id)
 
 
 @api('/actors', authenticated=False, paged=True, indexed=True)
@@ -73,7 +73,7 @@ def find(**filters):
     :rtype: list[PersonEntity]
     """
 
-    return actors_services.find(**filters)
+    return actor_services.find(**filters)
 
 
 @api('/actors/all', authenticated=False, paged=True, indexed=True)
@@ -84,4 +84,4 @@ def get_all(**options):
     :rtype: list[PersonEntity]
     """
 
-    return actors_services.get_all()
+    return actor_services.get_all()

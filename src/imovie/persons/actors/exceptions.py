@@ -25,3 +25,10 @@ class ActorDoesNotExistError(ActorsBusinessException):
     actor does not exist error.
     """
     pass
+
+
+class InvalidActorHookTypeError(ActorsException):
+    """
+    invalid actor hook type error.
+    """
+    pass
