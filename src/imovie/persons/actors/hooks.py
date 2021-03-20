@@ -5,6 +5,11 @@ actors hooks module.
 
 from pyrin.core.structs import Hook
 
+import imovie.persons.actors.services as actor_services
+
+from imovie.persons.decorators import person_hook
+from imovie.persons.hooks import PersonHookBase
+
 
 class ActorHookBase(Hook):
     """
@@ -21,3 +26,19 @@ class ActorHookBase(Hook):
         :param uuid.UUID id: person id.
         """
         pass
+
+
+@person_hook()
+class PersonHook(PersonHookBase):
+    """
+    person hook class.
+    """
+
+    def before_delete(self, id):
+        """
+        this method will be get called whenever a person is going to be deleted.
+
+        :param uuid.UUID id: person id.
+        """
+
+        actor_services.delete(id)
