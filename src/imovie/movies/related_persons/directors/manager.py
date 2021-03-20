@@ -5,9 +5,8 @@ movies related directors manager module.
 
 import pyrin.validator.services as validator_services
 
-from pyrin.core.globals import _
-from pyrin.core.globals import SECURE_FALSE
 from pyrin.core.structs import Manager
+from pyrin.core.globals import _, SECURE_FALSE
 from pyrin.database.services import get_current_store
 
 from imovie.movies.models import Movie2DirectorEntity
