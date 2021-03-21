@@ -30,9 +30,12 @@ class LanguagesManager(Manager):
 
         :keyword str name: language name.
 
+        :raises ValidationError: validation error.
+
         :rtype: list
         """
 
+        validator_services.validate_for_find(LanguageEntity, filters)
         name = filters.get('name')
 
         if name is not None:
@@ -107,6 +110,8 @@ class LanguagesManager(Manager):
         finds languages with given filters.
 
         :keyword str name: language name.
+
+        :raises ValidationError: validation error.
 
         :rtype: list[LanguageEntity]
         """
