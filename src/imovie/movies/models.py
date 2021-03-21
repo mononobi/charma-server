@@ -98,7 +98,8 @@ class FavoriteMovieBaseEntity(CoreEntity):
 
     _table = 'favorite_movie'
 
-    movie_id = FKColumn(fk='movie.id', name='movie_id', type_=GUID, primary_key=True)
+    movie_id = FKColumn(fk='movie.id', name='movie_id', type_=GUID,
+                        primary_key=True, validated=True)
 
 
 class FavoriteMovieEntity(FavoriteMovieBaseEntity, CreateHistoryMixin):
@@ -145,8 +146,10 @@ class Movie2DirectorBaseEntity(CoreEntity):
 
     _table = 'movie_2_director'
 
-    movie_id = FKColumn(fk='movie.id', name='movie_id', type_=GUID, primary_key=True)
-    person_id = FKColumn(fk='director.person_id', name='person_id', type_=GUID, primary_key=True)
+    movie_id = FKColumn(fk='movie.id', name='movie_id', type_=GUID,
+                        primary_key=True, validated=True)
+    person_id = FKColumn(fk='director.person_id', name='person_id', type_=GUID,
+                         primary_key=True, validated=True)
 
 
 class Movie2DirectorEntity(Movie2DirectorBaseEntity):
@@ -166,7 +169,8 @@ class MovieSuggestionCacheBaseEntity(CoreEntity):
 
     _table = 'movie_suggestion_cache'
 
-    movie_id = FKColumn(fk='movie.id', name='movie_id', type_=GUID, primary_key=True)
+    movie_id = FKColumn(fk='movie.id', name='movie_id', type_=GUID,
+                        primary_key=True, validated=True)
 
 
 class MovieSuggestionCacheEntity(MovieSuggestionCacheBaseEntity):
@@ -184,7 +188,8 @@ class WatchLaterBaseEntity(CoreEntity):
 
     _table = 'watch_later'
 
-    movie_id = FKColumn(fk='movie.id', name='movie_id', type_=GUID, primary_key=True)
+    movie_id = FKColumn(fk='movie.id', name='movie_id', type_=GUID,
+                        primary_key=True, validated=True)
 
 
 class WatchLaterEntity(WatchLaterBaseEntity, CreateHistoryMixin):
@@ -236,7 +241,8 @@ class CopyRequestedMovieBaseEntity(CoreEntity):
 
     _table = 'copy_requested_movie'
 
-    movie_id = FKColumn(fk='movie.id', name='movie_id', type_=GUID, primary_key=True)
+    movie_id = FKColumn(fk='movie.id', name='movie_id', type_=GUID,
+                        primary_key=True, validated=True)
 
 
 class CopyRequestedMovieEntity(CopyRequestedMovieBaseEntity):
@@ -254,8 +260,10 @@ class Movie2GenreBaseEntity(CoreEntity):
 
     _table = 'movie_2_genre'
 
-    movie_id = FKColumn(fk='movie.id', name='movie_id', type_=GUID, primary_key=True)
-    genre_id = FKColumn(fk='genre.id', name='genre_id', type_=GUID, primary_key=True)
+    movie_id = FKColumn(fk='movie.id', name='movie_id', type_=GUID,
+                        primary_key=True, validated=True)
+    genre_id = FKColumn(fk='genre.id', name='genre_id', type_=GUID,
+                        primary_key=True, validated=True)
 
 
 class Movie2GenreEntity(Movie2GenreBaseEntity):
@@ -275,8 +283,10 @@ class Movie2LanguageBaseEntity(CoreEntity):
 
     _table = 'movie_2_language'
 
-    movie_id = FKColumn(fk='movie.id', name='movie_id', type_=GUID, primary_key=True)
-    language_id = FKColumn(fk='language.id', name='language_id', type_=GUID, primary_key=True)
+    movie_id = FKColumn(fk='movie.id', name='movie_id', type_=GUID,
+                        primary_key=True, validated=True)
+    language_id = FKColumn(fk='language.id', name='language_id', type_=GUID,
+                           primary_key=True, validated=True)
 
 
 class Movie2LanguageEntity(Movie2LanguageBaseEntity):
