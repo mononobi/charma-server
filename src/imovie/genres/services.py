@@ -46,6 +46,8 @@ def find(**filters):
     :keyword str name: genre name.
     :keyword bool is_main: is main genre.
 
+    :raises ValidationError: validation error.
+
     :rtype: list[GenreEntity]
     """
 
