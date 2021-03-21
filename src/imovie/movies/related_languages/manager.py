@@ -64,6 +64,10 @@ class RelatedLanguagesManager(Manager):
 
         :param uuid.UUID movie_id: movie id.
         :param uuid.UUID language_id: language id.
+
+        :keyword bool is_main: is main.
+
+        :raises ValidationError: validation error.
         """
 
         options.update(movie_id=movie_id, language_id=language_id, ignore_pk=SECURE_FALSE)

@@ -31,6 +31,10 @@ def create(movie_id, language_id, **options):
 
     :param uuid.UUID movie_id: movie id.
     :param uuid.UUID language_id: language id.
+
+    :keyword bool is_main: is main.
+
+    :raises ValidationError: validation error.
     """
 
     return get_component(RelatedLanguagesPackage.COMPONENT_NAME).create(movie_id,
