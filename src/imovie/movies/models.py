@@ -295,3 +295,5 @@ class Movie2LanguageEntity(Movie2LanguageBaseEntity):
     """
 
     _extend_existing = True
+
+    is_main = BooleanColumn(name='is_main', nullable=False, default=False, validated=True)
