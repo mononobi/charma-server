@@ -66,9 +66,12 @@ class GenresManager(Manager):
         :keyword str name: genre name.
         :keyword bool is_main: is main genre.
 
+        :raises ValidationError: validation error.
+
         :rtype: list
         """
 
+        validator_services.validate_for_find(GenreEntity, filters)
         name = filters.get('name')
         is_main = filters.get('is_main')
 
@@ -150,6 +153,8 @@ class GenresManager(Manager):
 
         :keyword str name: genre name.
         :keyword bool is_main: is main genre.
+
+        :raises ValidationError: validation error.
 
         :rtype: list[GenreEntity]
         """
