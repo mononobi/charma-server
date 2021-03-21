@@ -67,6 +67,8 @@ class RelatedActorsManager(Manager, NormalizerMixin):
 
         :keyword bool is_star: is star.
         :keyword str character: character name.
+
+        :raises ValidationError: validation error.
         """
 
         options.update(movie_id=movie_id, person_id=person_id, ignore_pk=SECURE_FALSE)

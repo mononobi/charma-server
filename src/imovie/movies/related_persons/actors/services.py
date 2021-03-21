@@ -34,6 +34,8 @@ def create(movie_id, person_id, **options):
 
     :keyword bool is_star: is star.
     :keyword str character: character name.
+
+    :raises ValidationError: validation error.
     """
 
     return get_component(RelatedActorsPackage.COMPONENT_NAME).create(movie_id,

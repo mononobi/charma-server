@@ -65,6 +65,8 @@ class RelatedDirectorsManager(Manager):
         :param uuid.UUID person_id: person id.
 
         :keyword bool is_main: is_main.
+
+        :raises ValidationError: validation error.
         """
 
         options.update(movie_id=movie_id, person_id=person_id, ignore_pk=SECURE_FALSE)

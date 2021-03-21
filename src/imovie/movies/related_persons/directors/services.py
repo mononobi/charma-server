@@ -33,6 +33,8 @@ def create(movie_id, person_id, **options):
     :param uuid.UUID person_id: person id.
 
     :keyword bool is_main: is main.
+
+    :raises ValidationError: validation error.
     """
 
     return get_component(RelatedDirectorsPackage.COMPONENT_NAME).create(movie_id,
