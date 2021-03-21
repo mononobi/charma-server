@@ -33,6 +33,8 @@ def create(movie_id, genre_id, **options):
     :param uuid.UUID genre_id: genre id.
 
     :keyword bool is_main: is main.
+
+    :raises ValidationError: validation error.
     """
 
     return get_component(RelatedGenresPackage.COMPONENT_NAME).create(movie_id,

@@ -65,6 +65,8 @@ class RelatedGenresManager(Manager):
         :param uuid.UUID genre_id: genre id.
 
         :keyword bool is_main: is main.
+
+        :raises ValidationError: validation error.
         """
 
         options.update(movie_id=movie_id, genre_id=genre_id, ignore_pk=SECURE_FALSE)
