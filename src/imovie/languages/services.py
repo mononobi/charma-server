@@ -45,6 +45,8 @@ def find(**filters):
 
     :keyword str name: language name.
 
+    :raises ValidationError: validation error.
+
     :rtype: list[LanguageEntity]
     """
 
