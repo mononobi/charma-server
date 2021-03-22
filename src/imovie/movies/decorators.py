@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-movies decorator module.
+movies decorators module.
 """
 
 import imovie.movies.services as movie_services
