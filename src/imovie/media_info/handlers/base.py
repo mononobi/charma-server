@@ -19,11 +19,9 @@ class MediaInfoProviderBase(AbstractMediaInfoProvider):
     media info provider base class.
     """
 
-    def get_info(self, file):
+    def get_info(self, file, **options):
         """
         gets a dict containing media info of given file.
-
-        it returns None if it could not detect media info.
 
         :param str file: absolute path of video file.
 
@@ -43,25 +41,27 @@ class MediaInfoProviderBase(AbstractMediaInfoProvider):
         if not path.isfile(file):
             raise InvalidMediaFileError(_('Provided path is not a file.'))
 
-        result = self._get_info(file)
-        if result is not None:
-            runtime = result.get('runtime')
-            height = result.get('height')
-            width = result.get('width')
-            if runtime is None or height is None or width is None:
-                return None
+        result = self._get_info(file, **options)
+        runtime = result.get('runtime')
+        height = result.get('height')
+        width = result.get('width')
 
-            if runtime <= 0 or height <= 0 or width <= 0:
-                return None
+        if runtime is None or runtime <= 0:
+            result.pop('runtime', None)
+
+        if height is None or height <= 0:
+            result.pop('height', None)
+
+        if width is None or width <= 0:
+            result.pop('width', None)
 
         return result
 
     @abstractmethod
-    def _get_info(self, file):
+    def _get_info(self, file, **options):
         """
         gets a dict containing media info of given file.
 
-        it returns None if it could not detect media info.
         subclasses must override this method.
 
         :param str file: absolute path of video file.

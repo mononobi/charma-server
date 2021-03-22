@@ -27,11 +27,9 @@ class AbstractMediaInfoProvider(CoreObject, metaclass=MediaInfoSingletonMeta):
     """
 
     @abstractmethod
-    def get_info(self, file):
+    def get_info(self, file, **options):
         """
         gets a dict containing media info of given file.
-
-        it returns None if it could not detect media info.
 
         :param str file: absolute path of video file.
 

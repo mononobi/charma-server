@@ -3,19 +3,19 @@
 media info handlers opencv module.
 """
 
+from imovie.media_info.decorators import media_info_provider
 from imovie.media_info.handlers.base import MediaInfoProviderBase
 
 
+@media_info_provider()
 class OpenCVMediaInfoProvider(MediaInfoProviderBase):
     """
     opencv media info provider class.
     """
 
-    def _get_info(self, file):
+    def _get_info(self, file, **options):
         """
         gets a dict containing media info of given file.
-
-        it returns None if it could not detect media info.
 
         :param str file: absolute path of video file.
 
