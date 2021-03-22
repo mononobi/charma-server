@@ -26,3 +26,15 @@ def get_file_extension(file, **options):
         extension = extension.replace('.', '')
 
     return extension.lower()
+
+
+def get_file_size(file, **options):
+    """
+    gets the file size in bytes.
+
+    :param str file: file path to get its size.
+
+    :rtype: int
+    """
+
+    return path.getsize(file)

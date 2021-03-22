@@ -13,4 +13,3 @@ class MediaInfoPackage(Package):
 
     NAME = __name__
     COMPONENT_NAME = 'media_info.component'
-    CONFIG_STORE_NAMES = ['media.info']

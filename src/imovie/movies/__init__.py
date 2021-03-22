@@ -13,3 +13,4 @@ class MoviesPackage(Package):
 
     NAME = __name__
     COMPONENT_NAME = 'movies.component'
+    CONFIG_STORE_NAMES = ['movies']

@@ -3,16 +3,16 @@
 media info manager module.
 """
 
-import pyrin.configuration.services as config_services
+from os import path
 
+from pyrin.core.globals import _
 from pyrin.core.mixin import HookMixin
 from pyrin.core.structs import Manager
 
-import imovie.utils.path as path_utils
-
 from imovie.media_info import MediaInfoPackage
 from imovie.media_info.interface import AbstractMediaInfoProvider
-from imovie.media_info.exceptions import InvalidMediaInfoProviderTypeError
+from imovie.media_info.exceptions import InvalidMediaInfoProviderTypeError, \
+    MediaFileDoesNotExistError, IsNotFileError
 
 
 class MediaInfoManager(Manager, HookMixin):
@@ -23,27 +23,6 @@ class MediaInfoManager(Manager, HookMixin):
     package_class = MediaInfoPackage
     hook_type = AbstractMediaInfoProvider
     invalid_hook_type_error = InvalidMediaInfoProviderTypeError
-
-    def __init__(self):
-        """
-        initializes an instance of MediaInfoManager.
-        """
-
-        super().__init__()
-
-        self._video_extensions = self._load_video_extensions()
-        self._min_runtime = config_services.get('media.info', 'general', 'min_runtime')
-        self._min_size = config_services.get('media.info', 'general', 'min_size')
-
-    def _load_video_extensions(self):
-        """
-        loads all valid video extensions from config store.
-
-        :rtype: list[str]
-        """
-
-        result = config_services.get('media.info', 'general', 'video_extensions')
-        return [item.lower() for item in result]
 
     def _is_complete(self, info):
         """
@@ -56,58 +35,21 @@ class MediaInfoManager(Manager, HookMixin):
 
         return 'runtime' in info and 'height' in info and 'width' in info
 
-    def get_info(self, file, **options):
+    def _validate_file_exists(self, file):
         """
-        gets a dict containing media info of given file.
-
-        :param str file: absolute path of video file.
-
-        :returns: dict(int runtime,
-                       int height,
-                       int width)
-
-        :rtype: dict
-        """
-
-        result = dict()
-        for provider in self._get_hooks():
-            current_result = provider.get_info(file, **options)
-            result.update(current_result)
-            if self._is_complete(result) is True:
-                break
-
-        result.setdefault('runtime', 0)
-        result.setdefault('height', 0)
-        result.setdefault('width', 0)
-        return result
-
-    def is_video_extension(self, file, **options):
-        """
-        gets a value indicating that given file has a valid video file extension.
+        validates that given file exists.
 
         :param str file: absolute path of file.
 
-        :rtype: bool
+        :raises MediaFileDoesNotExistError: media file does not exist error.
+        :raises IsNotFileError: is not file error.
         """
 
-        if file is None:
-            return False
+        if not path.exists(file):
+            raise MediaFileDoesNotExistError(_('Provided media file path does not exist.'))
 
-        extension = path_utils.get_file_extension(file)
-        return extension in self._video_extensions
-
-    def is_video_file(self, file, **options):
-        """
-        gets a value indicating that given file is a valid video file.
-
-        :param str file: absolute path of file.
-
-        :rtype: bool
-        """
-
-        is_extension = self.is_video_extension(file, **options)
-        if is_extension is False:
-            return False
+        if not path.isfile(file):
+            raise IsNotFileError(_('Provided path is not a file.'))
 
     def register_provider(self, instance):
         """
@@ -120,3 +62,32 @@ class MediaInfoManager(Manager, HookMixin):
         """
 
         self.register_hook(instance)
+
+    def get_info(self, file, **options):
+        """
+        gets a dict containing media info of given file.
+
+        :param str file: absolute path of video file.
+
+        :raises MediaFileDoesNotExistError: media file does not exist error.
+        :raises IsNotFileError: is not file error.
+
+        :returns: dict(int runtime,
+                       int height,
+                       int width)
+
+        :rtype: dict
+        """
+
+        self._validate_file_exists(file)
+        result = dict()
+        for provider in self._get_hooks():
+            current_result = provider.get_info(file, **options)
+            result.update(current_result)
+            if self._is_complete(result) is True:
+                break
+
+        result.setdefault('runtime', 0)
+        result.setdefault('height', 0)
+        result.setdefault('width', 0)
+        return result

@@ -19,17 +19,3 @@ class MediaInfoHandlersBusinessException(CoreBusinessException,
     media info handlers business exception.
     """
     pass
-
-
-class MediaFileDoesNotExistError(MediaInfoHandlersBusinessException):
-    """
-    media file does not exist error.
-    """
-    pass
-
-
-class InvalidMediaFileError(MediaInfoHandlersBusinessException):
-    """
-    invalid media file error.
-    """
-    pass

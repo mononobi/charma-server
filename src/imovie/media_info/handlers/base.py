@@ -3,15 +3,11 @@
 media info handlers base module.
 """
 
-from os import path
 from abc import abstractmethod
 
-from pyrin.core.globals import _
 from pyrin.core.exceptions import CoreNotImplementedError
 
 from imovie.media_info.interface import AbstractMediaInfoProvider
-from imovie.media_info.handlers.exceptions import MediaFileDoesNotExistError, \
-    InvalidMediaFileError
 
 
 class MediaInfoProviderBase(AbstractMediaInfoProvider):
@@ -25,21 +21,12 @@ class MediaInfoProviderBase(AbstractMediaInfoProvider):
 
         :param str file: absolute path of video file.
 
-        :raises MediaFileDoesNotExistError: media file does not exist error.
-        :raises InvalidMediaFileError: invalid media file error.
-
         :returns: dict(int runtime,
                        int height,
                        int width)
 
         :rtype: dict
         """
-
-        if not path.exists(file):
-            raise MediaFileDoesNotExistError(_('Provided media file path does not exist.'))
-
-        if not path.isfile(file):
-            raise InvalidMediaFileError(_('Provided path is not a file.'))
 
         result = self._get_info(file, **options)
         runtime = result.get('runtime')
