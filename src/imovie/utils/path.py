@@ -38,3 +38,19 @@ def get_file_size(file, **options):
     """
 
     return path.getsize(file)
+
+
+def get_last_directory(full_path):
+    """
+    gets the last directory of given path.
+
+    :param str full_path: full path of file or directory.
+
+    :rtype: str
+    """
+
+    if path.isdir(full_path):
+        # this is to ensure that path ends with '/'.
+        full_path = path.join(full_path, '')
+
+    return path.basename(path.dirname(full_path))
