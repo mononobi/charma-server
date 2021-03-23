@@ -36,8 +36,8 @@ class AbstractMediaInfoProvider(CoreObject, metaclass=MediaInfoSingletonMeta):
         :raises CoreNotImplementedError: core not implemented error.
 
         :returns: dict(int runtime,
-                       int height,
-                       int width)
+                       int width,
+                       int height)
 
         :rtype: dict
         """

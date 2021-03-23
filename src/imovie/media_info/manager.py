@@ -23,6 +23,7 @@ class MediaInfoManager(Manager, HookMixin):
     package_class = MediaInfoPackage
     hook_type = AbstractMediaInfoProvider
     invalid_hook_type_error = InvalidMediaInfoProviderTypeError
+    REQUIRED_INFO = ['runtime', 'width', 'height']
 
     def _is_complete(self, info):
         """
@@ -33,7 +34,12 @@ class MediaInfoManager(Manager, HookMixin):
         :rtype: bool
         """
 
-        return 'runtime' in info and 'height' in info and 'width' in info
+        for item in self.REQUIRED_INFO:
+            result = info.get(item)
+            if result is None or result <= 0:
+                return False
+
+        return True
 
     def _validate_file_exists(self, file):
         """
@@ -73,8 +79,8 @@ class MediaInfoManager(Manager, HookMixin):
         :raises IsNotFileError: is not file error.
 
         :returns: dict(int runtime,
-                       int height,
-                       int width)
+                       int width,
+                       int height)
 
         :rtype: dict
         """
@@ -88,6 +94,6 @@ class MediaInfoManager(Manager, HookMixin):
                 break
 
         result.setdefault('runtime', 0)
-        result.setdefault('height', 0)
         result.setdefault('width', 0)
+        result.setdefault('height', 0)
         return result

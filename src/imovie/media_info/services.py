@@ -27,8 +27,8 @@ def get_info(file, **options):
     :param str file: absolute path of video file.
 
     :returns: dict(int runtime,
-                   int height,
-                   int width)
+                   int width,
+                   int height)
 
     :rtype: dict
     """

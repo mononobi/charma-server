@@ -15,31 +15,22 @@ class OpenCVMediaInfoProvider(MediaInfoProviderBase):
     opencv media info provider class.
     """
 
-    def _get_info(self, file, **options):
+    def _get_video_object(self, file, **options):
         """
-        gets a dict containing media info of given file.
+        gets the video object from given file.
 
         :param str file: absolute path of video file.
 
-        :returns: dict(int runtime,
-                       int height,
-                       int width)
-
-        :rtype: dict
+        :rtype: cv2.VideoCapture
         """
 
-        video = cv2.VideoCapture(file)
-        runtime = self._get_runtime(video)
-        height = video.get(cv2.CAP_PROP_FRAME_HEIGHT)
-        width = video.get(cv2.CAP_PROP_FRAME_WIDTH)
+        return cv2.VideoCapture(file)
 
-        return dict(runtime=int(runtime), height=int(height), width=int(width))
-
-    def _get_runtime(self, video):
+    def _get_runtime(self, video, **options):
         """
-        gets the runtime of given video object in minutes.
+        gets the runtime from given video object in minutes.
 
-        :param VideoCapture video: video object.
+        :param cv2.VideoCapture video: video object.
 
         :rtype: int
         """
@@ -49,4 +40,21 @@ class OpenCVMediaInfoProvider(MediaInfoProviderBase):
         if frames_per_second == 0:
             return 0
 
-        return (frame_count / frames_per_second) / 60
+        return int((frame_count / frames_per_second) / 60)
+
+    def _get_resolution(self, video, **options):
+        """
+        gets the resolution of given video object.
+
+        it returns a tuple of two items. first item is width, the second is height.
+
+        :param cv2.VideoCapture video: video object.
+
+        :returns: tuple[int width, int height]
+        :rtype: tuple[int, int]
+        """
+
+        width = video.get(cv2.CAP_PROP_FRAME_WIDTH)
+        height = video.get(cv2.CAP_PROP_FRAME_HEIGHT)
+
+        return int(width), int(height)
