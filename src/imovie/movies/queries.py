@@ -355,6 +355,20 @@ class MoviesQueries(NormalizerMixin):
 
         return existed
 
+    def exists_by_directory(self, directory, **options):
+        """
+        gets a value indicating that a movie with given directory name exists.
+
+        :param str directory: directory name.
+
+        :rtype: bool
+        """
+
+        store = get_current_store()
+        return store.query(MovieEntity.id)\
+            .filter(MovieEntity.directory_name.ilike(directory))\
+            .existed()
+
     def get_all(self, **options):
         """
         gets all movies.

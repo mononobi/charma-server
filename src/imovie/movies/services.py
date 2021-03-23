@@ -170,6 +170,19 @@ def exists(**options):
     return get_component(MoviesPackage.COMPONENT_NAME).exists(**options)
 
 
+def exists_by_directory(directory, **options):
+    """
+    gets a value indicating that a movie with given directory name exists.
+
+    :param str directory: directory name.
+
+    :rtype: bool
+    """
+
+    return get_component(MoviesPackage.COMPONENT_NAME).exists_by_directory(directory,
+                                                                           **options)
+
+
 def get_all(**options):
     """
     gets all movies.
