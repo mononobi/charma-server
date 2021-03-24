@@ -43,7 +43,8 @@ class MovieEntity(MovieBaseEntity, CreateHistoryMixin):
         DVD = 2
         HD = 3
         FHD = 4
-        UHD = 5
+        QHD = 5
+        UHD = 6
 
     class ContentRateEnum(CoreEnum):
         """
