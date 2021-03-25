@@ -18,3 +18,24 @@ class MoviesCollectorBusinessException(CoreBusinessException, MoviesCollectorExc
     movies collector business exception.
     """
     pass
+
+
+class DirectoryIsIgnoredError(MoviesCollectorBusinessException):
+    """
+    directory is ignored error.
+    """
+    pass
+
+
+class MovieIsAlreadyCollectedError(MoviesCollectorBusinessException):
+    """
+    movie is already collected error.
+    """
+    pass
+
+
+class DirectoryIsEmptyError(MoviesCollectorBusinessException):
+    """
+    directory is empty error.
+    """
+    pass

@@ -6,13 +6,9 @@ movies collector enumerations module.
 from pyrin.core.enumerations import CoreEnum
 
 
-class CollectResultEnum(CoreEnum):
+class MovieNormalizerEnum(CoreEnum):
     """
-    collect result enum.
+    movie normalizer enum.
     """
 
-    UNKNOWN = 0
-    EMPTY_FOLDER = 1
-    ALREADY_EXISTED = 2
-    IGNORED = 3
-    COLLECTED = 4
+    MOVIE_NAME_METADATA = 'movie_name_metadata'
