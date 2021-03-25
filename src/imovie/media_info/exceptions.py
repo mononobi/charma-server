@@ -25,17 +25,3 @@ class InvalidMediaInfoProviderTypeError(MediaInfoException):
     invalid media info provider type error.
     """
     pass
-
-
-class MediaFileDoesNotExistError(MediaInfoBusinessException):
-    """
-    media file does not exist error.
-    """
-    pass
-
-
-class IsNotFileError(MediaInfoBusinessException):
-    """
-    is not file error.
-    """
-    pass

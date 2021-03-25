@@ -3,16 +3,14 @@
 media info manager module.
 """
 
-from os import path
-
-from pyrin.core.globals import _
 from pyrin.core.mixin import HookMixin
 from pyrin.core.structs import Manager
 
+import pyrin.utils.path as path_utils
+
 from imovie.media_info import MediaInfoPackage
 from imovie.media_info.interface import AbstractMediaInfoProvider
-from imovie.media_info.exceptions import InvalidMediaInfoProviderTypeError, \
-    MediaFileDoesNotExistError, IsNotFileError
+from imovie.media_info.exceptions import InvalidMediaInfoProviderTypeError
 
 
 class MediaInfoManager(Manager, HookMixin):
@@ -23,7 +21,7 @@ class MediaInfoManager(Manager, HookMixin):
     package_class = MediaInfoPackage
     hook_type = AbstractMediaInfoProvider
     invalid_hook_type_error = InvalidMediaInfoProviderTypeError
-    REQUIRED_INFO = ['runtime', 'width', 'height']
+    REQUIRED_INFO = ('runtime', 'width', 'height')
 
     def _is_complete(self, info):
         """
@@ -40,22 +38,6 @@ class MediaInfoManager(Manager, HookMixin):
                 return False
 
         return True
-
-    def _validate_file_exists(self, file):
-        """
-        validates that given file exists.
-
-        :param str file: absolute path of file.
-
-        :raises MediaFileDoesNotExistError: media file does not exist error.
-        :raises IsNotFileError: is not file error.
-        """
-
-        if not path.exists(file):
-            raise MediaFileDoesNotExistError(_('Provided media file path does not exist.'))
-
-        if not path.isfile(file):
-            raise IsNotFileError(_('Provided path is not a file.'))
 
     def register_provider(self, instance):
         """
@@ -75,8 +57,10 @@ class MediaInfoManager(Manager, HookMixin):
 
         :param str file: absolute path of video file.
 
-        :raises MediaFileDoesNotExistError: media file does not exist error.
-        :raises IsNotFileError: is not file error.
+        :raises InvalidPathError: invalid path error.
+        :raises PathIsNotAbsoluteError: path is not absolute error.
+        :raises PathNotExistedError: path not existed error.
+        :raises IsNotFileError: is not directory error.
 
         :returns: dict(int runtime,
                        int width,
@@ -85,7 +69,7 @@ class MediaInfoManager(Manager, HookMixin):
         :rtype: dict
         """
 
-        self._validate_file_exists(file)
+        path_utils.assert_is_file(file)
         result = dict()
         for provider in self._get_hooks():
             current_result = provider.get_info(file, **options)
