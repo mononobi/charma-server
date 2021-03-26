@@ -12,3 +12,4 @@ class MovieNormalizerEnum(CoreEnum):
     """
 
     MOVIE_NAME_METADATA = 'movie_name_metadata'
+    MOVIE_COUNTING_LETTER = 'movie_counting_letter'

@@ -3,7 +3,7 @@
 utils path module.
 """
 
-from os import path
+import os
 
 
 def get_file_extension(file, **options):
@@ -20,7 +20,7 @@ def get_file_extension(file, **options):
     """
 
     remove_dot = options.get('remove_dot', True)
-    name, extension = path.splitext(file)
+    name, extension = os.path.splitext(file)
 
     if remove_dot is not False:
         extension = extension.replace('.', '')
@@ -37,7 +37,7 @@ def get_file_size(file, **options):
     :rtype: int
     """
 
-    return path.getsize(file)
+    return os.path.getsize(file)
 
 
 def get_last_directory(full_path):
@@ -49,8 +49,54 @@ def get_last_directory(full_path):
     :rtype: str
     """
 
-    if path.isdir(full_path):
+    if os.path.isdir(full_path):
         # this is to ensure that path ends with '/'.
-        full_path = path.join(full_path, '')
+        full_path = os.path.join(full_path, '')
 
-    return path.basename(path.dirname(full_path))
+    return os.path.basename(os.path.dirname(full_path))
+
+
+def get_files(directory, *extensions):
+    """
+    gets a list of all files in given directory.
+
+    it could filter files with given extensions if provided.
+
+    :param str directory: full path of directory.
+    :param str extensions: extension of files to be listed.
+                           if not provided, all files will be listed.
+
+    :rtype: list[str]
+    """
+
+    extensions = tuple(item.lower() for item in extensions)
+    files = []
+    for root, directories, file_names in os.walk(directory):
+        for item in file_names:
+            extension = get_file_extension(item)
+            if len(extensions) > 0 and extension not in extensions:
+                continue
+            full_path = os.path.join(root, item)
+            files.append(full_path)
+        break
+
+    return files
+
+
+def get_directories(root):
+    """
+    gets a list of all directories in given root directory.
+
+    :param str root: root path.
+
+    :rtype: list[str]
+    """
+
+    folders = []
+    for root, directories, file_names in os.walk(root):
+        for item in directories:
+            full_path = os.path.join(root, item)
+            folders.append(full_path)
+        break
+
+    return folders

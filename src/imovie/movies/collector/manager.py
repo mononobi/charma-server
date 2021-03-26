@@ -3,6 +3,9 @@
 movies collector manager module.
 """
 
+import re
+
+import pyrin.globalization.datetime.services as datetime_services
 import pyrin.utilities.string.normalizer.services as normalizer_services
 import pyrin.configuration.services as config_services
 import pyrin.utils.path as pyrin_path_utils
@@ -19,7 +22,7 @@ from imovie.movies.models import MovieEntity
 from imovie.movies.collector import MoviesCollectorPackage
 from imovie.movies.collector.enumerations import MovieNormalizerEnum
 from imovie.movies.collector.exceptions import DirectoryIsIgnoredError, \
-    MovieIsAlreadyCollectedError
+    MovieIsAlreadyCollectedError, DirectoryIsEmptyError
 
 
 class MoviesCollectorManager(Manager):
@@ -38,6 +41,10 @@ class MoviesCollectorManager(Manager):
     QHD_THRESHOLD = int(2560 * 1440 * MIN_QUALITY)
     UHD_THRESHOLD = int(3840 * 2160 * MIN_QUALITY)
 
+    # a regex to match year in movie folder name.
+    # it matches all years from 1900 to 2999.
+    YEAR_REGEX = re.compile('(19[0-9]{2})|(2[0-9]{3})', flags=re.IGNORECASE)
+
     def __init__(self):
         """
         initializes an instance of MoviesCollectorManager.
@@ -48,6 +55,8 @@ class MoviesCollectorManager(Manager):
         self._video_extensions = self._get_video_extensions()
         self._ignored_chars = self._get_ignored_chars()
         self._remove_chars = self._get_remove_chars()
+        self._min_size = config_services.get('movies', 'collector', 'min_size')
+        self._min_runtime = config_services.get('movies', 'collector', 'min_runtime')
 
     def _get_video_extensions(self):
         """
@@ -56,7 +65,7 @@ class MoviesCollectorManager(Manager):
         :rtype: tuple[str]
         """
 
-        result = config_services.get('media.info', 'general', 'video_extensions')
+        result = config_services.get('movies', 'collector', 'video_extensions')
         result = [item.lower() for item in result]
         return tuple(set(result))
 
@@ -67,7 +76,7 @@ class MoviesCollectorManager(Manager):
         :rtype: tuple[str]
         """
 
-        result = config_services.get('media.info', 'general', 'video_extensions')
+        result = config_services.get('movies', 'collector', 'ignored_chars')
         return tuple(set(result))
 
     def _get_remove_chars(self):
@@ -77,7 +86,7 @@ class MoviesCollectorManager(Manager):
         :rtype: tuple[str]
         """
 
-        result = config_services.get('media.info', 'general', 'remove_chars')
+        result = config_services.get('movies', 'collector', 'remove_chars')
         result = [item.lower() for item in result]
         return tuple(set(result))
 
@@ -105,10 +114,48 @@ class MoviesCollectorManager(Manager):
         name = normalizer_services.normalize(name,
                                              MovieNormalizerEnum.MOVIE_NAME_METADATA,
                                              NormalizerEnum.DUPLICATE_SPACE,
+                                             NormalizerEnum.TITLE_CASE,
+                                             MovieNormalizerEnum.MOVIE_COUNTING_LETTER,
                                              filters=self._remove_chars)
         name = name.strip('-')
         name = name.strip()
         return name
+
+    def _extract_year(self, name, **options):
+        """
+        extracts year from given movie name.
+
+        it returns a tuple of two items. first item is the year and the
+        second is the movie name without year.
+        year may be None if it could not be extracted from movie name.
+
+        :param str name: movie name.
+
+        :returns: tuple[int year, str name]
+        :rtype: tuple[int, str]
+        """
+
+        matches = re.findall(self.YEAR_REGEX, name)
+        flat_matches = []
+        for items in matches:
+            flat_matches.extend(items)
+        matches = [item for item in flat_matches if len(item) > 0]
+        if len(matches) <= 0:
+            return None, name
+
+        # we consider the last found year as production year
+        # because the movie may have a year in its name too.
+        year = int(matches[-1])
+        if year > datetime_services.current_year() + 1:
+            return None, name
+
+        index = name.rfind(str(year))
+        new_name = name[0:index]
+        new_name = new_name.strip()
+        if len(new_name) <= 0:
+            return None, name
+
+        return year, new_name
 
     def collect(self, directory, **options):
         """
@@ -126,18 +173,84 @@ class MoviesCollectorManager(Manager):
         :raises IsNotDirectoryError: is not directory error.
         :raises DirectoryIsIgnoredError: directory is ignored error.
         :raises MovieIsAlreadyCollectedError: movie is already collected error.
+        :raises DirectoryIsEmptyError: directory is empty error.
         """
 
         pyrin_path_utils.assert_is_directory(directory)
         force = options.get('force', False)
-        fullname = path_utils.get_last_directory(directory)
+        last_directory = path_utils.get_last_directory(directory)
+        fullname = last_directory
         if force is not True and self._should_be_ignored(fullname) is True:
             raise DirectoryIsIgnoredError(_('Directory [{directory}] is ignored.')
-                                          .format(directory=fullname))
+                                          .format(directory=directory))
 
         if movie_services.exists_by_directory(fullname) is True:
             raise MovieIsAlreadyCollectedError(_('Movie [{movie}] is already collected.')
                                                .format(movie=fullname))
+
+        fullname = self._normalize_name(fullname)
+        year, fullname = self._extract_year(fullname)
+
+        # we have to re-normalize the name after extracting year from it.
+        fullname = self._normalize_name(fullname)
+
+        total_runtime = 0
+        total_width = 0
+        total_height = 0
+        collected_count = 0
+        movies = path_utils.get_files(directory, *self._video_extensions)
+        for item in movies:
+            result = media_info_services.get_info(item)
+            size = path_utils.get_file_size(item)
+            runtime = result.get('runtime')
+            width = result.get('width')
+            height = result.get('height')
+            if force is False and size < self._min_size and runtime < self._min_runtime:
+                continue
+
+            collected_count += 1
+            total_runtime += runtime
+            total_width += width
+            total_height += height
+
+        if collected_count <= 0:
+            raise DirectoryIsEmptyError(_('Directory [{directory}] is empty.')
+                                        .format(directory=directory))
+
+        total_runtime = int(total_runtime / collected_count)
+        total_width = int(total_width / collected_count)
+        total_height = int(total_height / collected_count)
+        quality = self.get_quality(total_width, total_height)
+        id = movie_services.create(fullname, last_directory,
+                                   production_year=year,
+                                   runtime=total_runtime,
+                                   resolution=quality)
+        return id
+
+    def collect_all(self, root, **options):
+        directories = path_utils.get_directories(root)
+        collected = 0
+        ignored = 0
+        already_collected = 0
+        empty = 0
+        for item in directories:
+            try:
+                self.collect(item)
+                collected += 1
+
+            except DirectoryIsIgnoredError:
+                ignored += 1
+
+            except MovieIsAlreadyCollectedError:
+                already_collected += 1
+
+            except DirectoryIsEmptyError:
+                empty += 1
+
+        return dict(collected=collected,
+                    ignored=ignored,
+                    already_collected=already_collected,
+                    empty=empty)
 
     def get_quality(self, width, height, **options):
         """
@@ -162,7 +275,7 @@ class MoviesCollectorManager(Manager):
         if width in (None, 0) or height in (None, 0):
             return MovieEntity.ResolutionEnum.UNKNOWN
 
-        quality = width * height
+        quality = int(width * height)
         if quality >= self.UHD_THRESHOLD:
             return MovieEntity.ResolutionEnum.UHD
 
