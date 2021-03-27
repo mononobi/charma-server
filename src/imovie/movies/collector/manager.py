@@ -5,10 +5,10 @@ movies collector manager module.
 
 import re
 
+import pyrin.utils.path as path_utils
 import pyrin.globalization.datetime.services as datetime_services
 import pyrin.utilities.string.normalizer.services as normalizer_services
 import pyrin.configuration.services as config_services
-import pyrin.utils.path as pyrin_path_utils
 
 from pyrin.core.globals import _
 from pyrin.core.structs import Manager
@@ -16,7 +16,6 @@ from pyrin.utilities.string.normalizer.enumerations import NormalizerEnum
 
 import imovie.media_info.services as media_info_services
 import imovie.movies.services as movie_services
-import imovie.utils.path as path_utils
 
 from imovie.movies.models import MovieEntity
 from imovie.movies.collector import MoviesCollectorPackage
@@ -176,32 +175,32 @@ class MoviesCollectorManager(Manager):
         :raises DirectoryIsEmptyError: directory is empty error.
         """
 
-        pyrin_path_utils.assert_is_directory(directory)
+        path_utils.assert_is_directory(directory)
         force = options.get('force', False)
-        last_directory = path_utils.get_last_directory(directory)
-        fullname = last_directory
-        if force is not True and self._should_be_ignored(fullname) is True:
+        parent_directory = path_utils.get_parent_directory(directory)
+        title = parent_directory
+        if force is not True and self._should_be_ignored(title) is True:
             raise DirectoryIsIgnoredError(_('Directory [{directory}] is ignored.')
                                           .format(directory=directory))
 
-        if movie_services.exists_by_directory(fullname) is True:
+        if movie_services.exists_by_directory(title) is True:
             raise MovieIsAlreadyCollectedError(_('Movie [{movie}] is already collected.')
-                                               .format(movie=fullname))
+                                               .format(movie=title))
 
-        fullname = self._normalize_name(fullname)
-        year, fullname = self._extract_year(fullname)
+        title = self._normalize_name(title)
+        year, title = self._extract_year(title)
 
         # we have to re-normalize the name after extracting year from it.
-        fullname = self._normalize_name(fullname)
+        title = self._normalize_name(title)
 
         total_runtime = 0
         total_width = 0
         total_height = 0
         collected_count = 0
-        movies = pyrin_path_utils.get_files(directory, *self._video_extensions)
+        movies = path_utils.get_files(directory, *self._video_extensions)
         for item in movies:
             result = media_info_services.get_info(item)
-            size = pyrin_path_utils.get_file_size(item)
+            size = path_utils.get_file_size(item)
             runtime = result.get('runtime')
             width = result.get('width')
             height = result.get('height')
@@ -221,14 +220,13 @@ class MoviesCollectorManager(Manager):
         total_width = int(total_width / collected_count)
         total_height = int(total_height / collected_count)
         quality = self.get_quality(total_width, total_height)
-        id = movie_services.create(fullname, last_directory,
-                                   production_year=year,
-                                   runtime=total_runtime,
-                                   resolution=quality)
-        return id
+        fullname = movie_services.get_fullname(title, year, quality)
+        path_utils.rename(directory, fullname)
+        movie_services.create(title, fullname, production_year=year,
+                              runtime=total_runtime, resolution=quality)
 
     def collect_all(self, root, **options):
-        directories = pyrin_path_utils.get_directories(root)
+        directories = path_utils.get_directories(root)
         collected = 0
         ignored = 0
         already_collected = 0

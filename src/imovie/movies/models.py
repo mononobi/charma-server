@@ -7,7 +7,7 @@ from sqlalchemy import Unicode, UnicodeText
 
 import pyrin.globalization.datetime.services as datetime_services
 
-from pyrin.core.enumerations import CoreEnum
+from pyrin.core.enumerations import CoreEnum, EnumMember
 from pyrin.database.model.base import CoreEntity
 from pyrin.database.orm.types.custom import GUID
 from pyrin.database.model.mixin import CreateHistoryMixin
@@ -38,13 +38,13 @@ class MovieEntity(MovieBaseEntity, CreateHistoryMixin):
         resolution enum.
         """
 
-        UNKNOWN = 0
-        VCD = 1
-        DVD = 2
-        HD = 3
-        FHD = 4
-        QHD = 5
-        UHD = 6
+        UNKNOWN = EnumMember(0, 'NA')
+        VCD = EnumMember(1, 'VCD')
+        DVD = EnumMember(2, 'DVD')
+        HD = EnumMember(3, '720p')
+        FHD = EnumMember(4, '1080p')
+        QHD = EnumMember(5, '1440p')
+        UHD = EnumMember(6, '2160p')
 
     class ContentRateEnum(CoreEnum):
         """

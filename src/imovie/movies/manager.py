@@ -143,3 +143,39 @@ class MoviesManager(Manager, MoviesQueries, HookMixin):
 
         store = get_current_store()
         return store.query(MovieEntity.id).filter(MovieEntity.id == id).delete()
+
+    def get_fullname(self, title, production_year, resolution, **options):
+        """
+        gets the movie fullname from given inputs.
+
+        it returns the fullname with given format:
+        title [production_year] [resolution]
+
+        for example:
+        Crash [2005] [720p]
+
+        if the production year is None:
+        Crash [720p]
+
+        :param str title: movie title.
+        :param int production_year: production year.
+
+        :param int resolution: movie resolution.
+        :enum resolution:
+            UNKNOWN = 0
+            VCD = 1
+            DVD = 2
+            HD = 3
+            FHD = 4
+            QHD = 5
+            UHD = 6
+
+        :rtype: str
+        """
+
+        result = '{title} [{year}] [{resolution}]'
+        if production_year is None:
+            result = '{title} [{resolution}]'
+
+        resolution = MovieEntity.ResolutionEnum(resolution)
+        return result.format(title=title, year=production_year, resolution=resolution)
