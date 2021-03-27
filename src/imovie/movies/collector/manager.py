@@ -198,10 +198,10 @@ class MoviesCollectorManager(Manager):
         total_width = 0
         total_height = 0
         collected_count = 0
-        movies = path_utils.get_files(directory, *self._video_extensions)
+        movies = pyrin_path_utils.get_files(directory, *self._video_extensions)
         for item in movies:
             result = media_info_services.get_info(item)
-            size = path_utils.get_file_size(item)
+            size = pyrin_path_utils.get_file_size(item)
             runtime = result.get('runtime')
             width = result.get('width')
             height = result.get('height')
@@ -228,7 +228,7 @@ class MoviesCollectorManager(Manager):
         return id
 
     def collect_all(self, root, **options):
-        directories = path_utils.get_directories(root)
+        directories = pyrin_path_utils.get_directories(root)
         collected = 0
         ignored = 0
         already_collected = 0
