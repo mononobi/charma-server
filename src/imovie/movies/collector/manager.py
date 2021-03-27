@@ -32,7 +32,7 @@ class MoviesCollectorManager(Manager):
 
     package_class = MoviesCollectorPackage
 
-    # the minimum quality of movie to be considered in the relevant category.
+    # the minimum quality for movie to be considered in the relevant category.
     MIN_QUALITY = 0.65
     VCD_THRESHOLD = int(352 * 240 * MIN_QUALITY)
     DVD_THRESHOLD = int(720 * 480 * MIN_QUALITY)
