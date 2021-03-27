@@ -3,9 +3,11 @@
 movies collector manager module.
 """
 
+import os
 import re
 
 import pyrin.utils.path as path_utils
+import pyrin.utils.slug as slug_utils
 import pyrin.globalization.datetime.services as datetime_services
 import pyrin.utilities.string.normalizer.services as normalizer_services
 import pyrin.configuration.services as config_services
@@ -156,6 +158,25 @@ class MoviesCollectorManager(Manager):
 
         return year, new_name
 
+    def _prepare_individual_files(self, root, **options):
+        """
+        prepares individual movie files in given path for collecting.
+
+        :param str root: root directory.
+        """
+
+        files = path_utils.get_files(root, *self._video_extensions)
+        for item in files:
+            parent, name = path_utils.split_name(item)
+            folder_name = path_utils.get_file_name(name, include_extension=False)
+            folder = os.path.join(parent, folder_name)
+            while os.path.exists(folder) is True:
+                folder = folder + slug_utils.get_hex_slug(4)
+
+            path_utils.create_directory(folder)
+            target = os.path.join(folder, name)
+            path_utils.move(item, target)
+
     def collect(self, directory, **options):
         """
         collects the movie from given directory into database.
@@ -226,6 +247,28 @@ class MoviesCollectorManager(Manager):
                               runtime=total_runtime, resolution=quality)
 
     def collect_all(self, root, **options):
+        """
+        collects all movies in root directory.
+
+        :param str root: root directory.
+
+        :keyword bool include_individual_files: specifies that individual movie files in the
+                                                root path that have no directory must also be
+                                                collected as movies.
+                                                defaults to True if not provided.
+
+        :raises InvalidPathError: invalid path error.
+        :raises PathIsNotAbsoluteError: path is not absolute error.
+        :raises PathNotExistedError: path not existed error.
+        :raises IsNotDirectoryError: is not directory error.
+        """
+
+        path_utils.assert_is_directory(root)
+
+        include_individual_files = options.get('include_individual_files', True)
+        if include_individual_files is not False:
+            self._prepare_individual_files(root, **options)
+
         directories = path_utils.get_directories(root)
         collected = 0
         ignored = 0
