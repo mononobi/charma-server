@@ -363,7 +363,8 @@ class MoviesCollectorManager(Manager):
             except Exception:
                 error += 1
 
-        return dict(collected=collected,
+        return dict(total=collected + ignored + already_collected + empty + error,
+                    collected=collected,
                     ignored=ignored,
                     already_collected=already_collected,
                     empty=empty,
