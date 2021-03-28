@@ -39,3 +39,10 @@ class DirectoryIsEmptyError(MoviesCollectorBusinessException):
     directory is empty error.
     """
     pass
+
+
+class InvalidMovieTitleError(MoviesCollectorBusinessException):
+    """
+    invalid movie title error.
+    """
+    pass

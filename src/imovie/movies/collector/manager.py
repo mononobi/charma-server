@@ -24,7 +24,7 @@ from imovie.movies.models import MovieEntity
 from imovie.movies.collector import MoviesCollectorPackage
 from imovie.movies.collector.enumerations import MovieNormalizerEnum
 from imovie.movies.collector.exceptions import DirectoryIsIgnoredError, \
-    MovieIsAlreadyCollectedError, DirectoryIsEmptyError
+    MovieIsAlreadyCollectedError, DirectoryIsEmptyError, InvalidMovieTitleError
 
 
 class MoviesCollectorManager(Manager):
@@ -207,6 +207,7 @@ class MoviesCollectorManager(Manager):
         :raises IsNotDirectoryError: is not directory error.
         :raises DirectoryIsIgnoredError: directory is ignored error.
         :raises MovieIsAlreadyCollectedError: movie is already collected error.
+        :raises InvalidMovieTitleError: invalid movie title error.
         :raises DirectoryIsEmptyError: directory is empty error.
         """
 
@@ -227,6 +228,10 @@ class MoviesCollectorManager(Manager):
 
         # we have to re-normalize the name after extracting year from it.
         title = self._normalize_name(title)
+
+        if len(title) <= 0:
+            raise InvalidMovieTitleError(_('Movie [{directory}] does not have a valid title.')
+                                         .format(directory=directory))
 
         total_runtime = 0
         total_width = 0
