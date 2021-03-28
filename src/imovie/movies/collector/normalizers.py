@@ -25,7 +25,7 @@ class MovieNameMetadataNormalizer(FilterNormalizerBase):
         filters = ['\\[Indeterminate]', '\\[VCD]', '\\[DVD]', '\\[360p]',
                    '\\[480p]', '\\[720p]', '\\[1080p]', '\\[HD]', '\\[FHD]',
                    '\\[QHD]', '\\[UHD]', '\\[NA]', '\\[]', '\\(\\)', '\\[',
-                   ']', '\\{}', 'beginslug[0-9]{4}endslug']
+                   ']', '\\{}', 'beginslug[0-9]{4}endslug$']
 
         filter_map = {'\\.': ' ', '_': ' '}
         options.update(filters=filters, filter_map=filter_map)
@@ -53,3 +53,22 @@ class CountingLetterNormalizer(FilterNormalizerBase):
         options.update(filter_map=filter_map)
 
         super().__init__(MovieNormalizerEnum.MOVIE_COUNTING_LETTER, 91, **options)
+
+
+@string_normalizer()
+class MovieNameSequenceSlugNormalizer(FilterNormalizerBase):
+    """
+    movie name sequence slug normalizer class.
+
+    this normalizer removes sequence slug from movie name.
+    """
+
+    def __init__(self, **options):
+        """
+        initializes an instance of MovieNameSequenceSlugNormalizer.
+        """
+
+        filters = [' -D[0-9]{2}$']
+        options.update(filters=filters)
+
+        super().__init__(MovieNormalizerEnum.MOVIE_SEQUENCE_SLUG, 92, **options)

@@ -51,6 +51,10 @@ class MoviesCollectorManager(Manager):
     # if a folder with the same name exists and will be removed at the end.
     TEMP_SLUG = 'beginslug{digits}endslug'
 
+    # this slug will be appended to folder name when a movie with the
+    # same directory name is already existed.
+    SEQUENCE_SLUG = ' -D{digits}'
+
     def __init__(self):
         """
         initializes an instance of MoviesCollectorManager.
@@ -113,15 +117,23 @@ class MoviesCollectorManager(Manager):
 
         :param str name: movie name.
 
+        :keyword bool remove_sequence: specifies that sequence slug must be removed
+                                       from name. defaults to True if not provided.
+
         :rtype: str
         """
 
+        remove_sequence = options.get('remove_sequence', True)
+        normalizers = [MovieNormalizerEnum.MOVIE_NAME_METADATA,
+                       NormalizerEnum.DUPLICATE_SPACE,
+                       NormalizerEnum.TITLE_CASE,
+                       MovieNormalizerEnum.MOVIE_COUNTING_LETTER]
+
+        if remove_sequence is not False:
+            normalizers.insert(0, MovieNormalizerEnum.MOVIE_SEQUENCE_SLUG)
+
         name = name.strip()
-        name = normalizer_services.normalize(name,
-                                             MovieNormalizerEnum.MOVIE_NAME_METADATA,
-                                             NormalizerEnum.DUPLICATE_SPACE,
-                                             NormalizerEnum.TITLE_CASE,
-                                             MovieNormalizerEnum.MOVIE_COUNTING_LETTER,
+        name = normalizer_services.normalize(name, *normalizers,
                                              filters=self._remove_chars)
         name = name.strip('-')
         name = name.strip()
@@ -136,6 +148,16 @@ class MoviesCollectorManager(Manager):
 
         digits = slug_utils.get_digit_slug(4)
         return self.TEMP_SLUG.format(digits=digits)
+
+    def _get_sequence_slug(self):
+        """
+        gets a sequence slug to be used if a movie with the same folder is already existed.
+
+        :rtype: str
+        """
+
+        digits = slug_utils.get_digit_slug(2)
+        return self.SEQUENCE_SLUG.format(digits=digits)
 
     def _extract_year(self, name, **options):
         """
@@ -184,12 +206,33 @@ class MoviesCollectorManager(Manager):
             parent, name = path_utils.split_name(item)
             folder_name = path_utils.get_file_name(name, include_extension=False)
             folder = os.path.join(parent, folder_name)
-            while os.path.exists(folder) is True:
-                folder = folder + self._get_temp_slug()
-
+            folder = self._get_unique_directory_name(folder, self._get_temp_slug)
             path_utils.create_directory(folder)
             target = os.path.join(folder, name)
             path_utils.move(item, target)
+
+    def _get_unique_directory_name(self, directory, slug_generator):
+        """
+        gets a unique directory name with given path.
+
+        if the same directory is already existed, it uses the slug generator
+        to produce a slug and append it to the original requested name.
+
+        :param str directory: the full directory path to be created.
+        :param function slug_generator: a callable to be used for slug generation.
+
+        :rtype: str
+        """
+
+        last_slug = None
+        while os.path.exists(directory) is True:
+            if last_slug is not None:
+                directory = directory.rstrip(last_slug)
+
+            last_slug = slug_generator()
+            directory = directory + last_slug
+
+        return directory
 
     def collect(self, directory, **options):
         """
@@ -227,7 +270,7 @@ class MoviesCollectorManager(Manager):
         year, title = self._extract_year(title)
 
         # we have to re-normalize the name after extracting year from it.
-        title = self._normalize_name(title)
+        title = self._normalize_name(title, remove_sequence=False)
 
         if len(title) <= 0:
             raise InvalidMovieTitleError(_('Movie [{directory}] does not have a valid title.')
@@ -261,6 +304,10 @@ class MoviesCollectorManager(Manager):
         total_height = int(total_height / collected_count)
         quality = self.get_quality(total_width, total_height)
         fullname = movie_services.get_fullname(title, year, quality)
+        root, name = path_utils.split_name(directory)
+        new_path = os.path.join(root, fullname)
+        new_path = self._get_unique_directory_name(new_path, self._get_sequence_slug)
+        fullname = path_utils.get_directory_name(new_path)
         new_path = path_utils.rename(directory, fullname)
 
         # we have to rename directory to its original name if movie creation failed.
