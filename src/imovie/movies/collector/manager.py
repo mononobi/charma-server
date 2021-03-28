@@ -261,9 +261,15 @@ class MoviesCollectorManager(Manager):
         total_height = int(total_height / collected_count)
         quality = self.get_quality(total_width, total_height)
         fullname = movie_services.get_fullname(title, year, quality)
-        path_utils.rename(directory, fullname)
-        movie_services.create(title, fullname, production_year=year,
-                              runtime=total_runtime, resolution=quality)
+        new_path = path_utils.rename(directory, fullname)
+
+        # we have to rename directory to its original name if movie creation failed.
+        try:
+            movie_services.create(title, fullname, production_year=year,
+                                  runtime=total_runtime, resolution=quality)
+        except Exception as error:
+            path_utils.rename(new_path, parent_directory)
+            raise error
 
     def collect_all(self, root, **options):
         """
@@ -283,7 +289,6 @@ class MoviesCollectorManager(Manager):
         """
 
         path_utils.assert_is_directory(root)
-
         include_individual_files = options.get('include_individual_files', True)
         if include_individual_files is not False:
             self._prepare_individual_files(root, **options)
@@ -293,6 +298,7 @@ class MoviesCollectorManager(Manager):
         ignored = 0
         already_collected = 0
         empty = 0
+        error = 0
         for item in directories:
             try:
                 self.collect(item)
@@ -307,10 +313,14 @@ class MoviesCollectorManager(Manager):
             except DirectoryIsEmptyError:
                 empty += 1
 
+            except Exception:
+                error += 1
+
         return dict(collected=collected,
                     ignored=ignored,
                     already_collected=already_collected,
-                    empty=empty)
+                    empty=empty,
+                    error=error)
 
     def get_quality(self, width, height, **options):
         """
