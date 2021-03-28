@@ -25,7 +25,7 @@ class MovieNameMetadataNormalizer(FilterNormalizerBase):
         filters = ['\\[Indeterminate]', '\\[VCD]', '\\[DVD]', '\\[360p]',
                    '\\[480p]', '\\[720p]', '\\[1080p]', '\\[HD]', '\\[FHD]',
                    '\\[QHD]', '\\[UHD]', '\\[NA]', '\\[]', '\\(\\)', '\\[',
-                   ']', '\\{}']
+                   ']', '\\{}', 'beginslug[0-9]{4}endslug']
 
         filter_map = {'\\.': ' ', '_': ' '}
         options.update(filters=filters, filter_map=filter_map)

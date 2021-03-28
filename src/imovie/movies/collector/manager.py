@@ -8,9 +8,10 @@ import re
 
 import pyrin.utils.path as path_utils
 import pyrin.utils.slug as slug_utils
+import pyrin.utils.regex as regex_utils
+import pyrin.configuration.services as config_services
 import pyrin.globalization.datetime.services as datetime_services
 import pyrin.utilities.string.normalizer.services as normalizer_services
-import pyrin.configuration.services as config_services
 
 from pyrin.core.globals import _
 from pyrin.core.structs import Manager
@@ -45,6 +46,10 @@ class MoviesCollectorManager(Manager):
     # a regex to match year in movie folder name.
     # it matches all years from 1900 to 2999.
     YEAR_REGEX = re.compile('(19[0-9]{2})|(2[0-9]{3})', flags=re.IGNORECASE)
+
+    # this slug will be appended to folder name on preparing individual files
+    # if a folder with the same name exists and will be removed at the end.
+    TEMP_SLUG = 'beginslug{digits}endslug'
 
     def __init__(self):
         """
@@ -122,6 +127,16 @@ class MoviesCollectorManager(Manager):
         name = name.strip()
         return name
 
+    def _get_temp_slug(self):
+        """
+        gets a new temp slug.
+
+        :rtype: str
+        """
+
+        digits = slug_utils.get_digit_slug(4)
+        return self.TEMP_SLUG.format(digits=digits)
+
     def _extract_year(self, name, **options):
         """
         extracts year from given movie name.
@@ -136,11 +151,7 @@ class MoviesCollectorManager(Manager):
         :rtype: tuple[int, str]
         """
 
-        matches = re.findall(self.YEAR_REGEX, name)
-        flat_matches = []
-        for items in matches:
-            flat_matches.extend(items)
-        matches = [item for item in flat_matches if len(item) > 0]
+        matches = regex_utils.matches(self.YEAR_REGEX, name)
         if len(matches) <= 0:
             return None, name
 
@@ -153,7 +164,10 @@ class MoviesCollectorManager(Manager):
         index = name.rfind(str(year))
         new_name = name[0:index]
         new_name = new_name.strip()
-        if len(new_name) <= 0:
+
+        # if the found year is at the beginning, it will be
+        # considered as movie name not production year.
+        if index == 0 or len(new_name) <= 0:
             return None, name
 
         return year, new_name
@@ -171,7 +185,7 @@ class MoviesCollectorManager(Manager):
             folder_name = path_utils.get_file_name(name, include_extension=False)
             folder = os.path.join(parent, folder_name)
             while os.path.exists(folder) is True:
-                folder = folder + slug_utils.get_hex_slug(4)
+                folder = folder + self._get_temp_slug()
 
             path_utils.create_directory(folder)
             target = os.path.join(folder, name)
