@@ -46,18 +46,8 @@ class MovieEntity(MovieBaseEntity, CreateHistoryMixin):
         QHD = EnumMember(5, '1440p')
         UHD = EnumMember(6, '2160p')
 
-    class ContentRateEnum(CoreEnum):
-        """
-        content rate enum.
-        """
-
-        UNKNOWN = 0
-        G = 1
-        PG = 2
-        PG_13 = 3
-        R = 4
-        NC_17 = 5
-
+    content_rate_id = FKColumn(fk='content_rate.id', name='content_rate_id',
+                               type_=GUID, validated=True)
     identifier = HiddenColumn(name='identifier', type_=Unicode(150), unique=True)
     title = StringColumn(name='title', max_length=150, validated=True)
     search_title = HiddenColumn(name='search_title', type_=Unicode(150))
@@ -84,12 +74,29 @@ class MovieEntity(MovieBaseEntity, CreateHistoryMixin):
     search_storyline = HiddenColumn(name='search_storyline', type_=UnicodeText)
     watched_date = TimeStampColumn(name='watched_date', validated=True,
                                    validated_find=False, validated_range=True)
-    content_rate = SmallIntegerColumn(name='content_rate', validated=True, nullable=False,
-                                      default=ContentRateEnum.UNKNOWN,
-                                      check_in=ContentRateEnum.values())
     resolution = SmallIntegerColumn(name='resolution', nullable=False, validated=True,
                                     default=ResolutionEnum.UNKNOWN,
                                     check_in=ResolutionEnum.values())
+
+
+class ContentRateBaseEntity(CoreEntity):
+    """
+    content rate base entity class.
+    """
+
+    _table = 'content_rate'
+
+    id = GUIDPKColumn(name='id')
+
+
+class ContentRateEntity(ContentRateBaseEntity):
+    """
+    content rate entity class.
+    """
+
+    _extend_existing = True
+
+    name = StringColumn(name='name', max_length=20, nullable=False, unique=True, validated=True)
 
 
 class FavoriteMovieBaseEntity(CoreEntity):
