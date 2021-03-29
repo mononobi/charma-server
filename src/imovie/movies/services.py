@@ -52,7 +52,7 @@ def create(library_title, directory_name, **options):
     :keyword str imdb_page: imdb page.
     :keyword str poster_name: poster name.
     :keyword str storyline: storyline.
-    :keyword int content_rate: content_rate.
+    :keyword uuid.UUID content_rate_id: content rate id.
     :keyword int resolution: resolution.
 
     :returns: created movie id
@@ -80,7 +80,7 @@ def update(id, **options):
     :keyword str imdb_page: imdb page.
     :keyword str poster_name: poster name.
     :keyword str storyline: storyline.
-    :keyword int content_rate: content_rate.
+    :keyword uuid.UUID content_rate_id: content rate id.
     :keyword int resolution: resolution.
 
     :raises ValidationError: validation error.
@@ -128,7 +128,7 @@ def find(**filters):
     :keyword str storyline: storyline.
     :keyword datetime from_watched_date: from watched date.
     :keyword datetime to_watched_date: to watched date.
-    :keyword int | list[int] content_rate: content rate.
+    :keyword uuid.UUID | list[uuid.UUID] content_rate_id: content rate id.
     :keyword int | list[int] resolution: resolution.
     :keyword datetime from_created_on: from created on.
     :keyword datetime to_created_on: to created on.

@@ -75,7 +75,7 @@ class MoviesManager(Manager, MoviesQueries, HookMixin):
         :keyword str imdb_page: imdb page.
         :keyword str poster_name: poster name.
         :keyword str storyline: storyline.
-        :keyword int content_rate: content_rate.
+        :keyword uuid.UUID content_rate_id: content rate id.
         :keyword int resolution: resolution.
 
         :returns: created movie id
@@ -111,7 +111,7 @@ class MoviesManager(Manager, MoviesQueries, HookMixin):
         :keyword str imdb_page: imdb page.
         :keyword str poster_name: poster name.
         :keyword str storyline: storyline.
-        :keyword int content_rate: content_rate.
+        :keyword uuid.UUID content_rate_id: content rate id.
         :keyword int resolution: resolution.
 
         :raises ValidationError: validation error.

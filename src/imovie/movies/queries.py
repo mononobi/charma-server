@@ -48,7 +48,7 @@ class MoviesQueries(NormalizerMixin):
         :keyword str storyline: storyline.
         :keyword datetime from_watched_date: from watched date.
         :keyword datetime to_watched_date: to watched date.
-        :keyword int | list[int] content_rate: content rate.
+        :keyword uuid.UUID | list[uuid.UUID] content_rate_id: content rate id.
         :keyword int | list[int] resolution: resolution.
         :keyword datetime from_created_on: from created on.
         :keyword datetime to_created_on: to created on.
@@ -87,7 +87,7 @@ class MoviesQueries(NormalizerMixin):
         storyline = filters.get('storyline')
         from_watched_date = filters.get('from_watched_date')
         to_watched_date = filters.get('to_watched_date')
-        content_rate = filters.get('content_rate')
+        content_rate_id = filters.get('content_rate_id')
         resolution = filters.get('resolution')
         from_created_on = filters.get('from_created_on')
         to_created_on = filters.get('to_created_on')
@@ -150,8 +150,8 @@ class MoviesQueries(NormalizerMixin):
             add_datetime_range_clause(expressions, MovieEntity.watched_date,
                                       from_watched_date, to_watched_date, **filters)
 
-        if content_rate is not None:
-            expressions.append(MovieEntity.content_rate.in_(content_rate))
+        if content_rate_id is not None:
+            expressions.append(MovieEntity.content_rate_id.in_(content_rate_id))
 
         if resolution is not None:
             expressions.append(MovieEntity.resolution.in_(resolution))
@@ -307,7 +307,7 @@ class MoviesQueries(NormalizerMixin):
         :keyword str storyline: storyline.
         :keyword datetime from_watched_date: from watched date.
         :keyword datetime to_watched_date: to watched date.
-        :keyword int | list[int] content_rate: content rate.
+        :keyword uuid.UUID | list[uuid.UUID] content_rate_id: content rate id.
         :keyword int | list[int] resolution: resolution.
         :keyword datetime from_created_on: from created on.
         :keyword datetime to_created_on: to created on.
