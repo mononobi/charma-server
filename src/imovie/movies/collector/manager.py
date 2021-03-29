@@ -300,7 +300,7 @@ class MoviesCollectorManager(Manager):
             runtime = result.get('runtime')
             width = result.get('width')
             height = result.get('height')
-            if force is False and size < self._min_size and runtime < self._min_runtime:
+            if force is not True and size < self._min_size and runtime < self._min_runtime:
                 continue
 
             collected_count += 1
