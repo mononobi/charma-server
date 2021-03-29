@@ -256,7 +256,7 @@ class MoviesCollectorManager(Manager):
 
         path_utils.assert_is_directory(directory)
         force = options.get('force', False)
-        parent_directory = path_utils.get_parent_directory(directory)
+        parent_directory = path_utils.get_last_directory_name(directory)
         title = parent_directory
         if force is not True and self._should_be_ignored(title) is True:
             raise DirectoryIsIgnoredError(_('Directory [{directory}] is ignored.')
