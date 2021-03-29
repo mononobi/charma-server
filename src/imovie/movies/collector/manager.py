@@ -233,6 +233,7 @@ class MoviesCollectorManager(Manager):
         old_directory = options.get('old_directory')
         if old_directory is None or not path_utils.is_same_path(directory, old_directory):
             last_slug = None
+            old_name = directory
             while os.path.exists(directory) is True:
                 if last_slug is not None:
                     directory = directory.rstrip(last_slug)
@@ -240,6 +241,10 @@ class MoviesCollectorManager(Manager):
                 last_slug = slug_generator()
                 directory = directory + last_slug
 
+            if last_slug is not None:
+                self.LOGGER.info('Directory with name [{old_name}] is already existed. '
+                                 'The new directory will be created with name [{new_name}].'
+                                 .format(old_name=old_name, new_name=directory))
         return directory
 
     def collect(self, directory, **options):
