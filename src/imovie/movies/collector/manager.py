@@ -367,15 +367,15 @@ class MoviesCollectorManager(Manager):
 
             except DirectoryIsIgnoredError as error:
                 ignored += 1
-                self.LOGGER.exception(str(error))
+                self.LOGGER.exception(str(error), exc_info=False)
 
             except MovieIsAlreadyCollectedError as error:
                 already_collected += 1
-                self.LOGGER.exception(str(error))
+                self.LOGGER.exception(str(error), exc_info=False)
 
             except DirectoryIsEmptyError as error:
                 empty += 1
-                self.LOGGER.exception(str(error))
+                self.LOGGER.exception(str(error), exc_info=False)
 
             except Exception as error:
                 failed += 1
