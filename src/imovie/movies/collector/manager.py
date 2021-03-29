@@ -359,34 +359,34 @@ class MoviesCollectorManager(Manager):
         ignored = 0
         already_collected = 0
         empty = 0
-        error = 0
+        failed = 0
         for item in directories:
             try:
                 self.collect(item)
                 collected += 1
 
-            except DirectoryIsIgnoredError as failed:
+            except DirectoryIsIgnoredError as error:
                 ignored += 1
-                self.LOGGER.exception(str(failed))
+                self.LOGGER.exception(str(error))
 
-            except MovieIsAlreadyCollectedError as failed:
+            except MovieIsAlreadyCollectedError as error:
                 already_collected += 1
-                self.LOGGER.exception(str(failed))
+                self.LOGGER.exception(str(error))
 
-            except DirectoryIsEmptyError as failed:
+            except DirectoryIsEmptyError as error:
                 empty += 1
-                self.LOGGER.exception(str(failed))
+                self.LOGGER.exception(str(error))
 
-            except Exception as failed:
-                error += 1
-                self.LOGGER.exception(str(failed))
+            except Exception as error:
+                failed += 1
+                self.LOGGER.exception(str(error))
 
-        return dict(total=collected + ignored + already_collected + empty + error,
+        return dict(total=collected + ignored + already_collected + empty + failed,
                     collected=collected,
                     ignored=ignored,
                     already_collected=already_collected,
                     empty=empty,
-                    error=error)
+                    failed=failed)
 
     def get_quality(self, width, height, **options):
         """
