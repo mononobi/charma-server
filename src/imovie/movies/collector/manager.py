@@ -9,6 +9,7 @@ import re
 import pyrin.utils.path as path_utils
 import pyrin.utils.slug as slug_utils
 import pyrin.utils.regex as regex_utils
+import pyrin.logging.services as logging_services
 import pyrin.configuration.services as config_services
 import pyrin.globalization.datetime.services as datetime_services
 import pyrin.utilities.string.normalizer.services as normalizer_services
@@ -32,6 +33,7 @@ class MoviesCollectorManager(Manager):
     movies collector manager class.
     """
 
+    LOGGER = logging_services.get_logger('movie.collector')
     package_class = MoviesCollectorPackage
 
     # the minimum quality for movie to be considered in the relevant category.
@@ -211,7 +213,7 @@ class MoviesCollectorManager(Manager):
             target = os.path.join(folder, name)
             path_utils.move(item, target)
 
-    def _get_unique_directory_name(self, directory, slug_generator):
+    def _get_unique_directory_name(self, directory, slug_generator, **options):
         """
         gets a unique directory name with given path.
 
@@ -221,16 +223,22 @@ class MoviesCollectorManager(Manager):
         :param str directory: the full directory path to be created.
         :param function slug_generator: a callable to be used for slug generation.
 
+        :keyword str old_directory: the original directory name that the movie is
+                                    going to be collected from.
+                                    it may be the same as `directory` or None.
+
         :rtype: str
         """
 
-        last_slug = None
-        while os.path.exists(directory) is True:
-            if last_slug is not None:
-                directory = directory.rstrip(last_slug)
+        old_directory = options.get('old_directory')
+        if old_directory is None or not path_utils.is_same_path(directory, old_directory):
+            last_slug = None
+            while os.path.exists(directory) is True:
+                if last_slug is not None:
+                    directory = directory.rstrip(last_slug)
 
-            last_slug = slug_generator()
-            directory = directory + last_slug
+                last_slug = slug_generator()
+                directory = directory + last_slug
 
         return directory
 
@@ -306,7 +314,8 @@ class MoviesCollectorManager(Manager):
         fullname = movie_services.get_fullname(title, year, quality)
         root, name = path_utils.split_name(directory)
         new_path = os.path.join(root, fullname)
-        new_path = self._get_unique_directory_name(new_path, self._get_sequence_slug)
+        new_path = self._get_unique_directory_name(new_path, self._get_sequence_slug,
+                                                   old_directory=directory)
         fullname = path_utils.get_directory_name(new_path)
         new_path = path_utils.rename(directory, fullname)
 
@@ -351,17 +360,21 @@ class MoviesCollectorManager(Manager):
                 self.collect(item)
                 collected += 1
 
-            except DirectoryIsIgnoredError:
+            except DirectoryIsIgnoredError as failed:
                 ignored += 1
+                self.LOGGER.exception(str(failed))
 
-            except MovieIsAlreadyCollectedError:
+            except MovieIsAlreadyCollectedError as failed:
                 already_collected += 1
+                self.LOGGER.exception(str(failed))
 
-            except DirectoryIsEmptyError:
+            except DirectoryIsEmptyError as failed:
                 empty += 1
+                self.LOGGER.exception(str(failed))
 
-            except Exception:
+            except Exception as failed:
                 error += 1
+                self.LOGGER.exception(str(failed))
 
         return dict(total=collected + ignored + already_collected + empty + error,
                     collected=collected,
