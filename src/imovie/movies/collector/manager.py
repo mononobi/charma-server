@@ -407,7 +407,7 @@ class MoviesCollectorManager(Manager):
         :rtype: int
         """
 
-        if width in (None, 0) or height in (None, 0):
+        if width is None or height is None or width <= 0 or height <= 0:
             return MovieEntity.ResolutionEnum.UNKNOWN
 
         quality = int(width * height)
