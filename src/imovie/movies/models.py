@@ -5,8 +5,6 @@ movies models module.
 
 from sqlalchemy import Unicode, UnicodeText
 
-import pyrin.globalization.datetime.services as datetime_services
-
 from pyrin.core.enumerations import CoreEnum, EnumMember
 from pyrin.database.model.base import CoreEntity
 from pyrin.database.orm.types.custom import GUID
@@ -14,6 +12,8 @@ from pyrin.database.model.mixin import CreateHistoryMixin
 from pyrin.database.orm.sql.schema.columns import GUIDPKColumn, FKColumn, \
     HiddenColumn, StringColumn, IntegerColumn, FloatColumn, SmallIntegerColumn, \
     BooleanColumn, TimeStampColumn, TextColumn
+
+import imovie.movies.services as movie_services
 
 
 class MovieBaseEntity(CoreEntity):
@@ -57,8 +57,8 @@ class MovieEntity(MovieBaseEntity, CreateHistoryMixin):
                                  nullable=False, validated=True)
     search_library_title = HiddenColumn(name='search_library_title',
                                         type_=Unicode(150), nullable=False)
-    production_year = IntegerColumn(name='production_year', min_value=1900,
-                                    max_value=datetime_services.current_year, validated=True)
+    production_year = IntegerColumn(name='production_year', validated=True, min_value=1900,
+                                    max_value=movie_services.get_max_production_year)
     imdb_rate = FloatColumn(name='imdb_rate', min_value=0, max_value=10, validated=True)
     meta_score = SmallIntegerColumn(name='meta_score', min_value=0, max_value=100, validated=True)
     runtime = SmallIntegerColumn(name='runtime', min_value=0, max_value=1200, validated=True)

@@ -248,3 +248,13 @@ def get_fullname(title, production_year, resolution, **options):
 
     return get_component(MoviesPackage.COMPONENT_NAME).get_fullname(title, production_year,
                                                                     resolution, **options)
+
+
+def get_max_production_year():
+    """
+    gets the maximum acceptable production year for movies.
+
+    :rtype: int
+    """
+
+    return get_component(MoviesPackage.COMPONENT_NAME).get_max_production_year()

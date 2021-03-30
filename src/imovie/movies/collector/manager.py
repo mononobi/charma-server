@@ -11,7 +11,6 @@ import pyrin.utils.slug as slug_utils
 import pyrin.utils.regex as regex_utils
 import pyrin.logging.services as logging_services
 import pyrin.configuration.services as config_services
-import pyrin.globalization.datetime.services as datetime_services
 import pyrin.utilities.string.normalizer.services as normalizer_services
 
 from pyrin.core.globals import _
@@ -181,7 +180,7 @@ class MoviesCollectorManager(Manager):
         # we consider the last found year as production year
         # because the movie may have a year in its name too.
         year = int(matches[-1])
-        if year > datetime_services.current_year() + 1:
+        if year > movie_services.get_max_production_year():
             return None, name
 
         index = name.rfind(str(year))

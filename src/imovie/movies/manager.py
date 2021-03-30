@@ -3,6 +3,7 @@
 movies manager module.
 """
 
+import pyrin.globalization.datetime.services as datetime_services
 import pyrin.validator.services as validator_services
 
 from pyrin.core.globals import _
@@ -179,3 +180,12 @@ class MoviesManager(Manager, MoviesQueries, HookMixin):
 
         resolution = MovieEntity.ResolutionEnum(resolution)
         return result.format(title=title, year=production_year, resolution=resolution)
+
+    def get_max_production_year(self):
+        """
+        gets the maximum acceptable production year for movies.
+
+        :rtype: int
+        """
+
+        return datetime_services.current_year() + 1
