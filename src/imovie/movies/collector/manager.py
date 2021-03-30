@@ -38,7 +38,6 @@ class MoviesCollectorManager(Manager):
 
     # the minimum quality for movie to be considered in the relevant category.
     MIN_QUALITY = 0.65
-    VCD_THRESHOLD = int(352 * 240 * MIN_QUALITY)
     DVD_THRESHOLD = int(720 * 480 * MIN_QUALITY)
     HD_THRESHOLD = int(1280 * 720 * MIN_QUALITY)
     FHD_THRESHOLD = int(1920 * 1080 * MIN_QUALITY)
@@ -427,7 +426,4 @@ class MoviesCollectorManager(Manager):
         if quality >= self.DVD_THRESHOLD:
             return MovieEntity.ResolutionEnum.DVD
 
-        if quality >= self.VCD_THRESHOLD:
-            return MovieEntity.ResolutionEnum.VCD
-
-        return MovieEntity.ResolutionEnum.UNKNOWN
+        return MovieEntity.ResolutionEnum.VCD
