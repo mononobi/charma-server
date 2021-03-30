@@ -59,12 +59,9 @@ class MovieEntity(MovieBaseEntity, CreateHistoryMixin):
                                         type_=Unicode(150), nullable=False)
     production_year = IntegerColumn(name='production_year', min_value=1900,
                                     max_value=datetime_services.current_year, validated=True)
-    imdb_rate = FloatColumn(name='imdb_rate', nullable=False, default=0,
-                            min_value=0, max_value=10, validated=True)
-    meta_score = SmallIntegerColumn(name='meta_score', nullable=False, default=0,
-                                    min_value=0, max_value=100, validated=True)
-    runtime = SmallIntegerColumn(name='runtime', nullable=False, default=0,
-                                 min_value=0, max_value=1200, validated=True)
+    imdb_rate = FloatColumn(name='imdb_rate', min_value=0, max_value=10, validated=True)
+    meta_score = SmallIntegerColumn(name='meta_score', min_value=0, max_value=100, validated=True)
+    runtime = SmallIntegerColumn(name='runtime', min_value=0, max_value=1200, validated=True)
     imdb_page = StringColumn(name='imdb_page', min_length=31, max_length=150, validated=True)
     poster_name = StringColumn(name='poster_name', max_length=250, validated=True)
     directory_name = StringColumn(name='directory_name', max_length=250,
