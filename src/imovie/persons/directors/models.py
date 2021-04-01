@@ -4,7 +4,7 @@ directors models module.
 """
 
 from pyrin.database.orm.types.custom import GUID
-from pyrin.database.model.base import CoreEntity
+from pyrin.database.model.declarative import CoreEntity
 from pyrin.database.orm.sql.schema.columns import FKColumn
 
 

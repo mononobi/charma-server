@@ -3,7 +3,7 @@
 genres models module.
 """
 
-from pyrin.database.model.base import CoreEntity
+from pyrin.database.model.declarative import CoreEntity
 from pyrin.database.orm.sql.schema.columns import GUIDPKColumn, StringColumn, BooleanColumn
 
 

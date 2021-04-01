@@ -6,7 +6,7 @@ movies models module.
 from sqlalchemy import Unicode, UnicodeText
 
 from pyrin.core.enumerations import CoreEnum, EnumMember
-from pyrin.database.model.base import CoreEntity
+from pyrin.database.model.declarative import CoreEntity
 from pyrin.database.orm.types.custom import GUID
 from pyrin.database.model.mixin import CreateHistoryMixin
 from pyrin.database.orm.sql.schema.columns import GUIDPKColumn, FKColumn, \
