@@ -13,6 +13,7 @@ pygments = "==2.8.1"
 setuptools = "*"
 twine = "==3.4.1"
 opencv-python = "==4.5.1.48"
+sqlalchemy = "==1.4.5"
 
 [requires]
 python_version = "3.8"
