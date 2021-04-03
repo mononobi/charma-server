@@ -181,6 +181,31 @@ class MoviesManager(Manager, MoviesQueries, HookMixin):
         resolution = MovieEntity.ResolutionEnum(resolution)
         return result.format(title=title, year=production_year, resolution=resolution)
 
+    def get_full_title(self, title, production_year, **options):
+        """
+        gets the movie full title from given inputs.
+
+        it returns full title with given format:
+        title (production_year)
+
+        for example:
+        Crash (2005)
+
+        if the production year is None:
+        Crash
+
+        :param str title: movie title.
+        :param int production_year: production year.
+
+        :rtype: str
+        """
+
+        result = '{title} ({year})'
+        if production_year is None:
+            result = '{title}'
+
+        return result.format(title=title, year=production_year)
+
     def get_max_production_year(self):
         """
         gets the maximum acceptable production year for movies.

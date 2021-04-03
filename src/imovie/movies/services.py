@@ -250,6 +250,29 @@ def get_fullname(title, production_year, resolution, **options):
                                                                     resolution, **options)
 
 
+def get_full_title(title, production_year, **options):
+    """
+    gets the movie full title from given inputs.
+
+    it returns full title with given format:
+    title (production_year)
+
+    for example:
+    Crash (2005)
+
+    if the production year is None:
+    Crash
+
+    :param str title: movie title.
+    :param int production_year: production year.
+
+    :rtype: str
+    """
+
+    return get_component(MoviesPackage.COMPONENT_NAME).get_full_title(title, production_year,
+                                                                      **options)
+
+
 def get_max_production_year():
     """
     gets the maximum acceptable production year for movies.
