@@ -6,12 +6,12 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-pyrin = "*"
-pytest = "*"
-pytest-cov = "*"
-pygments = "*"
+pyrin = "==0.5.1"
+pytest = "==6.2.2"
+pytest-cov = "==2.11.1"
+pygments = "==2.8.1"
 setuptools = "*"
-twine = "*"
+twine = "==3.4.1"
 opencv-python = "==4.5.1.48"
 
 [requires]
