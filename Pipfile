@@ -10,10 +10,12 @@ pyrin = "==0.5.1"
 pytest = "==6.2.2"
 pytest-cov = "==2.11.1"
 pygments = "==2.8.1"
-setuptools = "*"
 twine = "==3.4.1"
 opencv-python = "==4.5.1.48"
 sqlalchemy = "==1.4.5"
+flask = "==1.1.2"
+alembic = "==1.5.8"
+pyjwt = "==2.0.1"
 
 [requires]
 python_version = "3.8"
