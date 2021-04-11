@@ -230,8 +230,7 @@ class MovieRootPathEntity(MovieRootPathBaseEntity):
         LINUX = 0
         WINDOWS = 1
         MAC = 2
-        ANDROID = 3
-        IOS = 4
+        JAVA = 3
 
     path = StringColumn(name='path', max_length=250, nullable=False, validated=True)
     os = SmallIntegerColumn(name='os', nullable=False, validated=True, check_in=OSEnum.values())
