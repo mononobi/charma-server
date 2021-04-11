@@ -54,6 +54,7 @@ class MovieRootManager(Manager):
         :raises InvalidPathError: invalid path error.
         :raises PathIsNotAbsoluteError: path is not absolute error.
         :raises PathNotExistedError: path not existed error.
+        :raises IsNotDirectoryError: is not directory error.
         :raises MovieRootPathAlreadyExistedError: movie root path already existed error.
 
         :rtype: uuid.UUID
@@ -62,7 +63,7 @@ class MovieRootManager(Manager):
         os = self.get_current_os()
         options.update(path=path, os=os)
         validator_services.validate_dict(MovieRootPathEntity, options)
-        path_utils.assert_exists(path)
+        path_utils.assert_is_directory(path)
         if self._exists(path, os) is True:
             raise MovieRootPathAlreadyExistedError(_('Movie root path [{root}] is '
                                                      'already existed.'.format(root=path)))

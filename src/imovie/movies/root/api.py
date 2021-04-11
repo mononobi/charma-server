@@ -16,6 +16,10 @@ def create(path, **options):
 
     :param str path: root path.
 
+    :raises InvalidPathError: invalid path error.
+    :raises PathIsNotAbsoluteError: path is not absolute error.
+    :raises PathNotExistedError: path not existed error.
+    :raises IsNotDirectoryError: is not directory error.
     :raises MovieRootPathAlreadyExistedError: movie root path already existed error.
 
     :rtype: uuid.UUID
