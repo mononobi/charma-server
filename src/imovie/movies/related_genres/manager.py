@@ -87,7 +87,7 @@ class RelatedGenresManager(Manager):
         """
 
         store = get_current_store()
-        return store.query(Movie2GenreEntity.genre_id)\
+        return store.query(Movie2GenreEntity)\
             .filter(Movie2GenreEntity.movie_id == movie_id,
                     Movie2GenreEntity.genre_id == genre_id).delete()
 
@@ -103,5 +103,5 @@ class RelatedGenresManager(Manager):
         """
 
         store = get_current_store()
-        return store.query(Movie2GenreEntity.genre_id)\
+        return store.query(Movie2GenreEntity)\
             .filter(Movie2GenreEntity.movie_id == movie_id).delete()

@@ -143,7 +143,7 @@ class MoviesManager(Manager, MoviesQueries, HookMixin):
             hook.before_delete(id)
 
         store = get_current_store()
-        return store.query(MovieEntity.id).filter(MovieEntity.id == id).delete()
+        return store.query(MovieEntity).filter(MovieEntity.id == id).delete()
 
     def get_fullname(self, title, production_year, resolution, **options):
         """

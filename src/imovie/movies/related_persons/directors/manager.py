@@ -87,7 +87,7 @@ class RelatedDirectorsManager(Manager):
         """
 
         store = get_current_store()
-        return store.query(Movie2DirectorEntity.person_id)\
+        return store.query(Movie2DirectorEntity)\
             .filter(Movie2DirectorEntity.movie_id == movie_id,
                     Movie2DirectorEntity.person_id == person_id).delete()
 
@@ -103,7 +103,7 @@ class RelatedDirectorsManager(Manager):
         """
 
         store = get_current_store()
-        return store.query(Movie2DirectorEntity.person_id)\
+        return store.query(Movie2DirectorEntity)\
             .filter(Movie2DirectorEntity.movie_id == movie_id).delete()
 
     def delete_by_director(self, person_id, **options):
@@ -118,5 +118,5 @@ class RelatedDirectorsManager(Manager):
         """
 
         store = get_current_store()
-        return store.query(Movie2DirectorEntity.person_id)\
+        return store.query(Movie2DirectorEntity)\
             .filter(Movie2DirectorEntity.person_id == person_id).delete()

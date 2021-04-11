@@ -205,39 +205,6 @@ class WatchLaterEntity(WatchLaterBaseEntity, CreateHistoryMixin):
     _extend_existing = True
 
 
-class MovieRootPathBaseEntity(CoreEntity):
-    """
-    movie root path base entity class.
-    """
-
-    _table = 'movie_root_path'
-
-    id = GUIDPKColumn(name='id')
-
-
-class MovieRootPathEntity(MovieRootPathBaseEntity):
-    """
-    movie root path entity class.
-    """
-
-    _extend_existing = True
-
-    class OSEnum(CoreEnum):
-        """
-        os enum.
-        """
-
-        LINUX = 0
-        WINDOWS = 1
-        MAC = 2
-        JAVA = 3
-
-    path = StringColumn(name='path', max_length=250, nullable=False, validated=True)
-    os = SmallIntegerColumn(name='os', nullable=False, validated=True, check_in=OSEnum.values())
-
-    _unique_on = os, path
-
-
 class CopyRequestedMovieBaseEntity(CoreEntity):
     """
     copy requested movie base entity class.

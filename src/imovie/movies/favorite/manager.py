@@ -98,5 +98,5 @@ class FavoriteMoviesManager(Manager):
         """
 
         store = get_current_store()
-        return store.query(FavoriteMovieEntity.movie_id)\
+        return store.query(FavoriteMovieEntity)\
             .filter(FavoriteMovieEntity.movie_id == movie_id).delete()

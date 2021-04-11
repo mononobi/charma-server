@@ -88,7 +88,7 @@ class RelatedLanguagesManager(Manager):
         """
 
         store = get_current_store()
-        return store.query(Movie2LanguageEntity.language_id)\
+        return store.query(Movie2LanguageEntity)\
             .filter(Movie2LanguageEntity.movie_id == movie_id,
                     Movie2LanguageEntity.language_id == language_id).delete()
 
@@ -104,5 +104,5 @@ class RelatedLanguagesManager(Manager):
         """
 
         store = get_current_store()
-        return store.query(Movie2LanguageEntity.language_id)\
+        return store.query(Movie2LanguageEntity)\
             .filter(Movie2LanguageEntity.movie_id == movie_id).delete()
