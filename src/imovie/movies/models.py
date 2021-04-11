@@ -47,7 +47,7 @@ class MovieEntity(MovieBaseEntity, CreateHistoryMixin):
         UHD = EnumMember(6, '2160p')
 
     content_rate_id = FKColumn(fk='content_rate.id', name='content_rate_id',
-                               type_=GUID, nullable=True, validated=True)
+                               type_=GUID, validated=True)
     identifier = HiddenColumn(name='identifier', type_=Unicode(150), unique=True)
     title = StringColumn(name='title', max_length=150, validated=True)
     search_title = HiddenColumn(name='search_title', type_=Unicode(150))
