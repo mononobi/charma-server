@@ -110,5 +110,5 @@ class ActorsManager(Manager, PersonsQueries, HookMixin):
             hook.before_delete(id)
 
         store = get_current_store()
-        return store.query(ActorEntity.person_id)\
+        return store.query(ActorEntity)\
             .filter(ActorEntity.person_id == id).delete()

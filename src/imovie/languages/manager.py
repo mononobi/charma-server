@@ -152,7 +152,7 @@ class LanguagesManager(Manager):
         """
 
         store = get_current_store()
-        return store.query(LanguageEntity.id).filter(LanguageEntity.id == id).delete()
+        return store.query(LanguageEntity).filter(LanguageEntity.id == id).delete()
 
     def get_by_name(self, name):
         """

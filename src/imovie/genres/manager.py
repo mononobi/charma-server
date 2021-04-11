@@ -195,7 +195,7 @@ class GenresManager(Manager):
         """
 
         store = get_current_store()
-        return store.query(GenreEntity.id).filter(GenreEntity.id == id).delete()
+        return store.query(GenreEntity).filter(GenreEntity.id == id).delete()
 
     def get_by_name(self, name):
         """

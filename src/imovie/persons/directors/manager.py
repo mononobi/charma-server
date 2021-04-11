@@ -111,5 +111,5 @@ class DirectorsManager(Manager, PersonsQueries, HookMixin):
             hook.before_delete(id)
 
         store = get_current_store()
-        return store.query(DirectorEntity.person_id)\
+        return store.query(DirectorEntity)\
             .filter(DirectorEntity.person_id == id).delete()

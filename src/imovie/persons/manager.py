@@ -190,4 +190,4 @@ class PersonsManager(Manager, PersonsQueries, HookMixin):
             hook.before_delete(id)
 
         store = get_current_store()
-        return store.query(PersonEntity.id).filter(PersonEntity.id == id).delete()
+        return store.query(PersonEntity).filter(PersonEntity.id == id).delete()
