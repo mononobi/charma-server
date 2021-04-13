@@ -12,7 +12,7 @@ from pyrin.database.services import get_current_store
 from pyrin.utils.sqlalchemy import add_datetime_range_clause, add_range_clause
 
 from imovie.common.normalizer.mixin import NormalizerMixin
-from imovie.movies.models import MovieEntity
+from imovie.movies.models import MovieEntity, ContentRateEntity
 
 
 class MoviesQueries(NormalizerMixin):
@@ -176,9 +176,12 @@ class MoviesQueries(NormalizerMixin):
         :rtype: list[MovieEntity]
         """
 
-        columns = options.get('columns') or [MovieEntity]
+        columns = options.get('columns') or [MovieEntity,
+                                             ContentRateEntity.name.label('content_rate')]
         store = get_current_store()
         query = store.query(*columns)
+        query = query.outerjoin(ContentRateEntity,
+                                ContentRateEntity.id == MovieEntity.content_rate_id)
         query = self._prepare_query(query)
         options.update(inject_total=SECURE_TRUE)
 
