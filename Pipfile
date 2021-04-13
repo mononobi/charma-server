@@ -16,6 +16,7 @@ sqlalchemy = "==1.4.5"
 flask = "==1.1.2"
 alembic = "==1.5.8"
 pyjwt = "==2.0.1"
+beautifulsoup4 = "==4.9.3"
 
 [requires]
 python_version = "3.8"
