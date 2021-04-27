@@ -8,9 +8,9 @@ import re
 from imovie.search.providers.base import SearchProviderBase
 
 
-class OscoboSearchProviderBase(SearchProviderBase):
+class OscoboBase(SearchProviderBase):
     """
-    oscobo search provider base class.
+    oscobo base class.
     """
 
     SEARCH_URL = 'https://www.oscobo.com/search.php?q={query}'
