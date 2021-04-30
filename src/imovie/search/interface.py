@@ -26,15 +26,17 @@ class AbstractSearchProvider(CoreObject, metaclass=SearchProviderSingletonMeta):
     """
 
     @abstractmethod
-    def find(self, text, limit, **options):
+    def search(self, text, **options):
         """
-        gets the founded url for given text.
+        searches given text and returns a url.
 
-        it may return None if no url matched the `accepted_result_pattern`.
+        it may return None if nothing found.
 
         :param str text: text to be searched.
-        :param int limit: max number of urls to be tried before giving
-                          up the search. defaults to 5 if not provided.
+
+        :keyword int limit: max number of urls to be tried before giving
+                            up the search. defaults to 5 if not provided.
+                            it could not be more than 10.
 
         :raises CoreNotImplementedError: core not implemented error.
 
@@ -48,6 +50,19 @@ class AbstractSearchProvider(CoreObject, metaclass=SearchProviderSingletonMeta):
     def name(self):
         """
         gets the name of this search provider.
+
+        :raises CoreNotImplementedError: core not implemented error.
+
+        :rtype: str
+        """
+
+        raise CoreNotImplementedError()
+
+    @property
+    @abstractmethod
+    def category(self):
+        """
+        gets the category of this provider.
 
         :raises CoreNotImplementedError: core not implemented error.
 
