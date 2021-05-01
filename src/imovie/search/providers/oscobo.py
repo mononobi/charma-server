@@ -14,7 +14,8 @@ class OscoboBase(SearchProviderBase):
     oscobo base class.
     """
 
-    _remote_url = 'https://www.oscobo.com/search.php?q={query}'
+    _name = 'oscobo'
+    _remote_url = 'https://www.oscobo.com/search.php?q={query} {target}'
 
     def _extract_urls(self, response, **options):
         """
@@ -28,7 +29,8 @@ class OscoboBase(SearchProviderBase):
         """
 
         urls = []
-        results = response.find_all('div', class_='line cite')
+        result_list = response.find('div', id='results-list')
+        results = result_list.find_all('div', class_='line cite')
         for item in results:
             urls.append(item.get_text(strip=True))
 
@@ -41,9 +43,9 @@ class OscoboIMDBProvider(OscoboBase):
     oscobo imdb provider class.
     """
 
-    _name = 'oscobo.imdb'
+    _target = 'imdb'
     _category = 'movie'
-    _accepted_result_pattern = re.compile(r'^(https://www\.imdb\.com/title/[^/]+).*$',
+    _accepted_result_pattern = re.compile(r'^(https?://(www\.)?imdb\.com/title/[^/]+).*$',
                                           re.IGNORECASE)
 
 
@@ -53,7 +55,7 @@ class OscoboSubsceneProvider(OscoboBase):
     oscobo subscene provider class.
     """
 
-    _name = 'oscobo.subscene'
+    _target = 'subscene'
     _category = 'subtitle'
-    _accepted_result_pattern = re.compile(r'^(https://www\.subscene\.com/subtitles/[^/]+).*$',
+    _accepted_result_pattern = re.compile(r'^(https?://(www\.)?subscene\.com/subtitles/[^/]+).*$',
                                           re.IGNORECASE)

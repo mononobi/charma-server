@@ -35,8 +35,8 @@ class AbstractSearchProvider(CoreObject, metaclass=SearchProviderSingletonMeta):
         :param str text: text to be searched.
 
         :keyword int limit: max number of urls to be tried before giving
-                            up the search. defaults to 5 if not provided.
-                            it could not be more than 10.
+                            up the search. defaults to 10 if not provided.
+                            it could not be more than 20.
 
         :raises CoreNotImplementedError: core not implemented error.
 

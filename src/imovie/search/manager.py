@@ -117,8 +117,8 @@ class SearchManager(Manager):
         :param str category: category of search providers to be used.
 
         :keyword int limit: max number of urls to be tried before giving
-                            up the search. defaults to 5 if not provided.
-                            it could not be more than 10.
+                            up the search. defaults to 10 if not provided.
+                            it could not be more than 20.
 
         :raises SearchProviderCategoryNotFoundError: search provider category not found error.
         """

@@ -20,6 +20,9 @@ class SearchProviderBase(AbstractSearchProvider):
     # the name of this search provider.
     _name = None
 
+    # the target of this search provider.
+    _target = None
+
     # the category of this search provider.
     _category = None
 
@@ -29,7 +32,7 @@ class SearchProviderBase(AbstractSearchProvider):
     _accepted_result_pattern = None
 
     # the remote url of this provider to make requests to it.
-    # it must have a '{query}' placeholder in it.
+    # it must have '{query}' and '{target}' place-holders in it.
     _remote_url = None
 
     def __prepare_url(self, url):
@@ -96,17 +99,17 @@ class SearchProviderBase(AbstractSearchProvider):
         :param str text: text to be searched.
 
         :keyword int limit: max number of urls to be tried before giving
-                            up the search. defaults to 5 if not provided.
-                            it could not be more than 10.
+                            up the search. defaults to 10 if not provided.
+                            it could not be more than 20.
 
         :rtype: str
         """
 
-        limit = options.get('limit', 5)
+        limit = options.get('limit', 10)
         if limit <= 0:
             limit = 1
 
-        limit = min(limit, 10)
+        limit = min(limit, 20)
         query = self.get_search_query(text)
         response = self._fetch(query, **options)
         urls = self.__extract_urls(response, **options)
@@ -136,17 +139,30 @@ class SearchProviderBase(AbstractSearchProvider):
         :rtype: str
         """
 
-        return self.remote_url.format(query=text)
+        return self.remote_url.format(query=text, target=self.target)
 
     @property
     def name(self):
         """
         gets the name of this search provider.
 
+        the name will be constructed in the form of `name`.`target`.
+        for example `oscobo.imdb`.
+
         :rtype: str
         """
 
-        return self._name
+        return '{name}.{target}'.format(name=self._name, target=self.target)
+
+    @property
+    def target(self):
+        """
+        gets the target of this search provider.
+
+        :rtype: str
+        """
+
+        return self._target
 
     @property
     def category(self):
