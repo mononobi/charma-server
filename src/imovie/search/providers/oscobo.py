@@ -3,10 +3,9 @@
 search providers oscobo module.
 """
 
-import re
-
 from imovie.search.decorators import search_provider
 from imovie.search.providers.base import SearchProviderBase
+from imovie.search.providers.mixins import IMDBMovieMixin, SubsceneMixin
 
 
 class OscoboBase(SearchProviderBase):
@@ -38,24 +37,16 @@ class OscoboBase(SearchProviderBase):
 
 
 @search_provider()
-class OscoboIMDBProvider(OscoboBase):
+class OscoboIMDBProvider(IMDBMovieMixin, OscoboBase):
     """
     oscobo imdb provider class.
     """
-
-    _target = 'imdb'
-    _category = 'movie'
-    _accepted_result_pattern = re.compile(r'^(https?://(www\.)?imdb\.com/title/[^/]+).*$',
-                                          re.IGNORECASE)
+    pass
 
 
 @search_provider()
-class OscoboSubsceneProvider(OscoboBase):
+class OscoboSubsceneProvider(SubsceneMixin, OscoboBase):
     """
     oscobo subscene provider class.
     """
-
-    _target = 'subscene'
-    _category = 'subtitle'
-    _accepted_result_pattern = re.compile(r'^(https?://(www\.)?subscene\.com/subtitles/[^/]+).*$',
-                                          re.IGNORECASE)
+    pass
