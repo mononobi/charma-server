@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 import pyrin.configuration.services as config_services
 
 from pyrin.core.structs import Manager
+from pyrin.processor.request.enumerations import RequestHeaderEnum
 
 from imovie.scraper import ScraperPackage
 
@@ -48,7 +49,7 @@ class ScraperManager(Manager):
         headers = options.get('headers') or {}
         add_user_agent = options.get('add_user_agent', True)
         if add_user_agent is True:
-            headers['User-Agent'] = self._user_agent
+            headers[RequestHeaderEnum.USER_AGENT] = self._user_agent
 
         response = requests.get(url, headers=headers)
         response.raise_for_status()

@@ -5,9 +5,9 @@ search providers base module.
 
 from abc import abstractmethod
 
-import requests
-
 from pyrin.core.exceptions import CoreNotImplementedError
+
+import imovie.scraper.services as scraper_services
 
 from imovie.search.interface import AbstractSearchProvider
 
@@ -46,18 +46,33 @@ class SearchProviderBase(AbstractSearchProvider):
 
         return self._prepare_url(url)
 
+    def __extract_urls(self, response, **options):
+        """
+        extracts available urls from given response.
+
+        it may return None if nothing found.
+
+        :param BeautifulSoup response: html response.
+
+        :rtype: list[str]
+        """
+
+        result = self._extract_urls(response, **options)
+        if result is None or len(result) <= 0:
+            return None
+
+        return result
+
     def _fetch(self, url, **options):
         """
         fetches the result of given url.
 
         :param str url: url to be fetched.
 
-        :rtype: str
+        :rtype: BeautifulSoup
         """
 
-        result = requests.get(url)
-        result.raise_for_status()
-        return result.text
+        return scraper_services.get(url, **options)
 
     def _prepare_url(self, url):
         """
@@ -94,7 +109,7 @@ class SearchProviderBase(AbstractSearchProvider):
         limit = min(limit, 10)
         query = self.get_search_query(text)
         response = self._fetch(query, **options)
-        urls = self._extract_urls(response, **options)
+        urls = self.__extract_urls(response, **options)
         if urls is None:
             return None
 
@@ -168,9 +183,9 @@ class SearchProviderBase(AbstractSearchProvider):
         """
         extracts available urls from given response.
 
-        it may return None if noting found.
+        it may return None if nothing found.
 
-        :param str response: html response.
+        :param BeautifulSoup response: html response.
 
         :raises CoreNotImplementedError: core not implemented error.
 
