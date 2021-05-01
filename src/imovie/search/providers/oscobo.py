@@ -28,8 +28,8 @@ class OscoboBase(SearchProviderBase):
         """
 
         urls = []
-        result_list = response.find('div', id='results-list')
-        results = result_list.find_all('div', class_='line cite')
+        result_container = response.find('div', id='results-list')
+        results = result_container.find_all('div', class_='line cite')
         for item in results:
             urls.append(item.get_text(strip=True))
 
