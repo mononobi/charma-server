@@ -5,7 +5,7 @@ search providers oscobo module.
 
 from imovie.search.decorators import search_provider
 from imovie.search.providers.base import SearchProviderBase
-from imovie.search.providers.mixins import IMDBMovieMixin, SubsceneMixin
+from imovie.search.providers.mixins import IMDBMovieMixin
 
 
 class OscoboBase(SearchProviderBase):
@@ -40,13 +40,5 @@ class OscoboBase(SearchProviderBase):
 class OscoboIMDBProvider(IMDBMovieMixin, OscoboBase):
     """
     oscobo imdb provider class.
-    """
-    pass
-
-
-@search_provider()
-class OscoboSubsceneProvider(SubsceneMixin, OscoboBase):
-    """
-    oscobo subscene provider class.
     """
     pass
