@@ -29,6 +29,9 @@ class BingBase(SearchProviderBase):
 
         urls = []
         result_container = response.find('ol', id='b_results')
+        if result_container is None:
+            return urls
+
         results = result_container.find_all('cite')
         for item in results:
             urls.append(item.get_text(strip=True))

@@ -29,6 +29,9 @@ class OscoboBase(SearchProviderBase):
 
         urls = []
         result_container = response.find('div', id='results-list')
+        if result_container is None:
+            return urls
+
         results = result_container.find_all('div', class_='line cite')
         for item in results:
             urls.append(item.get_text(strip=True))
