@@ -54,7 +54,7 @@ class SubsceneProvider(SearchProviderBase):
             full_url = '{base}{url}'.format(base=self.BASE_URL, url=item.get('href'))
             urls.append(full_url)
 
-        return list(set(urls))
+        return urls
 
     def _is_year_match(self, name, year):
         """
