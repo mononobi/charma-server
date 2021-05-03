@@ -18,3 +18,17 @@ class UpdaterBusinessException(CoreBusinessException, UpdaterException):
     updater business exception.
     """
     pass
+
+
+class InvalidUpdaterTypeError(UpdaterException):
+    """
+    invalid updater type error.
+    """
+    pass
+
+
+class DuplicateUpdaterError(UpdaterException):
+    """
+    duplicate updater error.
+    """
+    pass
