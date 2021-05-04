@@ -29,7 +29,7 @@ class SubsceneProvider(SearchProviderBase):
 
         it may return None if nothing found.
 
-        :param BeautifulSoup response: html response.
+        :param bs4.BeautifulSoup response: html response.
 
         :keyword int year: movie year. if not provided, the
                            subscene url will not be matched.

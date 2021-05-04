@@ -32,3 +32,10 @@ class DuplicateUpdaterError(UpdaterException):
     duplicate updater error.
     """
     pass
+
+
+class UpdaterCategoryNotFoundError(UpdaterException):
+    """
+    updater category not found error.
+    """
+    pass

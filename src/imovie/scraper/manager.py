@@ -43,7 +43,7 @@ class ScraperManager(Manager):
 
         :keyword dict headers: headers to be sent with request.
 
-        :rtype: BeautifulSoup
+        :rtype: bs4.BeautifulSoup
         """
 
         headers = options.get('headers') or {}

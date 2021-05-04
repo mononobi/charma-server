@@ -22,7 +22,7 @@ class OscoboBase(SearchProviderBase):
 
         it may return None if nothing found.
 
-        :param BeautifulSoup response: html response.
+        :param bs4.BeautifulSoup response: html response.
 
         :rtype: list[str]
         """

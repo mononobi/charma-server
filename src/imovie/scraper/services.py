@@ -19,7 +19,7 @@ def get(url, **options):
 
     :keyword dict headers: headers to be sent with request.
 
-    :rtype: BeautifulSoup
+    :rtype: bs4.BeautifulSoup
     """
 
     return get_component(ScraperPackage.COMPONENT_NAME).get(url, **options)

@@ -55,7 +55,7 @@ class SearchProviderBase(AbstractSearchProvider):
 
         it may return None if nothing found.
 
-        :param BeautifulSoup response: html response.
+        :param bs4.BeautifulSoup response: html response.
 
         :rtype: list[str]
         """
@@ -72,7 +72,7 @@ class SearchProviderBase(AbstractSearchProvider):
 
         :param str url: url to be fetched.
 
-        :rtype: BeautifulSoup
+        :rtype: bs4.BeautifulSoup
         """
 
         return scraper_services.get(url, **options)
@@ -201,7 +201,7 @@ class SearchProviderBase(AbstractSearchProvider):
 
         it may return None if nothing found.
 
-        :param BeautifulSoup response: html response.
+        :param bs4.BeautifulSoup response: html response.
 
         :raises CoreNotImplementedError: core not implemented error.
 

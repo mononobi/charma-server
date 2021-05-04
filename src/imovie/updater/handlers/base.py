@@ -7,6 +7,8 @@ from abc import abstractmethod
 
 from pyrin.core.exceptions import CoreNotImplementedError
 
+import imovie.scraper.services as scraper_services
+
 from imovie.updater.interface import AbstractUpdater
 from imovie.updater.exceptions import InvalidUpdaterTypeError
 
@@ -36,7 +38,7 @@ class UpdaterBase(AbstractUpdater):
         fetches data from given url.
 
         :param str url: url to fetch info from it.
-        :param BeautifulSoup content: the html content of input url.
+        :param bs4.BeautifulSoup content: the html content of input url.
 
         :raises CoreNotImplementedError: core not implemented error.
 
@@ -45,20 +47,40 @@ class UpdaterBase(AbstractUpdater):
 
         raise CoreNotImplementedError()
 
-    def fetch(self, url, content, **options):
+    def _update_url(self, url):
+        """
+        updates given url and returns the new url.
+
+        this method is intended to be overridden in subclasses.
+
+        :param str url: url to be updated.
+
+        :rtype: str
+        """
+
+        return url
+
+    def fetch(self, url, **options):
         """
         fetches data from given url.
 
         :param str url: url to fetch info from it.
-        :param BeautifulSoup content: the html content of input url.
+
+        :keyword bs4.BeautifulSoup content: the html content of input url.
 
         :returns: update data
         """
 
-        data = self._fetch(url, content, **options)
+        new_url = self._update_url(url)
+        content = options.get('content')
+        if content is None or url != new_url:
+            content = scraper_services.get(url, **options)
+
+        options.update(content=content)
+        data = self._fetch(new_url, content)
         if data is None:
             if self._next_handler is not None:
-                return self._next_handler.fetch(url, content, **options)
+                return self._next_handler.fetch(new_url, **options)
 
         return data
 
