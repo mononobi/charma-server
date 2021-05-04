@@ -80,6 +80,7 @@ class SearchManager(Manager):
         :param str category: category name.
         :param str name: search provider name.
 
+        :raises SearchProviderCategoryNotFoundError: search provider category not found error.
         :raises SearchProviderNotFoundError: search provider not found error.
 
         :rtype: AbstractSearchProviders
