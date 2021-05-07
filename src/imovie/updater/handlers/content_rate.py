@@ -27,7 +27,7 @@ class IMDBContentRateUpdater(UpdaterBase):
         :param str url: url to fetch info from it.
         :param bs4.BeautifulSoup content: the html content of input url.
 
-        :returns: update data
+        :returns: imdb content rate.
         """
 
         content_rate = None
