@@ -3,10 +3,6 @@
 updater handlers original title module.
 """
 
-from bs4 import NavigableString
-
-import pyrin.utilities.string.normalizer.services as normalizer_services
-
 from imovie.updater.decorators import updater
 from imovie.updater.handlers.base import UpdaterBase
 
@@ -30,13 +26,7 @@ class IMDBOriginalTitleUpdater(UpdaterBase):
         :returns: imdb original title.
         """
 
-        original_title = None
         original_title_tag = content.find('div', class_='originalTitle')
-        if original_title_tag is not None and isinstance(original_title_tag.next,
-                                                         NavigableString):
-            result = normalizer_services.filter(str(original_title_tag.next),
-                                                filters=['\n'])
-            if len(result) > 0:
-                original_title = result
+        original_title = self._get_text(original_title_tag, **options)
 
         return original_title

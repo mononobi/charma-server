@@ -5,6 +5,10 @@ updater handlers base module.
 
 from abc import abstractmethod
 
+from bs4 import NavigableString
+
+import pyrin.utilities.string.normalizer.services as normalizer_services
+
 from pyrin.core.exceptions import CoreNotImplementedError
 
 import imovie.scraper.services as scraper_services
@@ -59,6 +63,25 @@ class UpdaterBase(AbstractUpdater):
         """
 
         return url
+
+    def _get_text(self, tag, **options):
+        """
+        gets the string of `next` attribute of given tag if available.
+
+        otherwise returns None.
+
+        :param bs4.element.Tag tag: a tag object.
+
+        :rtype: str
+        """
+
+        text = None
+        if tag is not None and isinstance(tag.next, NavigableString):
+            result = normalizer_services.filter(str(tag.next), filters=['\n'])
+            if len(result) > 0:
+                text = result
+
+        return text
 
     def fetch(self, url, **options):
         """
