@@ -51,6 +51,9 @@ class ScraperManager(Manager):
         if add_user_agent is True:
             headers[RequestHeaderEnum.USER_AGENT] = self._user_agent
 
+        # we have to set 'Accept-Language' header to 'en-US'
+        # to get consistent results for any movie.
+        headers[RequestHeaderEnum.ACCEPT_LANGUAGE] = 'en-US'
         response = requests.get(url, headers=headers)
         response.raise_for_status()
         return BeautifulSoup(response.text, self._parser)
