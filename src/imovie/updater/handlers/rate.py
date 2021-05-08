@@ -29,7 +29,8 @@ class IMDBRateUpdater(UpdaterBase):
         rate = None
         rate_tag = content.find('span', itemprop='ratingValue')
         if rate_tag is not None:
-            rate = rate_tag.get_text(strip=True)
-            rate = float(rate)
+            result = rate_tag.get_text(strip=True)
+            if len(result) > 0:
+                rate = float(result)
 
         return rate
