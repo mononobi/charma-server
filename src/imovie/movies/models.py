@@ -283,7 +283,7 @@ class Movie2CountryBaseEntity(CoreEntity):
                           primary_key=True, validated=True)
 
 
-class Movie2CountryEntity(Movie2LanguageBaseEntity):
+class Movie2CountryEntity(Movie2CountryBaseEntity):
     """
     movie 2 country entity class.
     """
