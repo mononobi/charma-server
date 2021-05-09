@@ -268,3 +268,26 @@ class Movie2LanguageEntity(Movie2LanguageBaseEntity):
     _extend_existing = True
 
     is_main = BooleanColumn(name='is_main', nullable=False, default=False, validated=True)
+
+
+class Movie2CountryBaseEntity(CoreEntity):
+    """
+    movie 2 country base entity class.
+    """
+
+    _table = 'movie_2_country'
+
+    movie_id = FKColumn(fk='movie.id', name='movie_id', type_=GUID,
+                        primary_key=True, validated=True)
+    country_id = FKColumn(fk='country.id', name='country_id', type_=GUID,
+                          primary_key=True, validated=True)
+
+
+class Movie2CountryEntity(Movie2LanguageBaseEntity):
+    """
+    movie 2 country entity class.
+    """
+
+    _extend_existing = True
+
+    is_main = BooleanColumn(name='is_main', nullable=False, default=False, validated=True)
