@@ -16,7 +16,7 @@ class MovieIMDBPageValidator(HTTPSValidator):
     movie imdb page validator class.
     """
 
-    regex = r'^https://www.imdb.com/title/tt[\d]+/$'
+    regex = r'^https://www.imdb.com/title/tt[\d]+$'
 
     pattern_not_match_message = _('The provided value for [{param_name}] '
                                   'is not a valid imdb movie page.')
