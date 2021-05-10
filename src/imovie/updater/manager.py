@@ -7,7 +7,10 @@ from collections import OrderedDict
 
 from pyrin.core.structs import Manager, Context
 
+import imovie.scraper.services as scraper_services
+
 from imovie.updater import UpdaterPackage
+from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.interface import AbstractUpdater
 from imovie.updater.exceptions import InvalidUpdaterTypeError, DuplicateUpdaterError, \
     UpdaterCategoryNotFoundError
@@ -119,8 +122,45 @@ class UpdaterManager(Manager):
         :keyword bs4.BeautifulSoup content: the html content of input url.
 
         :raises UpdaterCategoryNotFoundError: updater category not found error.
+
+        :returns: dict[str category, object value]
+        :rtype: dict
         """
 
         updater = self.get_updater(category, **options)
         result = updater.fetch(url, **options)
-        return result
+        if result is None:
+            return None
+
+        final_result = dict()
+        final_result[updater.category] = result
+        return final_result
+
+    def fetch_all(self, url, *categories, **options):
+        """
+        fetches data from given url for specified categories.
+
+        :param str url: url to fetch data from it.
+
+        :param str categories: categories of updaters to be used.
+                               if not provided, all categories will be used.
+
+        :raises UpdaterCategoryNotFoundError: updater category not found error.
+
+        :returns: a dict of all updated values and their categories.
+        :rtype: dict
+        """
+
+        content = scraper_services.get(url, **options)
+        options.update(content=content)
+        categories = set(categories)
+        if len(categories) <= 0:
+            categories = UpdaterCategoryEnum.values()
+
+        final_result = dict()
+        for item in categories:
+            result = self.fetch(url, item, **options)
+            if result is not None:
+                final_result.update(result)
+
+        return final_result

@@ -49,6 +49,27 @@ def fetch(url, category, **options):
     :keyword bs4.BeautifulSoup content: the html content of input url.
 
     :raises UpdaterCategoryNotFoundError: updater category not found error.
+
+    :returns: dict[str category, object value]
+    :rtype: dict
     """
 
     return get_component(UpdaterPackage.COMPONENT_NAME).fetch(url, category, **options)
+
+
+def fetch_all(url, *categories, **options):
+    """
+    fetches data from given url for specified categories.
+
+    :param str url: url to fetch data from it.
+
+    :param str categories: categories of updaters to be used.
+                           if not provided, all categories will be used.
+
+    :raises UpdaterCategoryNotFoundError: updater category not found error.
+
+    :returns: a dict of all updated values and their categories.
+    :rtype: dict
+    """
+
+    return get_component(UpdaterPackage.COMPONENT_NAME).fetch_all(url, *categories, **options)
