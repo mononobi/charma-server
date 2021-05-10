@@ -12,7 +12,8 @@ def register_hook(instance):
     """
     registers the given instance into movie hooks.
 
-    :param MovieHookBase instance: movie hook instance to be registered.
+    :param imovie.movies.hooks.MovieHookBase instance: movie hook instance
+                                                       to be registered.
 
     :raises InvalidMovieHookTypeError: invalid movie hook type error.
     """
@@ -30,7 +31,7 @@ def get(id):
 
     :raises MovieDoesNotExistError: movie does not exist error.
 
-    :rtype: MovieEntity
+    :rtype: imovie.movies.models.MovieEntity
     """
 
     return get_component(MoviesPackage.COMPONENT_NAME).get(id)
@@ -148,7 +149,7 @@ def find(**filters):
 
     :keyword list[str] | str order_by: order by columns.
 
-    :rtype: list[MovieEntity]
+    :rtype: list[imovie.movies.models.MovieEntity]
     """
 
     return get_component(MoviesPackage.COMPONENT_NAME).find(**filters)
@@ -194,7 +195,7 @@ def get_all(**options):
 
     :keyword list[str] | str order_by: order by columns.
 
-    :rtype: list[MovieEntity]
+    :rtype: list[imovie.movies.models.MovieEntity]
     """
 
     return get_component(MoviesPackage.COMPONENT_NAME).get_all(**options)
@@ -211,7 +212,7 @@ def try_get(**options):
     :keyword str imdb_page: imdb page link.
     :keyword str title: title.
 
-    :rtype: MovieEntity
+    :rtype: imovie.movies.models.MovieEntity
     """
 
     return get_component(MoviesPackage.COMPONENT_NAME).try_get(**options)

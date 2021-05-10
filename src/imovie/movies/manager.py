@@ -35,7 +35,7 @@ class MoviesManager(Manager, MoviesQueries, HookMixin):
 
         :param uuid.UUID id: movie id.
 
-        :rtype: MovieEntity
+        :rtype: imovie.movies.models.MovieEntity
         """
 
         store = get_current_store()
@@ -51,7 +51,7 @@ class MoviesManager(Manager, MoviesQueries, HookMixin):
 
         :raises MovieDoesNotExistError: movie does not exist error.
 
-        :rtype: MovieEntity
+        :rtype: imovie.movies.models.MovieEntity
         """
 
         entity = self._get(id)
