@@ -64,6 +64,8 @@ def search(text, category, **options):
                         it could not be more than 20.
 
     :raises SearchProviderCategoryNotFoundError: search provider category not found error.
+
+    :rtype: str
     """
 
     return get_component(SearchPackage.COMPONENT_NAME).search(text, category, **options)

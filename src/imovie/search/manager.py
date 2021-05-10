@@ -122,6 +122,8 @@ class SearchManager(Manager):
                             it could not be more than 20.
 
         :raises SearchProviderCategoryNotFoundError: search provider category not found error.
+
+        :rtype: str
         """
 
         result = None
