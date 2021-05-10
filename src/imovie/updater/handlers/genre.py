@@ -4,17 +4,17 @@ updater handlers genre module.
 """
 
 from imovie.updater.decorators import updater
+from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 
 
 @updater()
-class IMDBGenreUpdater(UpdaterBase):
+class GenreUpdater(UpdaterBase):
     """
-    imdb genre updater class.
+    genre updater class.
     """
 
-    _name = 'imdb_genre'
-    _category = 'genre'
+    _category = UpdaterCategoryEnum.GENRE
 
     def _fetch(self, url, content, **options):
         """

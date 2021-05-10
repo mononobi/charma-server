@@ -22,10 +22,8 @@ class UpdaterBase(AbstractUpdater):
     updater base class.
     """
 
-    # the name of this updater.
-    _name = None
-
     # the category of this updater.
+    # it is actually the relevant entity's column name.
     _category = None
 
     def __init__(self, **options):
@@ -136,7 +134,7 @@ class UpdaterBase(AbstractUpdater):
         :rtype: str
         """
 
-        return self._name
+        return self.get_name()
 
     @property
     def category(self):

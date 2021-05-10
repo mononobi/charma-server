@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-updater handlers rate module.
+updater handlers imdb rate module.
 """
 
 from imovie.updater.decorators import updater
+from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 
 
@@ -13,8 +14,7 @@ class IMDBRateUpdater(UpdaterBase):
     imdb rate updater class.
     """
 
-    _name = 'imdb_rate'
-    _category = 'rate'
+    _category = UpdaterCategoryEnum.IMDB_RATE
 
     def _fetch(self, url, content, **options):
         """

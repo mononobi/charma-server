@@ -4,17 +4,17 @@ updater handlers title module.
 """
 
 from imovie.updater.decorators import updater
+from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 
 
 @updater()
-class IMDBTitleUpdater(UpdaterBase):
+class TitleUpdater(UpdaterBase):
     """
-    imdb title updater class.
+    title updater class.
     """
 
-    _name = 'imdb_title'
-    _category = 'title'
+    _category = UpdaterCategoryEnum.TITLE
 
     def _fetch(self, url, content, **options):
         """

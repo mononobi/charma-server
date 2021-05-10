@@ -4,17 +4,17 @@ updater handlers language module.
 """
 
 from imovie.updater.decorators import updater
+from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 
 
 @updater()
-class IMDBLanguageUpdater(UpdaterBase):
+class LanguageUpdater(UpdaterBase):
     """
-    imdb language updater class.
+    language updater class.
     """
 
-    _name = 'imdb_language'
-    _category = 'language'
+    _category = UpdaterCategoryEnum.LANGUAGE
 
     def _fetch(self, url, content, **options):
         """

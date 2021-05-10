@@ -4,17 +4,17 @@ updater handlers country module.
 """
 
 from imovie.updater.decorators import updater
+from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 
 
 @updater()
-class IMDBCountryUpdater(UpdaterBase):
+class CountryUpdater(UpdaterBase):
     """
-    imdb country updater class.
+    country updater class.
     """
 
-    _name = 'imdb_country'
-    _category = 'country'
+    _category = UpdaterCategoryEnum.COUNTRY
 
     def _fetch(self, url, content, **options):
         """

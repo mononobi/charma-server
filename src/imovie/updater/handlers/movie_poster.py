@@ -4,18 +4,18 @@ updater handlers movie poster module.
 """
 
 from imovie.updater.decorators import updater
+from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 from imovie.updater.handlers.mixin import IMDBHighQualityImageFetcherMixin
 
 
 @updater()
-class IMDBMoviePosterUpdater(UpdaterBase, IMDBHighQualityImageFetcherMixin):
+class MoviePosterUpdater(UpdaterBase, IMDBHighQualityImageFetcherMixin):
     """
-    imdb movie poster updater class.
+    movie poster updater class.
     """
 
-    _name = 'imdb_movie_poster'
-    _category = 'movie_poster'
+    _category = UpdaterCategoryEnum.POSTER_NAME
 
     def _fetch(self, url, content, **options):
         """

@@ -4,17 +4,17 @@ updater handlers meta score module.
 """
 
 from imovie.updater.decorators import updater
+from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 
 
 @updater()
-class IMDBMetaScoreUpdater(UpdaterBase):
+class MetaScoreUpdater(UpdaterBase):
     """
-    imdb meta score class.
+    meta score class.
     """
 
-    _name = 'imdb_meta_score'
-    _category = 'meta_score'
+    _category = UpdaterCategoryEnum.META_SCORE
 
     def _fetch(self, url, content, **options):
         """

@@ -6,17 +6,17 @@ updater handlers production year module.
 import pyrin.utilities.string.normalizer.services as normalizer_services
 
 from imovie.updater.decorators import updater
+from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 
 
 @updater()
-class IMDBProductionYearUpdater(UpdaterBase):
+class ProductionYearUpdater(UpdaterBase):
     """
-    imdb production year updater class.
+    production year updater class.
     """
 
-    _name = 'imdb_production_year'
-    _category = 'production_year'
+    _category = UpdaterCategoryEnum.PRODUCTION_YEAR
 
     def _fetch(self, url, content, **options):
         """

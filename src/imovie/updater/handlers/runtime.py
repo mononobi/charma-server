@@ -6,17 +6,17 @@ updater handlers runtime module.
 import pyrin.utilities.string.normalizer.services as normalizer_services
 
 from imovie.updater.decorators import updater
+from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 
 
 @updater()
-class IMDBRuntimeUpdater(UpdaterBase):
+class RuntimeUpdater(UpdaterBase):
     """
-    imdb runtime updater class.
+    runtime updater class.
     """
 
-    _name = 'imdb_runtime'
-    _category = 'runtime'
+    _category = UpdaterCategoryEnum.RUNTIME
 
     def _fetch(self, url, content, **options):
         """

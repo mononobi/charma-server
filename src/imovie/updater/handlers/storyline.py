@@ -4,17 +4,17 @@ updater handlers storyline module.
 """
 
 from imovie.updater.decorators import updater
+from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 
 
 @updater()
-class IMDBStoryLineUpdater(UpdaterBase):
+class StoryLineUpdater(UpdaterBase):
     """
-    imdb storyline updater class.
+    storyline updater class.
     """
 
-    _name = 'imdb_storyline'
-    _category = 'storyline'
+    _category = UpdaterCategoryEnum.STORYLINE
 
     def _fetch(self, url, content, **options):
         """

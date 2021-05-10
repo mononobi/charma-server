@@ -4,17 +4,17 @@ updater handlers content rate module.
 """
 
 from imovie.updater.decorators import updater
+from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 
 
 @updater()
-class IMDBContentRateUpdater(UpdaterBase):
+class ContentRateUpdater(UpdaterBase):
     """
-    imdb content rate updater class.
+    content rate updater class.
     """
 
-    _name = 'imdb_content_rate'
-    _category = 'content_rate'
+    _category = UpdaterCategoryEnum.CONTENT_RATE
 
     def _fetch(self, url, content, **options):
         """
