@@ -8,9 +8,12 @@ from collections import OrderedDict
 from pyrin.core.structs import Manager, Context
 
 import imovie.scraper.services as scraper_services
+import imovie.movies.services as movie_services
+import imovie.search.services as search_services
 
 from imovie.updater import UpdaterPackage
 from imovie.updater.enumerations import UpdaterCategoryEnum
+from imovie.search.enumerations import SearchCategoryEnum
 from imovie.updater.interface import AbstractUpdater
 from imovie.updater.exceptions import InvalidUpdaterTypeError, DuplicateUpdaterError, \
     UpdaterCategoryNotFoundError
@@ -164,3 +167,125 @@ class UpdaterManager(Manager):
                 final_result.update(result)
 
         return final_result
+
+    def update(self, movie_id, **options):
+        """
+        updates the info of given movie.
+
+        :param uuid.UUID movie_id: movie id.
+
+        :keyword bool content_rate: update content rate.
+                                    defaults to True if not provided.
+
+        :keyword bool country: update country.
+                               defaults to True if not provided.
+
+        :keyword bool genre: update genre.
+                             defaults to True if not provided.
+
+        :keyword bool imdb_rate: update imdb rate.
+                                 defaults to True if not provided.
+
+        :keyword bool language: update language.
+                                defaults to True if not provided.
+
+        :keyword bool meta_score: update meta score.
+                                  defaults to True if not provided.
+
+        :keyword bool movie_poster: update movie poster.
+                                    defaults to True if not provided.
+
+        :keyword bool original_title: update original title.
+                                      defaults to True if not provided.
+
+        :keyword bool production_year: update production year.
+                                       defaults to True if not provided.
+
+        :keyword bool runtime: update runtime.
+                               defaults to True if not provided.
+
+        :keyword bool storyline: update storyline.
+                                 defaults to True if not provided.
+
+        :keyword bool title: update title.
+                             defaults to True if not provided.
+
+        :keyword str imdb_page: an imdb movie page to be used to fetch data from.
+                                if not provided the movie page will be fetched
+                                automatically if possible.
+
+        :keyword bool force: force update data even if a category already
+                             has valid data. defaults to False if not provided.
+        """
+
+        content_rate = options.get('content_rate', True)
+        country = options.get('country', True)
+        genre = options.get('genre', True)
+        imdb_rate = options.get('imdb_rate', True)
+        language = options.get('language', True)
+        meta_score = options.get('meta_score', True)
+        movie_poster = options.get('movie_poster', True)
+        original_title = options.get('original_title', True)
+        production_year = options.get('production_year', True)
+        runtime = options.get('runtime', True)
+        storyline = options.get('storyline', True)
+        title = options.get('title', True)
+        force = options.get('force', False)
+        imdb_page = options.get('imdb_page')
+
+        # validate movie_id and imdb_url if it is not None
+
+        entity = movie_services.get(movie_id)
+        imdb_page = imdb_page or entity.imdb_page
+        if imdb_page in (None, ''):
+            full_title = movie_services.get_full_title(entity.title or entity.library_title,
+                                                       entity.production_year)
+            imdb_page = search_services.search(full_title, SearchCategoryEnum.MOVIE)
+
+        if imdb_page is None:
+            raise Exception()
+
+        categories = []
+        if content_rate is True and (force is True or entity.content_rate_id is None):
+            categories.append(UpdaterCategoryEnum.CONTENT_RATE)
+
+        if country is True:
+            categories.append(UpdaterCategoryEnum.COUNTRY)
+
+        if genre is True:
+            categories.append(UpdaterCategoryEnum.GENRE)
+
+        if imdb_rate is True and (force is True or entity.imdb_rate is None):
+            categories.append(UpdaterCategoryEnum.IMDB_RATE)
+
+        if language is True:
+            categories.append(UpdaterCategoryEnum.LANGUAGE)
+
+        if meta_score is True and (force is True or entity.meta_score is None):
+            categories.append(UpdaterCategoryEnum.META_SCORE)
+
+        if movie_poster is True and (force is True or entity.poster_name is None):
+            categories.append(UpdaterCategoryEnum.POSTER_NAME)
+
+        if original_title is True and (force is True or entity.original_title is None):
+            categories.append(UpdaterCategoryEnum.ORIGINAL_TITLE)
+
+        if production_year is True and (force is True or entity.production_year is None):
+            categories.append(UpdaterCategoryEnum.PRODUCTION_YEAR)
+
+        if runtime is True and (force is True or entity.runtime is None):
+            categories.append(UpdaterCategoryEnum.RUNTIME)
+
+        if storyline is True and (force is True or entity.storyline is None):
+            categories.append(UpdaterCategoryEnum.STORYLINE)
+
+        if title is True and (force is True or entity.title is None):
+            categories.append(UpdaterCategoryEnum.TITLE)
+
+        updated_fields = dict()
+        if len(categories) > 0:
+            updated_fields = self.fetch_all(imdb_page, *categories)
+
+        updated_fields.update(imdb_page=imdb_page)
+        movie_services.update(entity.id, **updated_fields)
+        return updated_fields

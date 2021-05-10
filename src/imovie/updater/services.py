@@ -73,3 +73,56 @@ def fetch_all(url, *categories, **options):
     """
 
     return get_component(UpdaterPackage.COMPONENT_NAME).fetch_all(url, *categories, **options)
+
+
+def update(movie_id, **options):
+    """
+    updates the info of given movie.
+
+    :param uuid.UUID movie_id: movie id.
+
+    :keyword bool content_rate: update content rate.
+                                defaults to True if not provided.
+
+    :keyword bool country: update country.
+                           defaults to True if not provided.
+
+    :keyword bool genre: update genre.
+                         defaults to True if not provided.
+
+    :keyword bool imdb_rate: update imdb rate.
+                             defaults to True if not provided.
+
+    :keyword bool language: update language.
+                            defaults to True if not provided.
+
+    :keyword bool meta_score: update meta score.
+                              defaults to True if not provided.
+
+    :keyword bool movie_poster: update movie poster.
+                                defaults to True if not provided.
+
+    :keyword bool original_title: update original title.
+                                  defaults to True if not provided.
+
+    :keyword bool production_year: update production year.
+                                   defaults to True if not provided.
+
+    :keyword bool runtime: update runtime.
+                           defaults to True if not provided.
+
+    :keyword bool storyline: update storyline.
+                             defaults to True if not provided.
+
+    :keyword bool title: update title.
+                         defaults to True if not provided.
+
+    :keyword str imdb_page: an imdb movie page to be used to fetch data from.
+                            if not provided the movie page will be fetched
+                            automatically if possible.
+
+    :keyword bool force: force update data even if a category already
+                         has valid data. defaults to False if not provided.
+    """
+
+    return get_component(UpdaterPackage.COMPONENT_NAME).update(movie_id, **options)
