@@ -7,6 +7,8 @@ import re
 
 from pyrin.core.structs import CoreObject
 
+from imovie.search.enumerations import SearchCategoryEnum
+
 
 class IMDBMovieMixin(CoreObject):
     """
@@ -14,7 +16,7 @@ class IMDBMovieMixin(CoreObject):
     """
 
     _target = 'imdb'
-    _category = 'movie'
+    _category = SearchCategoryEnum.MOVIE
     _accepted_result_pattern = re.compile(r'^(https?://(www\.)?imdb\.com/title/[^/]+).*$',
                                           re.IGNORECASE)
 
@@ -25,6 +27,6 @@ class SubsceneMixin(CoreObject):
     """
 
     _target = 'subscene'
-    _category = 'subtitle'
+    _category = SearchCategoryEnum.SUBTITLE
     _accepted_result_pattern = re.compile(r'^(https?://(www\.)?subscene\.com/subtitles/[^/]+).*$',
                                           re.IGNORECASE)

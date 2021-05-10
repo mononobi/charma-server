@@ -6,6 +6,7 @@ search providers subscene module.
 import re
 
 from imovie.search.decorators import search_provider
+from imovie.search.enumerations import SearchCategoryEnum
 from imovie.search.providers.base import SearchProviderBase
 
 
@@ -17,7 +18,7 @@ class SubsceneProvider(SearchProviderBase):
 
     _name = 'subscene'
     _target = 'subscene'
-    _category = 'subtitle'
+    _category = SearchCategoryEnum.SUBTITLE
     _remote_url = 'https://subscene.com/subtitles/searchbytitle?query={query}'
     _accepted_result_pattern = re.compile(r'(https?://(www\.)?subscene\.com/subtitles/[^/]+)$',
                                           re.IGNORECASE)
