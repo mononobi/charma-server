@@ -8,13 +8,13 @@ from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 
 
-@updater()
-class MetaScoreUpdater(UpdaterBase):
+class MetaScoreUpdaterBase(UpdaterBase):
     """
-    meta score class.
+    meta score updater base class.
     """
 
     _category = UpdaterCategoryEnum.META_SCORE
+    _META_SCORE_CONTAINER_CLASS = None
 
     def _fetch(self, url, content, **options):
         """
@@ -27,9 +27,7 @@ class MetaScoreUpdater(UpdaterBase):
         """
 
         meta_score = None
-        meta_score_container = content.find(
-            'div', class_='metacriticScore score_favorable titleReviewBarSubItem')
-
+        meta_score_container = content.find('div', class_=self._META_SCORE_CONTAINER_CLASS)
         if meta_score_container is not None:
             meta_score_tag = meta_score_container.find('span')
             if meta_score_tag is not None:
@@ -38,3 +36,23 @@ class MetaScoreUpdater(UpdaterBase):
                     meta_score = int(result)
 
         return meta_score
+
+
+@updater()
+class MetaScoreUpdaterHigh(MetaScoreUpdaterBase):
+    """
+    meta score updater high class.
+    """
+
+    _category = UpdaterCategoryEnum.META_SCORE
+    _META_SCORE_CONTAINER_CLASS = 'metacriticScore score_favorable titleReviewBarSubItem'
+
+
+@updater()
+class MetaScoreUpdaterMiddle(MetaScoreUpdaterBase):
+    """
+    meta score updater middle class.
+    """
+
+    _category = UpdaterCategoryEnum.META_SCORE
+    _META_SCORE_CONTAINER_CLASS = 'metacriticScore score_mixed titleReviewBarSubItem'
