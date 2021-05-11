@@ -18,7 +18,7 @@ class PersonIMDBPageValidator(HTTPSValidator):
     person imdb page validator class.
     """
 
-    regex = r'^https://www.imdb.com/name/nm[\d]+/$'
+    regex = r'^https://www.imdb.com/name/nm[\d]+$'
 
     pattern_not_match_message = _('The provided value for [{param_name}] '
                                   'is not a valid imdb person page.')
