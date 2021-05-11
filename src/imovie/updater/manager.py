@@ -5,18 +5,22 @@ updater manager module.
 
 from collections import OrderedDict
 
+import pyrin.validator.services as validator_services
+
+from pyrin.core.globals import _
 from pyrin.core.structs import Manager, Context
 
 import imovie.scraper.services as scraper_services
 import imovie.movies.services as movie_services
 import imovie.search.services as search_services
 
+from imovie.movies.models import MovieEntity
 from imovie.updater import UpdaterPackage
 from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.search.enumerations import SearchCategoryEnum
 from imovie.updater.interface import AbstractUpdater
 from imovie.updater.exceptions import InvalidUpdaterTypeError, DuplicateUpdaterError, \
-    UpdaterCategoryNotFoundError
+    UpdaterCategoryNotFoundError, MovieIMDBPageNotFoundError
 
 
 class UpdaterManager(Manager):
@@ -216,6 +220,9 @@ class UpdaterManager(Manager):
 
         :keyword bool force: force update data even if a category already
                              has valid data. defaults to False if not provided.
+
+        :raises ValidationError: validation error.
+        :raises MovieIMDBPageNotFoundError: movie imdb page not found error.
         """
 
         content_rate = options.get('content_rate', True)
@@ -233,17 +240,22 @@ class UpdaterManager(Manager):
         force = options.get('force', False)
         imdb_page = options.get('imdb_page')
 
-        # validate movie_id and imdb_url if it is not None
+        movie_id = validator_services.validate_field(MovieEntity, MovieEntity.id,
+                                                     movie_id, nullable=False)
 
         entity = movie_services.get(movie_id)
         imdb_page = imdb_page or entity.imdb_page
+        full_title = movie_services.get_full_title(entity.title or entity.library_title,
+                                                   entity.production_year)
         if imdb_page in (None, ''):
-            full_title = movie_services.get_full_title(entity.title or entity.library_title,
-                                                       entity.production_year)
             imdb_page = search_services.search(full_title, SearchCategoryEnum.MOVIE)
+        else:
+            validator_services.validate_field(MovieEntity, MovieEntity.imdb_page,
+                                              imdb_page, nullable=False)
 
         if imdb_page is None:
-            raise Exception()
+            raise MovieIMDBPageNotFoundError(_('IMDb page for movie [{title}] could '
+                                               'not be found.').format(name=full_title))
 
         categories = []
         if content_rate is True and (force is True or entity.content_rate_id is None):

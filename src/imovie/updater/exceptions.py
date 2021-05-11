@@ -39,3 +39,10 @@ class UpdaterCategoryNotFoundError(UpdaterException):
     updater category not found error.
     """
     pass
+
+
+class MovieIMDBPageNotFoundError(UpdaterBusinessException):
+    """
+    movie imdb page not found error.
+    """
+    pass

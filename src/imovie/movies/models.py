@@ -23,7 +23,7 @@ class MovieBaseEntity(CoreEntity):
 
     _table = 'movie'
 
-    id = GUIDPKColumn(name='id')
+    id = GUIDPKColumn(name='id', validated=True)
 
 
 class MovieEntity(MovieBaseEntity, CreateHistoryMixin):

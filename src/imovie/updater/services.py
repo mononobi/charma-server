@@ -123,6 +123,9 @@ def update(movie_id, **options):
 
     :keyword bool force: force update data even if a category already
                          has valid data. defaults to False if not provided.
+
+    :raises ValidationError: validation error.
+    :raises MovieIMDBPageNotFoundError: movie imdb page not found error.
     """
 
     return get_component(UpdaterPackage.COMPONENT_NAME).update(movie_id, **options)
