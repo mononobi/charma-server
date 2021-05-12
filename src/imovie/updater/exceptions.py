@@ -46,3 +46,24 @@ class MovieIMDBPageNotFoundError(UpdaterBusinessException):
     movie imdb page not found error.
     """
     pass
+
+
+class InvalidProcessorTypeError(UpdaterException):
+    """
+    invalid processor type error.
+    """
+    pass
+
+
+class DuplicateProcessorError(UpdaterException):
+    """
+    duplicate processor error.
+    """
+    pass
+
+
+class ProcessorCategoryNotFoundError(UpdaterException):
+    """
+    processor category not found error.
+    """
+    pass

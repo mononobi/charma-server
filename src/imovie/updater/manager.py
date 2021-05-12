@@ -18,9 +18,10 @@ from imovie.movies.models import MovieEntity
 from imovie.updater import UpdaterPackage
 from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.search.enumerations import SearchCategoryEnum
-from imovie.updater.interface import AbstractUpdater
+from imovie.updater.interface import AbstractUpdater, AbstractProcessor
 from imovie.updater.exceptions import InvalidUpdaterTypeError, DuplicateUpdaterError, \
-    UpdaterCategoryNotFoundError, MovieIMDBPageNotFoundError
+    UpdaterCategoryNotFoundError, MovieIMDBPageNotFoundError, InvalidProcessorTypeError, \
+    DuplicateProcessorError, ProcessorCategoryNotFoundError
 
 
 class UpdaterManager(Manager):
@@ -40,6 +41,10 @@ class UpdaterManager(Manager):
         # a dict containing all updater handlers for each category. in the form of:
         # {str category: {str name: AbstractUpdater updater}}
         self._updaters = Context()
+
+        # a dict containing update processors for each category. in the form of:
+        # {str category: AbstractProcessor processor}
+        self._processors = Context()
 
     def _get_updaters(self, category, **options):
         """
@@ -102,6 +107,32 @@ class UpdaterManager(Manager):
         self._set_next_handlers(previous_instances)
         self._updaters[instance.category] = previous_instances
 
+    def register_processor(self, instance, **options):
+        """
+        registers a new processor.
+
+        :param AbstractProcessor instance: processor to be registered.
+                                           it must be an instance of
+                                           AbstractProcessor.
+
+        :raises InvalidProcessorTypeError: invalid processor type error.
+        :raises DuplicateProcessorError: duplicate processor error.
+        """
+
+        if not isinstance(instance, AbstractProcessor):
+            raise InvalidProcessorTypeError('Input parameter [{instance}] is '
+                                            'not an instance of [{base}].'
+                                            .format(instance=instance,
+                                                    base=AbstractProcessor))
+
+        if instance.category in self._processors:
+            raise DuplicateProcessorError('There is another registered update '
+                                          'processor for category [{category}].'
+                                          .format(name=instance.name,
+                                                  category=instance.category))
+
+        self._processors[instance.category] = instance
+
     def get_updater(self, category, **options):
         """
         gets the first element of chained updaters for given category.
@@ -116,6 +147,23 @@ class UpdaterManager(Manager):
         updaters = self._get_updaters(category, **options)
         updaters = list(updaters.values())
         return updaters[0]
+
+    def get_processor(self, category, **options):
+        """
+        gets the update processor for given category.
+
+        :param str category: category name.
+
+        :raises ProcessorCategoryNotFoundError: processor category not found error.
+
+        :rtype: AbstractProcessor
+        """
+
+        if category not in self._processors:
+            raise ProcessorCategoryNotFoundError('Processor category [{category}] not '
+                                                 'found.'.format(category=category))
+
+        return self._processors.get(category)
 
     def fetch(self, url, category, **options):
         """

@@ -23,6 +23,21 @@ def register_updater(instance, **options):
     return get_component(UpdaterPackage.COMPONENT_NAME).register_updater(instance, **options)
 
 
+def register_processor(instance, **options):
+    """
+    registers a new processor.
+
+    :param AbstractProcessor instance: processor to be registered.
+                                       it must be an instance of
+                                       AbstractProcessor.
+
+    :raises InvalidProcessorTypeError: invalid processor type error.
+    :raises DuplicateProcessorError: duplicate processor error.
+    """
+
+    return get_component(UpdaterPackage.COMPONENT_NAME).register_processor(instance, **options)
+
+
 def get_updater(category, **options):
     """
     gets the first element of chained updaters for given category.
@@ -35,6 +50,20 @@ def get_updater(category, **options):
     """
 
     return get_component(UpdaterPackage.COMPONENT_NAME).get_updater(category, **options)
+
+
+def get_processor(category, **options):
+    """
+    gets the update processor for given category.
+
+    :param str category: category name.
+
+    :raises ProcessorCategoryNotFoundError: processor category not found error.
+
+    :rtype: AbstractProcessor
+    """
+
+    return get_component(UpdaterPackage.COMPONENT_NAME).get_processor(category, **options)
 
 
 def fetch(url, category, **options):

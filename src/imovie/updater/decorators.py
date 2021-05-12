@@ -37,3 +37,36 @@ def updater(*args, **kwargs):
         return cls
 
     return decorator
+
+
+def processor(*args, **kwargs):
+    """
+    decorator to register an update processor.
+
+    :param object args: processor class constructor arguments.
+    :param object kwargs: processor class constructor keyword arguments.
+
+    :raises InvalidProcessorTypeError: invalid processor type error.
+    :raises DuplicateProcessorError: duplicate processor error.
+
+    :returns: processor class.
+    :rtype: type
+    """
+
+    def decorator(cls):
+        """
+        decorates the given class and registers an instance
+        of it into available processors.
+
+        :param type cls: processor class.
+
+        :returns: processor class.
+        :rtype: type
+        """
+
+        instance = cls(*args, **kwargs)
+        updater_services.register_processor(instance, **kwargs)
+
+        return cls
+
+    return decorator
