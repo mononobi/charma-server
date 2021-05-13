@@ -111,6 +111,7 @@ class AbstractProcessor(CoreObject, metaclass=ProcessorSingletonMeta):
         :raises CoreNotImplementedError: core not implemented error.
 
         :returns: processed data
+        :rtype: dict
         """
 
         raise CoreNotImplementedError()

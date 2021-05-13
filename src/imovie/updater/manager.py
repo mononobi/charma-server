@@ -9,6 +9,7 @@ import pyrin.validator.services as validator_services
 
 from pyrin.core.globals import _
 from pyrin.core.structs import Manager, Context
+from pyrin.logging.contexts import suppress
 
 import imovie.scraper.services as scraper_services
 import imovie.movies.services as movie_services
@@ -164,6 +165,22 @@ class UpdaterManager(Manager):
                                                  'found.'.format(category=category))
 
         return self._processors.get(category)
+
+    def try_get_processor(self, category, **options):
+        """
+        gets the update processor for given category.
+
+        it returns None if no processor found.
+
+        :param str category: category name.
+
+        :rtype: AbstractProcessor
+        """
+
+        with suppress(ProcessorCategoryNotFoundError, log=False):
+            return self.get_processor(category, **options)
+
+        return None
 
     def fetch(self, url, category, **options):
         """
