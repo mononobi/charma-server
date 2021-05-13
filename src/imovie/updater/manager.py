@@ -79,6 +79,28 @@ class UpdaterManager(Manager):
             else:
                 instances[i].set_next(instances[i + 1])
 
+    def _process(self, movie_id, data, **options):
+        """
+        processes given data using related processors and returns the processed data.
+
+        :param uuid.UUID movie_id: movie id.
+        :param dict data: data to be processed.
+
+        :rtype: dict
+        """
+
+        processed_result = dict()
+        for category, value in data.items():
+            processor = self.try_get_processor(category)
+            if processor is None:
+                processed_result[category] = value
+            else:
+                result = processor.process(movie_id, value, **options)
+                if result is not None:
+                    processed_result.update(result)
+
+        return processed_result
+
     def register_updater(self, instance, **options):
         """
         registers a new updater.
@@ -362,6 +384,7 @@ class UpdaterManager(Manager):
         updated_fields = dict()
         if len(categories) > 0:
             updated_fields = self.fetch_all(imdb_page, *categories)
+            updated_fields = self._process(entity.id, updated_fields, **options)
 
         updated_fields.update(imdb_page=imdb_page)
         movie_services.update(entity.id, **updated_fields)

@@ -66,6 +66,20 @@ def get_processor(category, **options):
     return get_component(UpdaterPackage.COMPONENT_NAME).get_processor(category, **options)
 
 
+def try_get_processor(category, **options):
+    """
+    gets the update processor for given category.
+
+    it returns None if no processor found.
+
+    :param str category: category name.
+
+    :rtype: AbstractProcessor
+    """
+
+    return get_component(UpdaterPackage.COMPONENT_NAME).try_get_processor(category, **options)
+
+
 def fetch(url, category, **options):
     """
     fetches data from given url for given category.
