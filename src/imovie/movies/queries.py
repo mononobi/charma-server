@@ -130,8 +130,7 @@ class MoviesQueries(NormalizerMixin):
                              from_runtime, to_runtime, **filters)
 
         if imdb_page is not None:
-            identifier = self.get_normalized_name(imdb_page)
-            expressions.append(MovieEntity.identifier.icontains(identifier))
+            expressions.append(MovieEntity.imdb_page.icontains(imdb_page))
 
         if poster_name is not None:
             expressions.append(MovieEntity.poster_name.icontains(poster_name))
@@ -216,12 +215,11 @@ class MoviesQueries(NormalizerMixin):
         if imdb_page in (None, ''):
             return False
 
-        identifier = self.get_normalized_name(imdb_page)
         store = get_current_store()
         query = store.query(MovieEntity.id)
         query = self._prepare_query(query)
 
-        return query.filter(MovieEntity.identifier.ilike(identifier)).existed()
+        return query.filter(MovieEntity.imdb_page.ilike(imdb_page)).existed()
 
     def _exists_by_title(self, title, **options):
         """
@@ -257,12 +255,11 @@ class MoviesQueries(NormalizerMixin):
         :rtype: MovieEntity
         """
 
-        identifier = self.get_normalized_name(imdb_page)
         store = get_current_store()
         query = store.query(MovieEntity)
         query = self._prepare_query(query)
 
-        return query.filter(MovieEntity.identifier.ilike(identifier)).one_or_none()
+        return query.filter(MovieEntity.imdb_page.ilike(imdb_page)).one_or_none()
 
     def _get_by_title(self, title, **options):
         """
