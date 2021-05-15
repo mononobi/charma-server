@@ -14,6 +14,9 @@ from pyrin.logging.contexts import suppress
 import imovie.scraper.services as scraper_services
 import imovie.movies.services as movie_services
 import imovie.search.services as search_services
+import imovie.movies.related_languages.services as related_language_services
+import imovie.movies.related_genres.services as related_genre_services
+import imovie.movies.related_countries.services as related_country_services
 
 from imovie.movies.models import MovieEntity
 from imovie.updater import UpdaterPackage
@@ -348,16 +351,16 @@ class UpdaterManager(Manager):
         if content_rate is True and (force is True or entity.content_rate_id is None):
             categories.append(UpdaterCategoryEnum.CONTENT_RATE)
 
-        if country is True:
+        if country is True and (force is True or not related_country_services.exists(movie_id)):
             categories.append(UpdaterCategoryEnum.COUNTRY)
 
-        if genre is True:
+        if genre is True and (force is True or not related_genre_services.exists(movie_id)):
             categories.append(UpdaterCategoryEnum.GENRE)
 
         if imdb_rate is True and (force is True or entity.imdb_rate is None):
             categories.append(UpdaterCategoryEnum.IMDB_RATE)
 
-        if language is True:
+        if language is True and (force is True or not related_language_services.exists(movie_id)):
             categories.append(UpdaterCategoryEnum.LANGUAGE)
 
         if meta_score is True and (force is True or entity.meta_score is None):
