@@ -354,16 +354,19 @@ class UpdaterManager(Manager):
         if content_rate is True and (force is True or entity.content_rate_id is None):
             categories.append(UpdaterCategoryEnum.CONTENT_RATE)
 
-        if country is True and (force is True or not related_country_services.exists(movie_id)):
+        if country is True and (force is True or
+                                not related_country_services.exists(movie_id)):
             categories.append(UpdaterCategoryEnum.COUNTRY)
 
-        if genre is True and (force is True or not related_genre_services.exists(movie_id)):
+        if genre is True and (force is True or
+                              not related_genre_services.exists(movie_id)):
             categories.append(UpdaterCategoryEnum.GENRE)
 
         if imdb_rate is True and (force is True or entity.imdb_rate is None):
             categories.append(UpdaterCategoryEnum.IMDB_RATE)
 
-        if language is True and (force is True or not related_language_services.exists(movie_id)):
+        if language is True and (force is True or
+                                 not related_language_services.exists(movie_id)):
             categories.append(UpdaterCategoryEnum.LANGUAGE)
 
         if meta_score is True and (force is True or entity.meta_score is None):
