@@ -70,3 +70,15 @@ def delete_by_movie(movie_id, **options):
 
     return get_component(RelatedCountriesPackage.COMPONENT_NAME).delete_by_movie(movie_id,
                                                                                  **options)
+
+
+def exists(movie_id, **options):
+    """
+    gets a value indicating that given movie has any countries.
+
+    :param uuid.UUID movie_id: movie id.
+
+    :rtype: bool
+    """
+
+    return get_component(RelatedCountriesPackage.COMPONENT_NAME).exists(movie_id, **options)

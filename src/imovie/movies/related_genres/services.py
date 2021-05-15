@@ -70,3 +70,15 @@ def delete_by_movie(movie_id, **options):
 
     return get_component(RelatedGenresPackage.COMPONENT_NAME).delete_by_movie(movie_id,
                                                                               **options)
+
+
+def exists(movie_id, **options):
+    """
+    gets a value indicating that given movie has any genres.
+
+    :param uuid.UUID movie_id: movie id.
+
+    :rtype: bool
+    """
+
+    return get_component(RelatedGenresPackage.COMPONENT_NAME).exists(movie_id, **options)

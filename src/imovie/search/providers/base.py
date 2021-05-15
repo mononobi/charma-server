@@ -64,7 +64,7 @@ class SearchProviderBase(AbstractSearchProvider):
         if result is None or len(result) <= 0:
             return None
 
-        return list(set(result))
+        return result
 
     def _fetch(self, url, **options):
         """

@@ -105,3 +105,16 @@ class RelatedGenresManager(Manager):
         store = get_current_store()
         return store.query(Movie2GenreEntity)\
             .filter(Movie2GenreEntity.movie_id == movie_id).delete()
+
+    def exists(self, movie_id, **options):
+        """
+        gets a value indicating that given movie has any genres.
+
+        :param uuid.UUID movie_id: movie id.
+
+        :rtype: bool
+        """
+
+        store = get_current_store()
+        return store.query(Movie2GenreEntity.movie_id)\
+            .filter(Movie2GenreEntity.movie_id == movie_id).existed()

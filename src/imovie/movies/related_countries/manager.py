@@ -106,3 +106,16 @@ class RelatedCountriesManager(Manager):
         store = get_current_store()
         return store.query(Movie2CountryEntity)\
             .filter(Movie2CountryEntity.movie_id == movie_id).delete()
+
+    def exists(self, movie_id, **options):
+        """
+        gets a value indicating that given movie has any countries.
+
+        :param uuid.UUID movie_id: movie id.
+
+        :rtype: bool
+        """
+
+        store = get_current_store()
+        return store.query(Movie2CountryEntity.movie_id)\
+            .filter(Movie2CountryEntity.movie_id == movie_id).existed()

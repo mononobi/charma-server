@@ -172,3 +172,53 @@ def update(movie_id, **options):
     """
 
     return get_component(UpdaterPackage.COMPONENT_NAME).update(movie_id, **options)
+
+
+def update_all(**options):
+    """
+    updates the info of all movies.
+
+    :keyword datetime from_created_on: update movies added from this datetime.
+    :keyword datetime to_created_on: update movies added to this datetime.
+
+    :keyword bool content_rate: update content rate.
+                                defaults to True if not provided.
+
+    :keyword bool country: update country.
+                           defaults to True if not provided.
+
+    :keyword bool genre: update genre.
+                         defaults to True if not provided.
+
+    :keyword bool imdb_rate: update imdb rate.
+                             defaults to True if not provided.
+
+    :keyword bool language: update language.
+                            defaults to True if not provided.
+
+    :keyword bool meta_score: update meta score.
+                              defaults to True if not provided.
+
+    :keyword bool movie_poster: update movie poster.
+                                defaults to True if not provided.
+
+    :keyword bool original_title: update original title.
+                                  defaults to True if not provided.
+
+    :keyword bool production_year: update production year.
+                                   defaults to True if not provided.
+
+    :keyword bool runtime: update runtime.
+                           defaults to True if not provided.
+
+    :keyword bool storyline: update storyline.
+                             defaults to True if not provided.
+
+    :keyword bool title: update title.
+                         defaults to True if not provided.
+
+    :keyword bool force: force update data even if a category already
+                         has valid data. defaults to False if not provided.
+    """
+
+    return get_component(UpdaterPackage.COMPONENT_NAME).update_all(**options)

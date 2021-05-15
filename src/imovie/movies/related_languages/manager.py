@@ -106,3 +106,16 @@ class RelatedLanguagesManager(Manager):
         store = get_current_store()
         return store.query(Movie2LanguageEntity)\
             .filter(Movie2LanguageEntity.movie_id == movie_id).delete()
+
+    def exists(self, movie_id, **options):
+        """
+        gets a value indicating that given movie has any languages.
+
+        :param uuid.UUID movie_id: movie id.
+
+        :rtype: bool
+        """
+
+        store = get_current_store()
+        return store.query(Movie2LanguageEntity.movie_id)\
+            .filter(Movie2LanguageEntity.movie_id == movie_id).existed()

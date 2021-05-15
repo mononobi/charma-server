@@ -6,10 +6,12 @@ updater manager module.
 from collections import OrderedDict
 
 import pyrin.validator.services as validator_services
+import pyrin.logging.services as logging_services
 
 from pyrin.core.globals import _
 from pyrin.core.structs import Manager, Context
 from pyrin.logging.contexts import suppress
+from pyrin.database.transaction.contexts import atomic_context
 
 import imovie.scraper.services as scraper_services
 import imovie.movies.services as movie_services
@@ -34,6 +36,7 @@ class UpdaterManager(Manager):
     """
 
     package_class = UpdaterPackage
+    LOGGER = logging_services.get_logger('updater')
 
     def __init__(self):
         """
@@ -345,7 +348,7 @@ class UpdaterManager(Manager):
 
         if imdb_page is None:
             raise MovieIMDBPageNotFoundError(_('IMDb page for movie [{title}] could '
-                                               'not be found.').format(name=full_title))
+                                               'not be found.').format(title=full_title))
 
         categories = []
         if content_rate is True and (force is True or entity.content_rate_id is None):
@@ -391,4 +394,64 @@ class UpdaterManager(Manager):
 
         updated_fields.update(imdb_page=imdb_page)
         movie_services.update(entity.id, **updated_fields)
-        return updated_fields
+
+    def update_all(self, **options):
+        """
+        updates the info of all movies.
+
+        :keyword datetime from_created_on: update movies added from this datetime.
+        :keyword datetime to_created_on: update movies added to this datetime.
+
+        :keyword bool content_rate: update content rate.
+                                    defaults to True if not provided.
+
+        :keyword bool country: update country.
+                               defaults to True if not provided.
+
+        :keyword bool genre: update genre.
+                             defaults to True if not provided.
+
+        :keyword bool imdb_rate: update imdb rate.
+                                 defaults to True if not provided.
+
+        :keyword bool language: update language.
+                                defaults to True if not provided.
+
+        :keyword bool meta_score: update meta score.
+                                  defaults to True if not provided.
+
+        :keyword bool movie_poster: update movie poster.
+                                    defaults to True if not provided.
+
+        :keyword bool original_title: update original title.
+                                      defaults to True if not provided.
+
+        :keyword bool production_year: update production year.
+                                       defaults to True if not provided.
+
+        :keyword bool runtime: update runtime.
+                               defaults to True if not provided.
+
+        :keyword bool storyline: update storyline.
+                                 defaults to True if not provided.
+
+        :keyword bool title: update title.
+                             defaults to True if not provided.
+
+        :keyword bool force: force update data even if a category already
+                             has valid data. defaults to False if not provided.
+        """
+
+        from_created_on = options.pop('from_created_on', None)
+        to_created_on = options.pop('to_created_on', None)
+        movies = movie_services.find(from_created_on=from_created_on,
+                                     to_created_on=to_created_on,
+                                     columns=[MovieEntity.id],
+                                     order_by='-created_time')
+
+        for item in movies:
+            try:
+                with atomic_context():
+                    self.update(item.id, **options)
+            except Exception as error:
+                self.LOGGER.exception(str(error))
