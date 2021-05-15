@@ -4,12 +4,16 @@ updater manager module.
 """
 
 from collections import OrderedDict
+from datetime import timedelta
 
 import pyrin.validator.services as validator_services
 import pyrin.logging.services as logging_services
+import pyrin.configuration.services as config_services
+import pyrin.globalization.datetime.services as datetime_services
 
 from pyrin.core.globals import _
 from pyrin.core.structs import Manager, Context
+from pyrin.database.services import get_current_store
 from pyrin.logging.contexts import suppress
 from pyrin.database.transaction.contexts import atomic_context
 
@@ -106,6 +110,31 @@ class UpdaterManager(Manager):
                     processed_result.update(result)
 
         return processed_result
+
+    def _needs_update(self, current_value, force, modified_time):
+        """
+        gets a value indicating that a field must be updated.
+
+        :param object current_value: current value of the field.
+        :param bool force: force update is required.
+        :param datetime.datetime modified_time: last modified time.
+
+        :rtype: bool
+        """
+
+        if force is True:
+            return True
+
+        if current_value is not None:
+            return False
+
+        if modified_time is None:
+            return True
+
+        interval = config_services.get('updater', 'general', 'update_interval')
+        now = datetime_services.now()
+        next_interval = modified_time + timedelta(days=interval)
+        return now >= next_interval
 
     def register_updater(self, instance, **options):
         """
@@ -340,54 +369,72 @@ class UpdaterManager(Manager):
         imdb_page = imdb_page or entity.imdb_page
         full_title = movie_services.get_full_title(entity.title or entity.library_title,
                                                    entity.production_year)
-        if imdb_page in (None, ''):
+
+        if imdb_page is None and \
+                self._needs_update(imdb_page, force, entity.modified_on) is True:
             imdb_page = search_services.search(full_title, SearchCategoryEnum.MOVIE)
+
+        if imdb_page is None:
+            # we update 'imdb_page' to refresh 'modified_on' value.
+            store = get_current_store()
+            entity.update(imdb_page=imdb_page)
+            store.commit()
+            raise MovieIMDBPageNotFoundError(_('IMDb page for movie [{title}] could '
+                                               'not be found.').format(title=full_title))
         else:
             validator_services.validate_field(MovieEntity, MovieEntity.imdb_page,
                                               imdb_page, nullable=False)
 
-        if imdb_page is None:
-            raise MovieIMDBPageNotFoundError(_('IMDb page for movie [{title}] could '
-                                               'not be found.').format(title=full_title))
-
         categories = []
-        if content_rate is True and (force is True or entity.content_rate_id is None):
+        if content_rate is True and self._needs_update(entity.content_rate_id,
+                                                       force, entity.modified_on):
             categories.append(UpdaterCategoryEnum.CONTENT_RATE)
 
-        if country is True and (force is True or
-                                not related_country_services.exists(movie_id)):
+        has_country = related_country_services.exists(movie_id) or None
+        if country is True and self._needs_update(has_country, force,
+                                                  entity.modified_on):
             categories.append(UpdaterCategoryEnum.COUNTRY)
 
-        if genre is True and (force is True or
-                              not related_genre_services.exists(movie_id)):
+        has_genre = related_genre_services.exists(movie_id) or None
+        if genre is True and self._needs_update(has_genre, force,
+                                                entity.modified_on):
             categories.append(UpdaterCategoryEnum.GENRE)
 
-        if imdb_rate is True and (force is True or entity.imdb_rate is None):
+        if imdb_rate is True and self._needs_update(entity.imdb_rate, force,
+                                                    entity.modified_on):
             categories.append(UpdaterCategoryEnum.IMDB_RATE)
 
-        if language is True and (force is True or
-                                 not related_language_services.exists(movie_id)):
+        has_language = related_language_services.exists(movie_id) or None
+        if language is True and self._needs_update(has_language, force,
+                                                   entity.modified_on):
             categories.append(UpdaterCategoryEnum.LANGUAGE)
 
-        if meta_score is True and (force is True or entity.meta_score is None):
+        if meta_score is True and self._needs_update(entity.meta_score, force,
+                                                     entity.modified_on):
             categories.append(UpdaterCategoryEnum.META_SCORE)
 
-        if movie_poster is True and (force is True or entity.poster_name is None):
+        if movie_poster is True and self._needs_update(entity.poster_name, force,
+                                                       entity.modified_on):
             categories.append(UpdaterCategoryEnum.POSTER_NAME)
 
-        if original_title is True and (force is True or entity.original_title is None):
+        if original_title is True and self._needs_update(entity.original_title, force,
+                                                         entity.modified_on):
             categories.append(UpdaterCategoryEnum.ORIGINAL_TITLE)
 
-        if production_year is True and (force is True or entity.production_year is None):
+        if production_year is True and self._needs_update(entity.production_year, force,
+                                                          entity.modified_on):
             categories.append(UpdaterCategoryEnum.PRODUCTION_YEAR)
 
-        if runtime is True and (force is True or entity.runtime is None):
+        if runtime is True and self._needs_update(entity.runtime, force,
+                                                  entity.modified_on):
             categories.append(UpdaterCategoryEnum.RUNTIME)
 
-        if storyline is True and (force is True or entity.storyline is None):
+        if storyline is True and self._needs_update(entity.storyline, force,
+                                                    entity.modified_on):
             categories.append(UpdaterCategoryEnum.STORYLINE)
 
-        if title is True and (force is True or entity.title is None):
+        if title is True and self._needs_update(entity.title, force,
+                                                entity.modified_on):
             categories.append(UpdaterCategoryEnum.TITLE)
 
         updated_fields = dict()

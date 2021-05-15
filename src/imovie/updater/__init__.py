@@ -13,3 +13,4 @@ class UpdaterPackage(Package):
 
     NAME = __name__
     COMPONENT_NAME = 'updater.component'
+    CONFIG_STORE_NAMES = ['updater']
