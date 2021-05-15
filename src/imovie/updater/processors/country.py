@@ -3,6 +3,9 @@
 updater processors country module.
 """
 
+import imovie.countries.services as country_services
+import imovie.movies.related_countries.services as related_country_services
+
 from imovie.updater.decorators import processor
 from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.processors.base import ProcessorBase
@@ -23,4 +26,19 @@ class CountryProcessor(ProcessorBase):
         :param uuid.UUID movie_id: movie id to process data for it.
         :param list[str] data: list of countries to be processed.
         """
-        pass
+
+        related_country_services.delete_by_movie(movie_id, **options)
+        countries = []
+        for item in data:
+            country = country_services.get_by_name(item)
+            country_id = None
+            if country is not None:
+                country_id = country.id
+            else:
+                country_id = country_services.create(item, **options)
+
+            countries.append(country_id)
+
+        for index, item in enumerate(countries):
+            is_main = index == 0
+            related_country_services.create(movie_id, item, is_main=is_main)
