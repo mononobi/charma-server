@@ -56,3 +56,13 @@ class MetaScoreUpdaterMiddle(MetaScoreUpdaterBase):
 
     _category = UpdaterCategoryEnum.META_SCORE
     _META_SCORE_CONTAINER_CLASS = 'metacriticScore score_mixed titleReviewBarSubItem'
+
+
+@updater()
+class MetaScoreUpdaterLow(MetaScoreUpdaterBase):
+    """
+    meta score updater low class.
+    """
+
+    _category = UpdaterCategoryEnum.META_SCORE
+    _META_SCORE_CONTAINER_CLASS = 'metacriticScore score_unfavorable titleReviewBarSubItem'
