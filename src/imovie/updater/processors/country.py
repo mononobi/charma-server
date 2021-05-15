@@ -28,8 +28,8 @@ class CountryProcessor(ProcessorBase):
         """
 
         related_country_services.delete_by_movie(movie_id, **options)
-        countries = []
-        for item in data:
+        for index, item in enumerate(data):
+            is_main = index == 0
             country = country_services.get_by_name(item)
             country_id = None
             if country is not None:
@@ -37,8 +37,4 @@ class CountryProcessor(ProcessorBase):
             else:
                 country_id = country_services.create(item, **options)
 
-            countries.append(country_id)
-
-        for index, item in enumerate(countries):
-            is_main = index == 0
-            related_country_services.create(movie_id, item, is_main=is_main)
+            related_country_services.create(movie_id, country_id, is_main=is_main)

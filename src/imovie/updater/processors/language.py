@@ -28,8 +28,8 @@ class LanguageProcessor(ProcessorBase):
         """
 
         related_language_services.delete_by_movie(movie_id, **options)
-        languages = []
-        for item in data:
+        for index, item in enumerate(data):
+            is_main = index == 0
             language = language_services.get_by_name(item)
             language_id = None
             if language is not None:
@@ -37,8 +37,4 @@ class LanguageProcessor(ProcessorBase):
             else:
                 language_id = language_services.create(item, **options)
 
-            languages.append(language_id)
-
-        for index, item in enumerate(languages):
-            is_main = index == 0
-            related_language_services.create(movie_id, item, is_main=is_main)
+            related_language_services.create(movie_id, language_id, is_main=is_main)
