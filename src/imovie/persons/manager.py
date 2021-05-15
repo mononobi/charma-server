@@ -143,7 +143,6 @@ class PersonsManager(Manager, PersonsQueries, HookMixin):
         validator_services.validate_dict(PersonEntity, options)
         entity = PersonEntity(**options)
         entity.search_name = self.get_normalized_name(entity.fullname)
-        entity.identifier = self.get_normalized_name(entity.imdb_page)
         entity.save()
 
         handlers = options.get('type')
@@ -173,7 +172,6 @@ class PersonsManager(Manager, PersonsQueries, HookMixin):
         entity = self.get(id)
         entity.update(**options)
         entity.search_name = self.get_normalized_name(entity.fullname)
-        entity.identifier = self.get_normalized_name(entity.imdb_page)
         entity.save()
 
     def delete(self, id):

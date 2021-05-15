@@ -31,5 +31,4 @@ class PersonEntity(PersonBaseEntity, CreateHistoryMixin):
     search_name = HiddenColumn(name='search_name', type_=Unicode(200), nullable=False, index=True)
     imdb_page = StringColumn(name='imdb_page', min_length=29, max_length=150,
                              unique=True, validated=True)
-    identifier = HiddenColumn(name='identifier', type_=Unicode(150), unique=True, index=True)
     photo_name = StringColumn(name='photo_name', max_length=250, unique=True, validated=True)

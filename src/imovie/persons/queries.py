@@ -57,8 +57,7 @@ class PersonsQueries(NormalizerMixin):
             expressions.append(PersonEntity.search_name.icontains(search_name))
 
         if imdb_page is not None:
-            identifier = self.get_normalized_name(imdb_page)
-            expressions.append(PersonEntity.identifier.icontains(identifier))
+            expressions.append(PersonEntity.imdb_page.icontains(imdb_page))
 
         if photo_name is not None:
             expressions.append(PersonEntity.photo_name.icontains(photo_name))
@@ -119,12 +118,11 @@ class PersonsQueries(NormalizerMixin):
         if imdb_page in (None, ''):
             return False
 
-        identifier = self.get_normalized_name(imdb_page)
         store = get_current_store()
         query = store.query(PersonEntity.id)
         query = self._prepare_query(query)
 
-        return query.filter(PersonEntity.identifier.ilike(identifier)).existed()
+        return query.filter(PersonEntity.imdb_page.ilike(imdb_page)).existed()
 
     def _exists_by_fullname(self, fullname, **options):
         """
@@ -160,12 +158,11 @@ class PersonsQueries(NormalizerMixin):
         :rtype: PersonEntity
         """
 
-        identifier = self.get_normalized_name(imdb_page)
         store = get_current_store()
         query = store.query(PersonEntity)
         query = self._prepare_query(query)
 
-        return query.filter(PersonEntity.identifier.ilike(identifier)).one_or_none()
+        return query.filter(PersonEntity.imdb_page.ilike(imdb_page)).one_or_none()
 
     def _get_by_fullname(self, fullname, **options):
         """
