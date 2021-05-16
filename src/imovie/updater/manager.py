@@ -298,6 +298,8 @@ class UpdaterManager(Manager):
         """
         updates the info of given movie.
 
+        it returns a value indicating that update is done.
+
         :param uuid.UUID movie_id: movie id.
 
         :keyword bool content_rate: update content rate.
@@ -345,6 +347,8 @@ class UpdaterManager(Manager):
 
         :raises ValidationError: validation error.
         :raises MovieIMDBPageNotFoundError: movie imdb page not found error.
+
+        :rtype: bool
         """
 
         content_rate = options.get('content_rate', True)
@@ -442,8 +446,14 @@ class UpdaterManager(Manager):
             updated_fields = self.fetch_all(imdb_page, *categories)
             updated_fields = self._process(entity.id, updated_fields, **options)
 
-        updated_fields.update(imdb_page=imdb_page)
-        movie_services.update(entity.id, **updated_fields)
+        if imdb_page != entity.imdb_page:
+            updated_fields.update(imdb_page=imdb_page)
+
+        if len(updated_fields) > 0:
+            movie_services.update(entity.id, **updated_fields)
+            return True
+
+        return False
 
     def update_all(self, **options):
         """
@@ -490,6 +500,12 @@ class UpdaterManager(Manager):
 
         :keyword bool force: force update data even if a category already
                              has valid data. defaults to False if not provided.
+
+        :returns: dict(total: total processed movies count,
+                       updated: updated movies count,
+                       not_updated: not updated movies count,
+                       failed: failed to update movies count)
+        :rtype: dict
         """
 
         from_created_on = options.pop('from_created_on', None)
@@ -499,9 +515,22 @@ class UpdaterManager(Manager):
                                      columns=[MovieEntity.id],
                                      order_by='-created_time')
 
+        updated = 0
+        not_updated = 0
+        failed = 0
         for item in movies:
             try:
                 with atomic_context():
-                    self.update(item.id, **options)
+                    result = self.update(item.id, **options)
+                    if result is True:
+                        updated += 1
+                    else:
+                        not_updated += 1
             except Exception as error:
+                failed += 1
                 self.LOGGER.exception(str(error))
+
+        return dict(total=len(movies),
+                    updated=updated,
+                    not_updated=not_updated,
+                    failed=failed)

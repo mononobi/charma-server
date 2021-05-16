@@ -122,6 +122,8 @@ def update(movie_id, **options):
     """
     updates the info of given movie.
 
+    it returns a value indicating that update is done.
+
     :param uuid.UUID movie_id: movie id.
 
     :keyword bool content_rate: update content rate.
@@ -169,6 +171,8 @@ def update(movie_id, **options):
 
     :raises ValidationError: validation error.
     :raises MovieIMDBPageNotFoundError: movie imdb page not found error.
+
+    :rtype: bool
     """
 
     return get_component(UpdaterPackage.COMPONENT_NAME).update(movie_id, **options)
@@ -219,6 +223,12 @@ def update_all(**options):
 
     :keyword bool force: force update data even if a category already
                          has valid data. defaults to False if not provided.
+
+    :returns: dict(total: total processed movies count,
+                   updated: updated movies count,
+                   not_updated: not updated movies count,
+                   failed: failed to update movies count)
+    :rtype: dict
     """
 
     return get_component(UpdaterPackage.COMPONENT_NAME).update_all(**options)
