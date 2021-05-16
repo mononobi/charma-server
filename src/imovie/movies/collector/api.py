@@ -49,6 +49,14 @@ def collect_all(root, **options):
     :raises PathIsNotAbsoluteError: path is not absolute error.
     :raises PathNotExistedError: path not existed error.
     :raises IsNotDirectoryError: is not directory error.
+
+    :returns: dict(int total: total processed movies count,
+                   int collected: collected movies count,
+                   int ignored: ignored folders count,
+                   int already_existed: already existed movies count,
+                   int empty: empty folders count,
+                   int failed: failed movies count)
+    :rtype: dict
     """
 
     return movies_collector_services.collect_all(root, **options)
