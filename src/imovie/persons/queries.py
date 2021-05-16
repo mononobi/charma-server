@@ -144,7 +144,7 @@ class PersonsQueries(NormalizerMixin):
         query = self._prepare_query(query)
 
         return query.filter(PersonEntity.search_name.ilike(search_name),
-                            or_(PersonEntity.imdb_page is None,
+                            or_(PersonEntity.imdb_page == None,
                                 PersonEntity.imdb_page == '')).existed()
 
     def _get_by_imdb_page(self, imdb_page, **options):
@@ -182,7 +182,7 @@ class PersonsQueries(NormalizerMixin):
         query = self._prepare_query(query)
 
         return query.filter(PersonEntity.search_name.ilike(search_name),
-                            or_(PersonEntity.imdb_page is None,
+                            or_(PersonEntity.imdb_page == None,
                                 PersonEntity.imdb_page == '')).first()
 
     def find(self, **filters):

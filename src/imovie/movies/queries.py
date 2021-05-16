@@ -241,7 +241,7 @@ class MoviesQueries(NormalizerMixin):
         query = self._prepare_query(query)
 
         return query.filter(MovieEntity.search_title.ilike(search_title),
-                            or_(MovieEntity.imdb_page is None,
+                            or_(MovieEntity.imdb_page == None,
                                 MovieEntity.imdb_page == '')).existed()
 
     def _get_by_imdb_page(self, imdb_page, **options):
@@ -279,7 +279,7 @@ class MoviesQueries(NormalizerMixin):
         query = self._prepare_query(query)
 
         return query.filter(MovieEntity.search_title.ilike(search_title),
-                            or_(MovieEntity.imdb_page is None,
+                            or_(MovieEntity.imdb_page == None,
                                 MovieEntity.imdb_page == '')).first()
 
     def find(self, **filters):
