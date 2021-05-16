@@ -30,7 +30,10 @@ class MovieStatsManager(Manager):
         result = store.query(func.avg(MovieEntity.imdb_rate))\
             .filter(MovieEntity.imdb_rate != None).scalar()
 
-        return round(result, 1)
+        if result is not None:
+            return round(result, 1)
+
+        return result
 
     def get_count(self):
         """
@@ -50,10 +53,8 @@ class MovieStatsManager(Manager):
         """
 
         store = get_current_store()
-        result = store.query(func.max(MovieEntity.imdb_rate))\
+        return store.query(func.max(MovieEntity.imdb_rate))\
             .filter(MovieEntity.imdb_rate != None).scalar()
-
-        return result
 
     def get_lowest_rate(self):
         """
@@ -63,10 +64,8 @@ class MovieStatsManager(Manager):
         """
 
         store = get_current_store()
-        result = store.query(func.min(MovieEntity.imdb_rate))\
+        return store.query(func.min(MovieEntity.imdb_rate))\
             .filter(MovieEntity.imdb_rate != None).scalar()
-
-        return result
 
     def get_oldest_production_year(self):
         """
