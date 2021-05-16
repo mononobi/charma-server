@@ -16,4 +16,4 @@ def get_stats(**options):
     :rtype: dict
     """
 
-    return stats_services.get_stats(**options)
+    return stats_services.get_stats()

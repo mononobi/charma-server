@@ -14,7 +14,7 @@ class StatsHookBase(Hook):
     this class and register an instance of it in stats hooks.
     """
 
-    def get_stats(self, **options):
+    def get_stats(self):
         """
         this method will be get called whenever stats are requested.
 

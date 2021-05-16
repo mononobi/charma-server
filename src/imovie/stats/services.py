@@ -20,11 +20,11 @@ def register_hook(instance):
     return get_component(StatsPackage.COMPONENT_NAME).register_hook(instance)
 
 
-def get_stats(**options):
+def get_stats():
     """
     gets different stats of application data.
 
     :rtype: dict
     """
 
-    return get_component(StatsPackage.COMPONENT_NAME).get_stats(**options)
+    return get_component(StatsPackage.COMPONENT_NAME).get_stats()

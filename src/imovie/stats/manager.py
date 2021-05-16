@@ -20,7 +20,7 @@ class StatsManager(Manager, HookMixin):
     hook_type = StatsHookBase
     invalid_hook_type_error = InvalidStatsHookTypeError
 
-    def get_stats(self, **options):
+    def get_stats(self):
         """
         gets different stats of application data.
 
@@ -29,7 +29,7 @@ class StatsManager(Manager, HookMixin):
 
         result = dict()
         for hook in self._get_hooks():
-            stats = hook.get_stats(**options)
+            stats = hook.get_stats()
             result.update(stats)
 
         return result
