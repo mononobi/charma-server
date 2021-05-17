@@ -55,6 +55,17 @@ class ImagesManager(Manager):
 
         raise CoreNotImplementedError()
 
+    def _delete(self, name):
+        """
+        deletes an image with given name.
+
+        :param str name: image name to be deleted.
+        """
+
+        full_path = self.get_full_path(name)
+        if path_utils.exists(full_path):
+            path_utils.remove_file(full_path)
+
     def get_root_directory(self):
         """
         gets the root directory for images.
@@ -80,6 +91,8 @@ class ImagesManager(Manager):
         gets a value indicating that an image with given name exists.
 
         :param str name: image name.
+
+        :rtype: bool
         """
 
         full_path = self.get_full_path(name)

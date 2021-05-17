@@ -35,6 +35,20 @@ def exists(name):
     gets a value indicating that an image with given name exists.
 
     :param str name: image name.
+
+    :rtype: bool
     """
 
     return get_component(PersonsImagesPackage.COMPONENT_NAME).exists(name)
+
+
+def delete(id):
+    """
+    deletes the photo of given person.
+
+    :param uuid.UUID id: person id.
+
+    :raises PersonDoesNotExistError: person does not exist error.
+    """
+
+    return get_component(PersonsImagesPackage.COMPONENT_NAME).delete(id)

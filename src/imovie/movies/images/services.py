@@ -35,6 +35,20 @@ def exists(name):
     gets a value indicating that an image with given name exists.
 
     :param str name: image name.
+
+    :rtype: bool
     """
 
     return get_component(MoviesImagesPackage.COMPONENT_NAME).exists(name)
+
+
+def delete(id):
+    """
+    deletes the poster image of given movie.
+
+    :param uuid.UUID id: movie id.
+
+    :raises MovieDoesNotExistError: movie does not exist error.
+    """
+
+    return get_component(MoviesImagesPackage.COMPONENT_NAME).delete(id)
