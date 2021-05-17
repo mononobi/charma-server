@@ -13,3 +13,4 @@ class PersonsPackage(Package):
 
     NAME = __name__
     COMPONENT_NAME = 'persons.component'
+    CONFIG_STORE_NAMES = ['persons']
