@@ -5,7 +5,6 @@ downloader manager module.
 
 import os
 
-import pyrin.configuration.services as config_services
 import pyrin.utils.path as path_utils
 import pyrin.utils.slug as slug_utils
 
@@ -26,16 +25,6 @@ class DownloaderManager(Manager):
     # this slug will be appended to file name when a file
     # with the same name is already existed.
     SEQUENCE_SLUG = ' -D{digits}'
-
-    def __init__(self):
-        """
-        initializes an instance of DownloaderManager.
-        """
-
-        super().__init__()
-
-        self._temp_directory = config_services.get('downloader', 'general', 'temp_directory')
-        path_utils.create_directory(self._temp_directory, ignore_existed=True)
 
     def _get_sequence_slug(self):
         """
