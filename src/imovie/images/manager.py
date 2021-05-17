@@ -74,3 +74,13 @@ class ImagesManager(Manager):
         """
 
         return os.path.join(self._root_directory, name)
+
+    def exists(self, name):
+        """
+        gets a value indicating that an image with given name exists.
+
+        :param str name: image name.
+        """
+
+        full_path = self.get_full_path(name)
+        return path_utils.exists(full_path)

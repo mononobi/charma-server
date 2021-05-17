@@ -28,3 +28,13 @@ def get_full_path(name):
     """
 
     return get_component(MoviesImagesPackage.COMPONENT_NAME).get_full_path(name)
+
+
+def exists(name):
+    """
+    gets a value indicating that an image with given name exists.
+
+    :param str name: image name.
+    """
+
+    return get_component(MoviesImagesPackage.COMPONENT_NAME).exists(name)
