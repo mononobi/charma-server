@@ -12,4 +12,3 @@ class ImagesPackage(Package):
     """
 
     NAME = __name__
-    COMPONENT_NAME = 'images.component'
