@@ -212,3 +212,26 @@ class MoviesManager(Manager, MoviesQueries, HookMixin):
         """
 
         return datetime_services.current_year() + 1
+
+    def get_full_name_for_path(self, id):
+        """
+        gets the movie full title to be used in paths.
+
+        it returns full title with given format:
+        title (production_year)
+
+        for example:
+        Crash (2005)
+
+        if the production year is None:
+        Crash
+
+        :param uuid.UUID id: movie id.
+
+        :raises MovieDoesNotExistError: movie does not exist error.
+
+        :rtype: str
+        """
+
+        entity = self.get(id)
+        return self.get_full_title(entity.library_title, entity.production_year)
