@@ -280,7 +280,7 @@ class UpdaterManager(Manager):
         :rtype: dict
         """
 
-        content = scraper_services.get(url, **options)
+        content = scraper_services.get_soup(url, **options)
         options.update(content=content)
         categories = set(categories)
         if len(categories) <= 0:

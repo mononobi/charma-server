@@ -75,7 +75,7 @@ class SearchProviderBase(AbstractSearchProvider):
         :rtype: bs4.BeautifulSoup
         """
 
-        return scraper_services.get(url, **options)
+        return scraper_services.get_soup(url, **options)
 
     def _prepare_url(self, url):
         """

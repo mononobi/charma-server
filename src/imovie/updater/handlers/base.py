@@ -95,7 +95,7 @@ class UpdaterBase(AbstractUpdater):
         new_url = self._update_url(url)
         content = options.get('content')
         if content is None or url != new_url:
-            content = scraper_services.get(url, **options)
+            content = scraper_services.get_soup(url, **options)
 
         options.update(content=content)
         data = self._fetch(new_url, content)
