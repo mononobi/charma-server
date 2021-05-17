@@ -31,7 +31,7 @@ class ImagesManager(Manager):
 
         super().__init__()
 
-        self._root_path = self._get_root_directory()
+        self._root_directory = self._get_root_directory()
         self._create_root_directory()
 
     def _create_root_directory(self):
@@ -39,7 +39,7 @@ class ImagesManager(Manager):
         creates images root directory.
         """
 
-        path_utils.create_directory(self._root_path, ignore_existed=True)
+        path_utils.create_directory(self._root_directory, ignore_existed=True)
 
     @abstractmethod
     def _get_root_directory(self):
@@ -62,9 +62,9 @@ class ImagesManager(Manager):
         :rtype: str
         """
 
-        return self._root_path
+        return self._root_directory
 
-    def get_full_path(self, name, **options):
+    def get_full_path(self, name):
         """
         gets the full path of image with given name.
 
@@ -73,4 +73,4 @@ class ImagesManager(Manager):
         :rtype: str
         """
 
-        return os.path.join(self._root_path, name)
+        return os.path.join(self._root_directory, name)
