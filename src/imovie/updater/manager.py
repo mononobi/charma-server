@@ -41,6 +41,7 @@ class UpdaterManager(Manager):
 
     package_class = UpdaterPackage
     LOGGER = logging_services.get_logger('updater')
+    CREDITS_URL_PATTERN = '{base}/fullcredits'
 
     def __init__(self):
         """
@@ -135,6 +136,87 @@ class UpdaterManager(Manager):
         now = datetime_services.now()
         next_interval = modified_time + timedelta(days=interval)
         return now >= next_interval
+
+    def _get_credits_url(self, url):
+        """
+        gets credits url for given imdb page url.
+
+        :param str url: imdb page url.
+
+        :rtype: str
+        """
+
+        return self.CREDITS_URL_PATTERN.format(base=url)
+
+    def _fetch(self, content, category, **options):
+        """
+        fetches data from given content for given category.
+
+        it may return None if no data is available.
+
+        :param bs4.BeautifulSoup content: the html content of imdb page.
+        :param str category: category of updaters to be used.
+
+        :keyword bs4.BeautifulSoup credits: the html content of credits page.
+                                            this is only needed by person updaters.
+
+        :raises UpdaterCategoryNotFoundError: updater category not found error.
+
+        :returns: dict[str category, object value]
+        :rtype: dict
+        """
+
+        updater = self.get_updater(category, **options)
+        result = updater.fetch(content, **options)
+        if result is None:
+            return None
+
+        final_result = dict()
+        final_result[updater.category] = result
+        return final_result
+
+    def _fetch_all(self, url, *categories, **options):
+        """
+        fetches data from given url for specified categories.
+
+        :param str url: url to fetch data from it.
+
+        :param str categories: categories of updaters to be used.
+                               if not provided, all categories will be used.
+
+        :raises UpdaterCategoryNotFoundError: updater category not found error.
+
+        :returns: a dict of all updated values and their categories.
+        :rtype: dict
+        """
+
+        content = scraper_services.get_soup(url, **options)
+        categories = set(categories)
+        if len(categories) <= 0:
+            categories = UpdaterCategoryEnum.values()
+
+        person_categories = set(UpdaterCategoryEnum.persons).intersection(set(categories))
+        if len(person_categories) > 0:
+            with suppress():
+                credits_url = self._get_credits_url(url)
+                credits_content = scraper_services.get_soup(credits_url, **options)
+                options.update(credits=credits_content)
+
+        if UpdaterCategoryEnum.ACTORS_PHOTO in categories:
+            options.update(actors_photo=True)
+            categories.remove(UpdaterCategoryEnum.ACTORS_PHOTO)
+
+        if UpdaterCategoryEnum.DIRECTORS_PHOTO in categories:
+            options.update(directors_photo=True)
+            categories.remove(UpdaterCategoryEnum.DIRECTORS_PHOTO)
+
+        final_result = dict()
+        for item in categories:
+            result = self._fetch(content, item, **options)
+            if result is not None:
+                final_result.update(result)
+
+        return final_result
 
     def register_updater(self, instance, **options):
         """
@@ -238,61 +320,6 @@ class UpdaterManager(Manager):
             return self.get_processor(category, **options)
 
         return None
-
-    def fetch(self, url, category, **options):
-        """
-        fetches data from given url for given category.
-
-        it may return None if no data is available.
-
-        :param str url: url to fetch data from it.
-        :param str category: category of updaters to be used.
-
-        :keyword bs4.BeautifulSoup content: the html content of input url.
-
-        :raises UpdaterCategoryNotFoundError: updater category not found error.
-
-        :returns: dict[str category, object value]
-        :rtype: dict
-        """
-
-        updater = self.get_updater(category, **options)
-        result = updater.fetch(url, **options)
-        if result is None:
-            return None
-
-        final_result = dict()
-        final_result[updater.category] = result
-        return final_result
-
-    def fetch_all(self, url, *categories, **options):
-        """
-        fetches data from given url for specified categories.
-
-        :param str url: url to fetch data from it.
-
-        :param str categories: categories of updaters to be used.
-                               if not provided, all categories will be used.
-
-        :raises UpdaterCategoryNotFoundError: updater category not found error.
-
-        :returns: a dict of all updated values and their categories.
-        :rtype: dict
-        """
-
-        content = scraper_services.get_soup(url, **options)
-        options.update(content=content)
-        categories = set(categories)
-        if len(categories) <= 0:
-            categories = UpdaterCategoryEnum.values()
-
-        final_result = dict()
-        for item in categories:
-            result = self.fetch(url, item, **options)
-            if result is not None:
-                final_result.update(result)
-
-        return final_result
 
     def update(self, movie_id, **options):
         """
@@ -450,7 +477,7 @@ class UpdaterManager(Manager):
 
         updated_fields = dict()
         if len(categories) > 0:
-            updated_fields = self.fetch_all(imdb_page, *categories)
+            updated_fields = self._fetch_all(imdb_page, *categories)
             updated_fields = self._process(entity.id, updated_fields, **options)
 
         if imdb_page != entity.imdb_page:

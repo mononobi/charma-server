@@ -9,25 +9,6 @@ from pyrin.core.enumerations import HTTPMethodEnum
 import imovie.updater.services as updater_services
 
 
-@api('/updater/fetch_all', authenticated=False)
-def fetch_all(url, *categories, **options):
-    """
-    fetches data from given url for specified categories.
-
-    :param str url: url to fetch data from it.
-
-    :param str categories: categories of updaters to be used.
-                           if not provided, all categories will be used.
-
-    :raises UpdaterCategoryNotFoundError: updater category not found error.
-
-    :returns: a dict of all updated values and their categories.
-    :rtype: dict
-    """
-
-    return updater_services.fetch_all(url, *categories, **options)
-
-
 @api('/updater/<uuid:movie_id>', methods=HTTPMethodEnum.PATCH, authenticated=False)
 def update(movie_id, **options):
     """

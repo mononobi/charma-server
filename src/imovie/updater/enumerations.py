@@ -23,3 +23,20 @@ class UpdaterCategoryEnum(CoreEnum):
     RUNTIME = 'runtime'
     STORYLINE = 'storyline'
     TITLE = 'title'
+    ACTORS = 'actors'
+    DIRECTORS = 'directors'
+
+    # these two values have no relevant registered updater.
+    # they will be injected into each updater through options.
+    ACTORS_PHOTO = 'actors_photo'
+    DIRECTORS_PHOTO = 'directors_photo'
+
+    @property
+    def persons(self):
+        """
+        gets all enumeration values related to persons.
+
+        :rtype: tuple[str]
+        """
+
+        return self.ACTORS, self.ACTORS_PHOTO, self.DIRECTORS, self.DIRECTORS_PHOTO
