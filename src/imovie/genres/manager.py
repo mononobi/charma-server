@@ -141,9 +141,8 @@ class GenresManager(Manager):
 
         options.update(name=name)
         validator_services.validate_dict(GenreEntity, options)
-        is_main = self._is_main(name)
-        options.update(is_main=is_main)
         entity = GenreEntity(**options)
+        entity.is_main = self._is_main(name)
         entity.save()
         return entity.id
 
