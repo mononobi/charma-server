@@ -441,7 +441,7 @@ class UpdaterManager(Manager):
                                                 entity.modified_on):
             categories.append(UpdaterCategoryEnum.TITLE)
 
-        # this code is to try update production year even if it has valid value.
+        # this code is to try correct production year even if it has valid value.
         # because it is possible that the production year extracted from library
         # title be incorrect.
         if production_year is True and len(categories) > 0 \
