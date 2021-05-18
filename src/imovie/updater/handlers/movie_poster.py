@@ -27,6 +27,7 @@ class MoviePosterUpdater(UpdaterBase, IMDBHighQualityImageFetcherMixin):
                                             this is only needed by person updaters.
 
         :returns: imdb movie poster url.
+        :rtype: str
         """
 
         image_url = None

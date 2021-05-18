@@ -26,6 +26,7 @@ class MetaScoreUpdaterBase(UpdaterBase):
                                             this is only needed by person updaters.
 
         :returns: imdb meta score.
+        :rtype: int
         """
 
         meta_score = None

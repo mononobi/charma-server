@@ -26,6 +26,7 @@ class StoryLineUpdater(UpdaterBase):
                                             this is only needed by person updaters.
 
         :returns: imdb storyline.
+        :rtype: str
         """
 
         storyline = None

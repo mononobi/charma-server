@@ -28,6 +28,7 @@ class ProductionYearUpdater(UpdaterBase):
                                             this is only needed by person updaters.
 
         :returns: imdb production year.
+        :rtype: int
         """
 
         production_year = None

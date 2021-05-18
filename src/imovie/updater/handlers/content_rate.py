@@ -26,6 +26,7 @@ class ContentRateUpdater(UpdaterBase):
                                             this is only needed by person updaters.
 
         :returns: imdb content rate.
+        :rtype: str
         """
 
         content_rate = None

@@ -26,6 +26,7 @@ class IMDBRateUpdater(UpdaterBase):
                                             this is only needed by person updaters.
 
         :returns: imdb rate.
+        :rtype: float
         """
 
         rate = None

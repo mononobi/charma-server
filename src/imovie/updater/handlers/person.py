@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-updater handlers original title module.
+updater handlers person module.
 """
 
 from imovie.updater.decorators import updater
 from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
+from imovie.updater.handlers.mixin import IMDBHighQualityImageFetcherMixin
 
 
-@updater()
-class OriginalTitleUpdater(UpdaterBase):
+class PersonUpdaterBase(UpdaterBase, IMDBHighQualityImageFetcherMixin):
     """
-    original title updater class.
+    person updater class.
     """
-
-    _category = UpdaterCategoryEnum.ORIGINAL_TITLE
 
     def _fetch(self, content, **options):
         """
@@ -25,11 +23,25 @@ class OriginalTitleUpdater(UpdaterBase):
         :keyword bs4.BeautifulSoup credits: the html content of credits page.
                                             this is only needed by person updaters.
 
-        :returns: imdb original title.
-        :rtype: str
+        :returns: person information.
+        :rtype: dict
         """
+        pass
 
-        original_title_tag = content.find('div', class_='originalTitle')
-        original_title = self._get_text(original_title_tag, **options)
 
-        return original_title
+@updater()
+class ActorUpdater(PersonUpdaterBase):
+    """
+    actor updater class.
+    """
+
+    _category = UpdaterCategoryEnum.ACTORS
+
+
+@updater()
+class DirectorUpdater(PersonUpdaterBase):
+    """
+    director updater class.
+    """
+
+    _category = UpdaterCategoryEnum.DIRECTORS

@@ -26,6 +26,7 @@ class TitleUpdater(UpdaterBase):
                                             this is only needed by person updaters.
 
         :returns: imdb title.
+        :rtype: str
         """
 
         title = None

@@ -28,6 +28,7 @@ class RuntimeUpdater(UpdaterBase):
                                             this is only needed by person updaters.
 
         :returns: imdb runtime.
+        :rtype: int
         """
 
         runtime = None
