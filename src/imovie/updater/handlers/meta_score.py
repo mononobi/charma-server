@@ -16,12 +16,14 @@ class MetaScoreUpdaterBase(UpdaterBase):
     _category = UpdaterCategoryEnum.META_SCORE
     _META_SCORE_CONTAINER_CLASS = None
 
-    def _fetch(self, url, content, **options):
+    def _fetch(self, content, **options):
         """
         fetches data from given url.
 
-        :param str url: url to fetch info from it.
-        :param bs4.BeautifulSoup content: the html content of input url.
+        :param bs4.BeautifulSoup content: the html content of imdb page.
+
+        :keyword bs4.BeautifulSoup credits: the html content of credits page.
+                                            this is only needed by person updaters.
 
         :returns: imdb meta score.
         """

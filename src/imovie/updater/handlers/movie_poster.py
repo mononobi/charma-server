@@ -17,17 +17,19 @@ class MoviePosterUpdater(UpdaterBase, IMDBHighQualityImageFetcherMixin):
 
     _category = UpdaterCategoryEnum.POSTER_NAME
 
-    def _fetch(self, url, content, **options):
+    def _fetch(self, content, **options):
         """
         fetches data from given url.
 
-        :param str url: url to fetch info from it.
-        :param bs4.BeautifulSoup content: the html content of input url.
+        :param bs4.BeautifulSoup content: the html content of imdb page.
+
+        :keyword bs4.BeautifulSoup credits: the html content of credits page.
+                                            this is only needed by person updaters.
 
         :returns: imdb movie poster url.
         """
 
-        url = None
+        image_url = None
         url_container = content.find('div', class_='title-overview')
         if url_container is not None:
             poster_tag = url_container.find('div', class_='poster')
@@ -36,6 +38,6 @@ class MoviePosterUpdater(UpdaterBase, IMDBHighQualityImageFetcherMixin):
                 if image_tag is not None:
                     result = image_tag.get('src')
                     if result is not None:
-                        url = self.get_high_quality_image_url(result)
+                        image_url = self.get_high_quality_image_url(result)
 
-        return url
+        return image_url

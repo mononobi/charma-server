@@ -26,13 +26,14 @@ class AbstractUpdater(CoreObject, metaclass=UpdaterSingletonMeta):
     """
 
     @abstractmethod
-    def fetch(self, url, **options):
+    def fetch(self, content, **options):
         """
         fetches data from given url.
 
-        :param str url: url to fetch info from it.
+        :param bs4.BeautifulSoup content: the html content of imdb page.
 
-        :keyword bs4.BeautifulSoup content: the html content of input url.
+        :keyword bs4.BeautifulSoup credits: the html content of credits page.
+                                            this is only needed by person updaters.
 
         :raises CoreNotImplementedError: core not implemented error.
 
