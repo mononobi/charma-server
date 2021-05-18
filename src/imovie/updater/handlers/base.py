@@ -35,7 +35,7 @@ class UpdaterBase(AbstractUpdater):
     @abstractmethod
     def _fetch(self, content, **options):
         """
-        fetches data from given url.
+        fetches data from given content.
 
         :param bs4.BeautifulSoup content: the html content of imdb page.
 
@@ -70,7 +70,7 @@ class UpdaterBase(AbstractUpdater):
 
     def fetch(self, content, **options):
         """
-        fetches data from given url.
+        fetches data from given content.
 
         :param bs4.BeautifulSoup content: the html content of imdb page.
 
