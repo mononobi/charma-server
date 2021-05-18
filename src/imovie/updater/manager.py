@@ -23,6 +23,8 @@ import imovie.search.services as search_services
 import imovie.movies.related_languages.services as related_language_services
 import imovie.movies.related_genres.services as related_genre_services
 import imovie.movies.related_countries.services as related_country_services
+import imovie.movies.related_persons.actors.services as related_actor_services
+import imovie.movies.related_persons.directors.services as related_director_services
 
 from imovie.movies.models import MovieEntity
 from imovie.updater import UpdaterPackage
@@ -137,6 +139,17 @@ class UpdaterManager(Manager):
         next_interval = modified_time + timedelta(days=interval)
         return now >= next_interval
 
+    def _get_max_modified_on(self):
+        """
+        gets the maximum modified on value to select movies to this value for update.
+
+        :rtype: datetime.datetime
+        """
+
+        interval = config_services.get('updater', 'general', 'update_interval')
+        now = datetime_services.now()
+        return now - timedelta(days=interval)
+
     def _get_credits_url(self, url):
         """
         gets credits url for given imdb page url.
@@ -201,14 +214,6 @@ class UpdaterManager(Manager):
                 credits_url = self._get_credits_url(url)
                 credits_content = scraper_services.get_soup(credits_url, **options)
                 options.update(credits=credits_content)
-
-        if UpdaterCategoryEnum.ACTORS_PHOTO in categories:
-            options.update(actors_photo=True)
-            categories.remove(UpdaterCategoryEnum.ACTORS_PHOTO)
-
-        if UpdaterCategoryEnum.DIRECTORS_PHOTO in categories:
-            options.update(directors_photo=True)
-            categories.remove(UpdaterCategoryEnum.DIRECTORS_PHOTO)
 
         final_result = dict()
         for item in categories:
@@ -365,6 +370,12 @@ class UpdaterManager(Manager):
         :keyword bool title: update title.
                              defaults to True if not provided.
 
+        :keyword bool actors: update actors.
+                              defaults to True if not provided.
+
+        :keyword bool directors: update directors.
+                                 defaults to True if not provided.
+
         :keyword str imdb_page: an imdb movie page to be used to fetch data from.
                                 if not provided the movie page will be fetched
                                 automatically if possible.
@@ -390,6 +401,8 @@ class UpdaterManager(Manager):
         runtime = options.get('runtime', True)
         storyline = options.get('storyline', True)
         title = options.get('title', True)
+        actors = options.get('actors', True)
+        directors = options.get('directors', True)
         force = options.get('force', False)
         imdb_page = options.get('imdb_page')
 
@@ -468,6 +481,16 @@ class UpdaterManager(Manager):
                                                 entity.modified_on):
             categories.append(UpdaterCategoryEnum.TITLE)
 
+        has_actor = related_actor_services.exists(movie_id) or None
+        if actors is True and self._needs_update(has_actor, force,
+                                                 entity.modified_on):
+            categories.append(UpdaterCategoryEnum.ACTORS)
+
+        has_director = related_director_services.exists(movie_id) or None
+        if directors is True and self._needs_update(has_director, force,
+                                                    entity.modified_on):
+            categories.append(UpdaterCategoryEnum.DIRECTORS)
+
         # this code is to try to correct production year even if it has valid value.
         # because it is possible that the production year extracted from library
         # title be incorrect.
@@ -532,6 +555,12 @@ class UpdaterManager(Manager):
         :keyword bool title: update title.
                              defaults to True if not provided.
 
+        :keyword bool actors: update actors.
+                              defaults to True if not provided.
+
+        :keyword bool directors: update directors.
+                                 defaults to True if not provided.
+
         :keyword bool force: force update data even if a category already
                              has valid data. defaults to False if not provided.
 
@@ -542,12 +571,19 @@ class UpdaterManager(Manager):
         :rtype: dict
         """
 
+        force = options.get('force', False)
         from_created_on = options.pop('from_created_on', None)
         to_created_on = options.pop('to_created_on', None)
+        modified_on_criteria = dict()
+        if force is not True:
+            to_modified_on = self._get_max_modified_on()
+            modified_on_criteria.update(to_modified_on=to_modified_on)
+
         movies = movie_services.find(from_created_on=from_created_on,
                                      to_created_on=to_created_on,
                                      columns=[MovieEntity.id],
-                                     order_by='-created_time')
+                                     order_by='-created_time',
+                                     **modified_on_criteria)
 
         updated = 0
         not_updated = 0

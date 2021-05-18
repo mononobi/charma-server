@@ -3,7 +3,7 @@
 movies queries module.
 """
 
-from sqlalchemy import or_
+from sqlalchemy import and_, or_
 
 import pyrin.validator.services as validator_services
 
@@ -52,6 +52,8 @@ class MoviesQueries(NormalizerMixin):
         :keyword int | list[int] resolution: resolution.
         :keyword datetime from_created_on: from created on.
         :keyword datetime to_created_on: to created on.
+        :keyword datetime from_modified_on: from modified on.
+        :keyword datetime to_modified_on: to modified on.
 
         :keyword bool consider_begin_of_day: specifies that consider begin
                                              of day for lower datetime.
@@ -91,6 +93,8 @@ class MoviesQueries(NormalizerMixin):
         resolution = filters.get('resolution')
         from_created_on = filters.get('from_created_on')
         to_created_on = filters.get('to_created_on')
+        from_modified_on = filters.get('from_modified_on')
+        to_modified_on = filters.get('to_modified_on')
 
         if title is not None:
             search_title = self.get_normalized_name(title)
@@ -158,6 +162,12 @@ class MoviesQueries(NormalizerMixin):
         if from_created_on is not None or to_created_on is not None:
             add_datetime_range_clause(expressions, MovieEntity.created_on,
                                       from_created_on, to_created_on, **filters)
+
+        if from_modified_on is not None or to_modified_on is not None:
+            modified_on_range = []
+            add_datetime_range_clause(modified_on_range, MovieEntity.modified_on,
+                                      from_modified_on, to_modified_on, **filters)
+            expressions.append(or_(and_(*modified_on_range), MovieEntity.modified_on == None))
 
     def _get_all(self, *expressions, **options):
         """
@@ -311,6 +321,8 @@ class MoviesQueries(NormalizerMixin):
         :keyword int | list[int] resolution: resolution.
         :keyword datetime from_created_on: from created on.
         :keyword datetime to_created_on: to created on.
+        :keyword datetime from_modified_on: from modified on.
+        :keyword datetime to_modified_on: to modified on.
 
         :keyword bool consider_begin_of_day: specifies that consider begin
                                              of day for lower datetime.

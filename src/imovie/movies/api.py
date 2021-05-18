@@ -125,6 +125,8 @@ def find(**filters):
     :keyword int | list[int] resolution: resolution.
     :keyword datetime from_created_on: from created on.
     :keyword datetime to_created_on: to created on.
+    :keyword datetime from_modified_on: from modified on.
+    :keyword datetime to_modified_on: to modified on.
 
     :keyword bool consider_begin_of_day: specifies that consider begin
                                          of day for lower datetime.

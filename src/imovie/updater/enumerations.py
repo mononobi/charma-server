@@ -3,6 +3,7 @@
 updater enumerations module.
 """
 
+from pyrin.core.decorators import class_property
 from pyrin.core.enumerations import CoreEnum
 
 
@@ -26,12 +27,7 @@ class UpdaterCategoryEnum(CoreEnum):
     ACTORS = 'actors'
     DIRECTORS = 'directors'
 
-    # these two values have no relevant registered updater.
-    # they will be injected into each updater through options.
-    ACTORS_PHOTO = 'actors_photo'
-    DIRECTORS_PHOTO = 'directors_photo'
-
-    @property
+    @class_property
     def persons(self):
         """
         gets all enumeration values related to persons.
@@ -39,4 +35,4 @@ class UpdaterCategoryEnum(CoreEnum):
         :rtype: tuple[str]
         """
 
-        return self.ACTORS, self.ACTORS_PHOTO, self.DIRECTORS, self.DIRECTORS_PHOTO
+        return self.ACTORS, self.DIRECTORS

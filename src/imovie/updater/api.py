@@ -54,6 +54,12 @@ def update(movie_id, **options):
     :keyword bool title: update title.
                          defaults to True if not provided.
 
+    :keyword bool actors: update actors.
+                          defaults to True if not provided.
+
+    :keyword bool directors: update directors.
+                             defaults to True if not provided.
+
     :keyword str imdb_page: an imdb movie page to be used to fetch data from.
                             if not provided the movie page will be fetched
                             automatically if possible.
@@ -113,6 +119,12 @@ def update_all(**options):
 
     :keyword bool title: update title.
                          defaults to True if not provided.
+
+    :keyword bool actors: update actors.
+                          defaults to True if not provided.
+
+    :keyword bool directors: update directors.
+                             defaults to True if not provided.
 
     :keyword bool force: force update data even if a category already
                          has valid data. defaults to False if not provided.

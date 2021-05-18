@@ -86,3 +86,15 @@ def delete_by_actor(person_id, **options):
 
     return get_component(RelatedActorsPackage.COMPONENT_NAME).delete_by_actor(person_id,
                                                                               **options)
+
+
+def exists(movie_id, **options):
+    """
+    gets a value indicating that given movie has any actors.
+
+    :param uuid.UUID movie_id: movie id.
+
+    :rtype: bool
+    """
+
+    return get_component(RelatedActorsPackage.COMPONENT_NAME).exists(movie_id, **options)
