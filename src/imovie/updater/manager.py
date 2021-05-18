@@ -441,6 +441,13 @@ class UpdaterManager(Manager):
                                                 entity.modified_on):
             categories.append(UpdaterCategoryEnum.TITLE)
 
+        # this code is to try update production year even if it has valid value.
+        # because it is possible that the production year extracted from library
+        # title be incorrect.
+        if production_year is True and len(categories) > 0 \
+                and UpdaterCategoryEnum.PRODUCTION_YEAR not in categories:
+            categories.append(UpdaterCategoryEnum.PRODUCTION_YEAR)
+
         updated_fields = dict()
         if len(categories) > 0:
             updated_fields = self.fetch_all(imdb_page, *categories)
