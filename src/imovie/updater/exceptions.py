@@ -67,3 +67,10 @@ class ProcessorCategoryNotFoundError(UpdaterException):
     processor category not found error.
     """
     pass
+
+
+class IMDBPageIsNotProvidedError(UpdaterException):
+    """
+    imdb page is not provided error.
+    """
+    pass

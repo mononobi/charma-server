@@ -25,6 +25,8 @@ class CountryProcessor(ProcessorBase):
 
         :param uuid.UUID movie_id: movie id to process data for it.
         :param list[str] data: list of countries to be processed.
+
+        :keyword str imdb_page: movie imdb page.
         """
 
         related_country_services.delete_by_movie(movie_id, **options)

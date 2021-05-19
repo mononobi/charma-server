@@ -25,6 +25,8 @@ class ContentRateProcessor(ProcessorBase):
         :param uuid.UUID movie_id: movie id to process data for it.
         :param str data: content rate to be processed.
 
+        :keyword str imdb_page: movie imdb page.
+
         :returns: dict(uuid.UUID content_rate_id: content rate id)
         :rtype: dict
         """

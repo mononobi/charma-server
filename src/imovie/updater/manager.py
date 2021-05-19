@@ -99,6 +99,8 @@ class UpdaterManager(Manager):
         :param uuid.UUID movie_id: movie id.
         :param dict data: data to be processed.
 
+        :keyword str imdb_page: movie imdb page.
+
         :rtype: dict
         """
 
@@ -501,6 +503,7 @@ class UpdaterManager(Manager):
         updated_fields = dict()
         if len(categories) > 0:
             updated_fields = self._fetch_all(imdb_page, *categories)
+            options.update(imdb_page=imdb_page)
             updated_fields = self._process(entity.id, updated_fields, **options)
 
         if imdb_page != entity.imdb_page:

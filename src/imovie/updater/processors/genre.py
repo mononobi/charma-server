@@ -25,6 +25,8 @@ class GenreProcessor(ProcessorBase):
 
         :param uuid.UUID movie_id: movie id to process data for it.
         :param list[str] data: list of genres to be processed.
+
+        :keyword str imdb_page: movie imdb page.
         """
 
         related_genre_services.delete_by_movie(movie_id, **options)

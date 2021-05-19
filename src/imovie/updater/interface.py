@@ -109,6 +109,8 @@ class AbstractProcessor(CoreObject, metaclass=ProcessorSingletonMeta):
         :param uuid.UUID movie_id: movie id to process data for it.
         :param object data: update data to be processed.
 
+        :keyword str imdb_page: movie imdb page.
+
         :raises CoreNotImplementedError: core not implemented error.
 
         :returns: processed data
