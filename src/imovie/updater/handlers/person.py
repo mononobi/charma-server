@@ -172,7 +172,11 @@ class ActorUpdater(PersonUpdaterBase):
         :param bs4.BeautifulSoup content: the html content of imdb page.
         :param bs4.BeautifulSoup credits_content: the html content of credits page.
 
-        :returns: list of actors.
+        :returns: list[dict(str fullname,
+                            str imdb_page,
+                            str character,
+                            str photo_name,
+                            bool is_star)].
         :rtype: list[dict]
         """
 
@@ -205,3 +209,35 @@ class DirectorUpdater(PersonUpdaterBase):
     """
 
     _category = UpdaterCategoryEnum.DIRECTORS
+
+    def _fetch_data(self, content, credits_content, **options):
+        """
+        fetches data from given content and credits content.
+
+        :param bs4.BeautifulSoup content: the html content of imdb page.
+        :param bs4.BeautifulSoup credits_content: the html content of credits page.
+
+        :returns: list of directors.
+        :rtype: list[dict]
+        """
+
+        cast_list_container = credits_content.find('table', class_='cast_list')
+        stars = self._get_stars(content)
+        actors = []
+        if cast_list_container is not None:
+            odd_rows = cast_list_container.find_all('tr', class_='odd')
+            even_rows = cast_list_container.find_all('tr', class_='even')
+            all_rows = []
+            all_rows.extend(odd_rows)
+            all_rows.extend(even_rows)
+            for item in all_rows:
+                fullname, imdb_page = self._get_fullname_and_imdb_page(item)
+                character = self._get_character(item)
+                photo_name = self._get_photo_url(item)
+                single_actor = dict(fullname=fullname, imdb_page=imdb_page,
+                                    character=character, photo_name=photo_name,
+                                    is_star=imdb_page in stars)
+
+                actors.append(single_actor)
+
+        return actors or None
