@@ -38,7 +38,6 @@ class MoviePosterUpdater(UpdaterBase, IMDBHighQualityImageFetcherMixin):
                 image_tag = poster_tag.find('img', src=True)
                 if image_tag is not None:
                     result = image_tag.get('src')
-                    if result is not None:
-                        image_url = self.get_high_quality_image_url(result)
+                    image_url = self.get_high_quality_image_url(result)
 
         return image_url

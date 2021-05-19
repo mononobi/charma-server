@@ -20,17 +20,18 @@ class IMDBHighQualityImageFetcherMixin(CoreObject):
         """
         gets the high quality image url from given url.
 
-        it gets the same url if it could not extract high quality url.
+        it may return None if it could not extract high quality url.
 
         :param str url: original url.
 
         :rtype: str
         """
 
-        matched = self.IMAGE_URL_REGEX.match(url)
-        if matched:
-            base = matched.group(1)
-            extension = matched.group(3)
-            return '{base}{extension}'.format(base=base, extension=extension)
+        if url is not None:
+            matched = self.IMAGE_URL_REGEX.match(url)
+            if matched:
+                base = matched.group(1)
+                extension = matched.group(3)
+                return '{base}{extension}'.format(base=base, extension=extension)
 
-        return url
+        return None

@@ -80,7 +80,7 @@ class UpdaterBase(AbstractUpdater):
         :returns: update data
         """
 
-        data = self._fetch(content)
+        data = self._fetch(content, **options)
         if data is None:
             if self._next_handler is not None:
                 return self._next_handler.fetch(content, **options)
