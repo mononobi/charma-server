@@ -4,6 +4,7 @@ updater processors movie poster module.
 """
 
 import pyrin.utilities.string.normalizer.services as normalizer_services
+import pyrin.utils.path as path_utils
 
 from pyrin.logging.contexts import suppress
 
@@ -40,8 +41,13 @@ class MoviePosterProcessor(ProcessorBase):
 
         imdb_page = self._get_imdb_page(**options)
         imdb_page = normalizer_services.normalize(imdb_page)
-        image_root = movie_image_services.get_root_directory()
+        extension = path_utils.get_file_extension(data, remove_dot=False, lowercase=False)
+        file_name = '{name}{extension}'.format(name=imdb_page, extension=extension)
 
+        if movie_image_services.exists(file_name) is True:
+            return dict(poster_name=file_name)
+
+        image_root = movie_image_services.get_root_directory()
         with suppress():
             _, name = downloader_services.download(data, image_root, name=imdb_page)
             return dict(poster_name=name)
