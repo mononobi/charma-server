@@ -7,7 +7,10 @@ import re
 
 from abc import abstractmethod
 
+from pyrin.logging.contexts import suppress
 from pyrin.core.exceptions import CoreNotImplementedError
+
+import imovie.scraper.services as scraper_services
 
 from imovie.updater.decorators import updater
 from imovie.updater.enumerations import UpdaterCategoryEnum
@@ -42,14 +45,42 @@ class PersonUpdaterBase(UpdaterBase, IMDBHighQualityImageFetcherMixin):
 
         return self._fetch_data(content, credits_content, **options)
 
+    def _get_fullname_and_imdb_page(self, tag, class_):
+        """
+        gets the fullname and imdb page of actor.
+
+        it may return None for each value if it is not available.
+
+        :param bs4.Tag tag: tag to fetch fullname and imdb page from.
+        :param bool | str class_: the class attribute of corresponding `td` tag.
+
+        :returns: tuple[str fullname, str imdb_page]
+        :rtype: tuple[str, str]
+        """
+
+        actor_tag = tag.find('td', class_=class_)
+        if actor_tag is not None:
+            actor_info = actor_tag.find('a', href=True)
+            if actor_info is not None:
+                name = actor_info.get_text(separator=' ', strip=True) or None
+                url = self._get_person_url(actor_info.get('href')) or None
+                return name, url
+
+        return None, None
+
     def _get_person_url(self, url):
         """
         gets the person imdb page url from given url.
+
+        it returns None if it could not get the imdb page.
 
         :param str url: url to get person page url from it.
 
         :rtype: str
         """
+
+        if url is None:
+            return None
 
         matched = re.match(self.PERSON_URL_PATTERN, url)
         if matched:
@@ -82,28 +113,6 @@ class ActorUpdater(PersonUpdaterBase):
     """
 
     _category = UpdaterCategoryEnum.ACTORS
-
-    def _get_fullname_and_imdb_page(self, tag):
-        """
-        gets the fullname and imdb page of actor.
-
-        it may return None for each value if it is not available.
-
-        :param bs4.Tag tag: tag to fetch fullname and imdb page from.
-
-        :returns: tuple[str fullname, str imdb_page]
-        :rtype: tuple[str, str]
-        """
-
-        actor_tag = tag.find('td', class_=False)
-        if actor_tag is not None:
-            actor_info = actor_tag.find('a', href=True)
-            if actor_info is not None:
-                name = actor_info.get_text(separator=' ', strip=True) or None
-                url = self._get_person_url(actor_info.get('href')) or None
-                return name, url
-
-        return None, None
 
     def _get_character(self, tag):
         """
@@ -151,6 +160,8 @@ class ActorUpdater(PersonUpdaterBase):
         """
         gets photo url of actor.
 
+        it returns None if it fails to fetch photo url.
+
         :param bs4.Tag tag: tag to fetch photo url from.
 
         :rtype: str
@@ -190,7 +201,7 @@ class ActorUpdater(PersonUpdaterBase):
             all_rows.extend(odd_rows)
             all_rows.extend(even_rows)
             for item in all_rows:
-                fullname, imdb_page = self._get_fullname_and_imdb_page(item)
+                fullname, imdb_page = self._get_fullname_and_imdb_page(item, class_=False)
                 character = self._get_character(item)
                 photo_name = self._get_photo_url(item)
                 single_actor = dict(fullname=fullname, imdb_page=imdb_page,
@@ -210,6 +221,29 @@ class DirectorUpdater(PersonUpdaterBase):
 
     _category = UpdaterCategoryEnum.DIRECTORS
 
+    def _get_photo_url(self, imdb_page):
+        """
+        gets photo url of director.
+
+        it returns None if it fails to fetch photo url.
+
+        :param str imdb_page: imdb page url of director.
+
+        :rtype: str
+        """
+
+        if imdb_page is None:
+            return None
+
+        with suppress():
+            content = scraper_services.get_soup(imdb_page)
+            poster_tag = content.find('img', id='name-poster', src=True)
+            if poster_tag is not None:
+                result = poster_tag.get('src')
+                return self.get_high_quality_image_url(result)
+
+        return None
+
     def _fetch_data(self, content, credits_content, **options):
         """
         fetches data from given content and credits content.
@@ -217,27 +251,26 @@ class DirectorUpdater(PersonUpdaterBase):
         :param bs4.BeautifulSoup content: the html content of imdb page.
         :param bs4.BeautifulSoup credits_content: the html content of credits page.
 
-        :returns: list of directors.
+        :returns: list[dict(str fullname,
+                            str imdb_page,
+                            str photo_name,
+                            bool is_main)].
         :rtype: list[dict]
         """
 
-        cast_list_container = credits_content.find('table', class_='cast_list')
-        stars = self._get_stars(content)
-        actors = []
-        if cast_list_container is not None:
-            odd_rows = cast_list_container.find_all('tr', class_='odd')
-            even_rows = cast_list_container.find_all('tr', class_='even')
-            all_rows = []
-            all_rows.extend(odd_rows)
-            all_rows.extend(even_rows)
-            for item in all_rows:
-                fullname, imdb_page = self._get_fullname_and_imdb_page(item)
-                character = self._get_character(item)
-                photo_name = self._get_photo_url(item)
-                single_actor = dict(fullname=fullname, imdb_page=imdb_page,
-                                    character=character, photo_name=photo_name,
-                                    is_star=imdb_page in stars)
+        directors = []
+        directors_title = credits_content.find('h4', attrs=dict(name='director'), id='director')
+        if directors_title is not None:
+            director_list_container = directors_title.find_next(
+                'table', class_='simpleTable simpleCreditsTable')
+            if director_list_container is not None:
+                directors_list = director_list_container.find_all('tr')
+                for index, item in enumerate(directors_list):
+                    fullname, imdb_page = self._get_fullname_and_imdb_page(item, class_='name')
+                    photo_name = self._get_photo_url(imdb_page)
+                    single_director = dict(fullname=fullname, imdb_page=imdb_page,
+                                           photo_name=photo_name, is_main=index == 0)
 
-                actors.append(single_actor)
+                    directors.append(single_director)
 
-        return actors or None
+        return directors or None
