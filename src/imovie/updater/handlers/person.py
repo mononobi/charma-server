@@ -122,9 +122,9 @@ class ActorUpdater(PersonUpdaterBase):
 
         return None
 
-    def _get_stars_imdb_page(self, content):
+    def _get_stars(self, content):
         """
-        gets imdb pages of all star actors.
+        gets imdb page of all star actors.
 
         :param bs4.BeautifulSoup content: the html content of imdb page.
 
@@ -177,7 +177,7 @@ class ActorUpdater(PersonUpdaterBase):
         """
 
         cast_list_container = credits_content.find('table', class_='cast_list')
-        stars = self._get_stars_imdb_page(content)
+        stars = self._get_stars(content)
         actors = []
         if cast_list_container is not None:
             odd_rows = cast_list_container.find_all('tr', class_='odd')
