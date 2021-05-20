@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-search providers mixins module.
+search providers mixin module.
 """
 
 import re
