@@ -19,6 +19,7 @@ pyjwt = "==2.0.1"
 beautifulsoup4 = "==4.9.3"
 lxml = "==4.6.3"
 requests = "==2.25.1"
+ffmpeg-python = "==0.2.0"
 
 [requires]
 python_version = "3.8"
