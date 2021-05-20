@@ -171,8 +171,7 @@ class ActorUpdater(PersonUpdaterBase):
         if photo_container is not None:
             photo_tag = photo_container.find('img', loadlate=True)
             if photo_tag is not None:
-                result = photo_tag.get('loadlate')
-                return self.get_high_quality_image_url(result)
+                return photo_tag.get('loadlate') or None
 
         return None
 
@@ -239,8 +238,7 @@ class DirectorUpdater(PersonUpdaterBase):
             content = scraper_services.get_soup(imdb_page)
             poster_tag = content.find('img', id='name-poster', src=True)
             if poster_tag is not None:
-                result = poster_tag.get('src')
-                return self.get_high_quality_image_url(result)
+                return poster_tag.get('src') or None
 
         return None
 
