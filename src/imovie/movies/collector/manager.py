@@ -19,6 +19,7 @@ from pyrin.utilities.string.normalizer.enumerations import NormalizerEnum
 
 import imovie.media_info.services as media_info_services
 import imovie.movies.services as movie_services
+import imovie.movies.root.services as movie_root_services
 
 from imovie.movies.models import MovieEntity
 from imovie.movies.collector import MoviesCollectorPackage
@@ -498,7 +499,7 @@ class MoviesCollectorManager(Manager):
 
         it may return None if no valid movie file is available in given directory.
 
-        :param str directory: directory path of movie.
+        :param str directory: directory name of movie.
 
         :keyword bool force: specifies that the provided files must be forcefully
                              considered as movie even if the size or runtime
@@ -507,14 +508,19 @@ class MoviesCollectorManager(Manager):
         :rtype: list[str]
         """
 
-        movies = path_utils.get_files(directory, *self._video_extensions)
+        paths = movie_root_services.get_full_path(directory)
+        if paths is None:
+            return None
+
         results = []
-        for item in movies:
-            movie_info = self._get_movie_info(item, **options)
-            if movie_info is None:
-                continue
-            else:
-                results.append(item)
+        for folder in paths:
+            movies = path_utils.get_files(folder, *self._video_extensions)
+            for item in movies:
+                movie_info = self._get_movie_info(item, **options)
+                if movie_info is None:
+                    continue
+                else:
+                    results.append(item)
 
         if len(results) > 0:
             return results

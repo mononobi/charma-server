@@ -69,7 +69,7 @@ def get_movie_files(directory, **options):
 
     it may return None if no valid movie file is available in given directory.
 
-    :param str directory: directory path of movie.
+    :param str directory: directory name of movie.
 
     :keyword bool force: specifies that the provided files must be forcefully
                          considered as movie even if the size or runtime
