@@ -245,6 +245,84 @@ class MoviesCollectorManager(Manager):
                                  .format(old_name=old_name, new_name=directory))
         return directory
 
+    def _get_movie_info(self, file_path, **options):
+        """
+        gets movie info of given movie file.
+
+        it may return None if the file is not a valid movie file.
+
+        :param str file_path: movie file full path.
+
+        :keyword bool force: specifies that the provided file must be forcefully
+                             considered as movie even if the size or runtime
+                             conditions are not met. defaults to False if not provided.
+
+        :returns: dict(int runtime,
+                       int width,
+                       int height)
+
+        :rtype: dict
+        """
+
+        force = options.get('force', False)
+        result = media_info_services.get_info(file_path)
+        size = path_utils.get_file_size(file_path)
+        runtime = result.get('runtime')
+        if force is not True and size < self._min_size and runtime < self._min_runtime:
+            return None
+
+        return result
+
+    def _get_directory_movie_info(self, directory, **options):
+        """
+        gets movie info of all files in given directory as a single movie.
+
+        it raises an error if there are no valid movie files in given directory.
+
+        :param str directory: directory path.
+
+        :keyword bool force: specifies that the provided files must be forcefully
+                             considered as movie even if the size or runtime
+                             conditions are not met. defaults to False if not provided.
+
+        :raises DirectoryIsEmptyError: directory is empty error.
+
+        :returns: dict(int runtime,
+                       int width,
+                       int height)
+
+        :rtype: dict
+        """
+
+        total_runtime = 0
+        total_width = 0
+        total_height = 0
+        collected_count = 0
+        movies = path_utils.get_files(directory, *self._video_extensions)
+        for item in movies:
+            movie_info = self._get_movie_info(item, **options)
+            if movie_info is None:
+                continue
+
+            runtime = movie_info.get('runtime')
+            width = movie_info.get('width')
+            height = movie_info.get('height')
+            collected_count += 1
+            total_runtime += runtime
+            total_width += width
+            total_height += height
+
+        if collected_count <= 0:
+            raise DirectoryIsEmptyError(_('Directory [{directory}] is empty.')
+                                        .format(directory=directory))
+
+        total_width = int(total_width / collected_count)
+        total_height = int(total_height / collected_count)
+
+        return dict(runtime=total_runtime,
+                    width=total_width,
+                    height=total_height)
+
     def collect(self, directory, **options):
         """
         collects the movie from given directory into database.
@@ -287,33 +365,11 @@ class MoviesCollectorManager(Manager):
             raise InvalidMovieTitleError(_('Movie [{directory}] does not have a valid title.')
                                          .format(directory=directory))
 
-        total_runtime = 0
-        total_width = 0
-        total_height = 0
-        collected_count = 0
-        movies = path_utils.get_files(directory, *self._video_extensions)
-        for item in movies:
-            result = media_info_services.get_info(item)
-            size = path_utils.get_file_size(item)
-            runtime = result.get('runtime')
-            width = result.get('width')
-            height = result.get('height')
-            if force is not True and size < self._min_size and runtime < self._min_runtime:
-                continue
-
-            collected_count += 1
-            total_runtime += runtime
-            total_width += width
-            total_height += height
-
-        if collected_count <= 0:
-            raise DirectoryIsEmptyError(_('Directory [{directory}] is empty.')
-                                        .format(directory=directory))
-
-        total_runtime = int(total_runtime / collected_count)
-        total_width = int(total_width / collected_count)
-        total_height = int(total_height / collected_count)
-        quality = self.get_quality(total_width, total_height)
+        movie_info = self._get_directory_movie_info(directory, **options)
+        runtime = movie_info.get('runtime')
+        width = movie_info.get('width')
+        height = movie_info.get('height')
+        quality = self.get_quality(width, height)
         fullname = movie_services.get_fullname(title, year, quality)
         root, name = path_utils.split_name(directory)
         new_path = os.path.join(root, fullname)
@@ -325,7 +381,8 @@ class MoviesCollectorManager(Manager):
         # we have to rename directory to its original name if movie creation failed.
         try:
             movie_services.create(title, fullname, production_year=year,
-                                  runtime=total_runtime, resolution=quality)
+                                  runtime=runtime, resolution=quality,
+                                  forced=force)
         except Exception as error:
             path_utils.rename(new_path, parent_directory)
             raise error
@@ -434,3 +491,32 @@ class MoviesCollectorManager(Manager):
             return MovieEntity.ResolutionEnum.DVD
 
         return MovieEntity.ResolutionEnum.VCD
+
+    def get_movie_files(self, directory, **options):
+        """
+        gets all movie files in given directory.
+
+        it may return None if no valid movie file is available in given directory.
+
+        :param str directory: directory path of movie.
+
+        :keyword bool force: specifies that the provided files must be forcefully
+                             considered as movie even if the size or runtime
+                             conditions are not met. defaults to False if not provided.
+
+        :rtype: list[str]
+        """
+
+        movies = path_utils.get_files(directory, *self._video_extensions)
+        results = []
+        for item in movies:
+            movie_info = self._get_movie_info(item, **options)
+            if movie_info is None:
+                continue
+            else:
+                results.append(item)
+
+        if len(results) > 0:
+            return results
+
+        return None

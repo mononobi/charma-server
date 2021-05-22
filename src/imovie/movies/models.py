@@ -68,6 +68,7 @@ class MovieEntity(MovieBaseEntity, HistoryMixin):
     is_watched = BooleanColumn(name='is_watched', nullable=False, default=False, validated=True)
     storyline = TextColumn(name='storyline', validated=True)
     search_storyline = HiddenColumn(name='search_storyline', type_=UnicodeText)
+    forced = HiddenColumn(name='forced', type_=BooleanColumn, nullable=False, default=False)
     watched_date = TimeStampColumn(name='watched_date', validated=True,
                                    validated_find=False, validated_range=True)
     resolution = SmallIntegerColumn(name='resolution', nullable=False, validated=True,

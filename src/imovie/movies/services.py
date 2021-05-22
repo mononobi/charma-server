@@ -56,6 +56,9 @@ def create(library_title, directory_name, **options):
     :keyword uuid.UUID content_rate_id: content rate id.
     :keyword int resolution: resolution.
 
+    :keyword bool forced: specifies that this movie is collected with `force=True`.
+                          defaults to False if not provided.
+
     :returns: created movie id
     :rtype: uuid.UUID
     """
@@ -284,26 +287,3 @@ def get_max_production_year():
     """
 
     return get_component(MoviesPackage.COMPONENT_NAME).get_max_production_year()
-
-
-def get_full_name_for_path(id):
-    """
-    gets the movie full title to be used in paths.
-
-    it returns full title with given format:
-    title (production_year)
-
-    for example:
-    Crash (2005)
-
-    if the production year is None:
-    Crash
-
-    :param uuid.UUID id: movie id.
-
-    :raises MovieDoesNotExistError: movie does not exist error.
-
-    :rtype: str
-    """
-
-    return get_component(MoviesPackage.COMPONENT_NAME).get_full_name_for_path(id)

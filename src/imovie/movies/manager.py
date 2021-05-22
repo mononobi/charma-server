@@ -79,10 +79,14 @@ class MoviesManager(Manager, MoviesQueries, HookMixin):
         :keyword uuid.UUID content_rate_id: content rate id.
         :keyword int resolution: resolution.
 
+        :keyword bool forced: specifies that this movie is collected with `force=True`.
+                              defaults to False if not provided.
+
         :returns: created movie id
         :rtype: uuid.UUID
         """
 
+        forced = options.pop('forced', False)
         options.update(library_title=library_title, directory_name=directory_name)
         validator_services.validate_dict(MovieEntity, options)
         entity = MovieEntity(**options)
@@ -90,6 +94,7 @@ class MoviesManager(Manager, MoviesQueries, HookMixin):
         entity.search_title = self.get_normalized_name(entity.title)
         entity.search_original_title = self.get_normalized_name(entity.original_title)
         entity.search_storyline = self.get_normalized_name(entity.storyline)
+        entity.forced = forced
         entity.save()
 
         return entity.id
@@ -212,26 +217,3 @@ class MoviesManager(Manager, MoviesQueries, HookMixin):
         """
 
         return datetime_services.current_year() + 1
-
-    def get_full_name_for_path(self, id):
-        """
-        gets the movie full title to be used in paths.
-
-        it returns full title with given format:
-        title (production_year)
-
-        for example:
-        Crash (2005)
-
-        if the production year is None:
-        Crash
-
-        :param uuid.UUID id: movie id.
-
-        :raises MovieDoesNotExistError: movie does not exist error.
-
-        :rtype: str
-        """
-
-        entity = self.get(id)
-        return self.get_full_title(entity.library_title, entity.production_year)

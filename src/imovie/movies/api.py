@@ -46,6 +46,9 @@ def create(library_title, directory_name, **options):
     :keyword uuid.UUID content_rate_id: content rate id.
     :keyword int resolution: resolution.
 
+    :keyword bool forced: specifies that this movie is collected with `force=True`.
+                          defaults to False if not provided.
+
     :returns: created movie id
     :rtype: uuid.UUID
     """

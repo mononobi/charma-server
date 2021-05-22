@@ -60,3 +60,22 @@ def collect_all(root, **options):
     """
 
     return movies_collector_services.collect_all(root, **options)
+
+
+@api('/movies/files', authenticated=False)
+def get_movie_files(directory, **options):
+    """
+    gets all movie files in given directory.
+
+    it may return None if no valid movie file is available in given directory.
+
+    :param str directory: directory path of movie.
+
+    :keyword bool force: specifies that the provided files must be forcefully
+                         considered as movie even if the size or runtime
+                         conditions are not met. defaults to False if not provided.
+
+    :rtype: list[str]
+    """
+
+    return movies_collector_services.get_movie_files(directory, **options)

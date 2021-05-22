@@ -81,3 +81,22 @@ def get_quality(width, height, **options):
 
     return get_component(MoviesCollectorPackage.COMPONENT_NAME).get_quality(width, height,
                                                                             **options)
+
+
+def get_movie_files(directory, **options):
+    """
+    gets all movie files in given directory.
+
+    it may return None if no valid movie file is available in given directory.
+
+    :param str directory: directory path of movie.
+
+    :keyword bool force: specifies that the provided files must be forcefully
+                         considered as movie even if the size or runtime
+                         conditions are not met. defaults to False if not provided.
+
+    :rtype: list[str]
+    """
+
+    return get_component(MoviesCollectorPackage.COMPONENT_NAME).get_movie_files(directory,
+                                                                                **options)
