@@ -3,6 +3,8 @@
 movies root manager module.
 """
 
+import os
+
 import pyrin.validator.services as validator_services
 import pyrin.utils.environment as env_utils
 import pyrin.utils.path as path_utils
@@ -24,13 +26,13 @@ class MovieRootManager(Manager):
 
     package_class = MovieRootPackage
 
-    def _exists(self, path, os, **options):
+    def _exists(self, path, operating_system, **options):
         """
         gets a value indicating that given path for provided os is already existed.
 
         :param str path: root path.
-        :param int os: os of given path.
-        :enum os:
+        :param int operating_system: operating system of given path.
+        :enum operating_system:
             LINUX = 0
             WINDOWS = 1
             MAC = 2
@@ -41,7 +43,7 @@ class MovieRootManager(Manager):
 
         store = get_current_store()
         return store.query(MovieRootPathEntity.id)\
-            .filter(MovieRootPathEntity.os == os,
+            .filter(MovieRootPathEntity.os == operating_system,
                     MovieRootPathEntity.path.ilike(path))\
             .existed()
 
@@ -60,11 +62,11 @@ class MovieRootManager(Manager):
         :rtype: uuid.UUID
         """
 
-        os = self.get_current_os()
-        options.update(path=path, os=os)
+        operating_system = self.get_current_os()
+        options.update(path=path, os=operating_system)
         validator_services.validate_dict(MovieRootPathEntity, options)
         path_utils.assert_is_directory(path)
-        if self._exists(path, os) is True:
+        if self._exists(path, operating_system) is True:
             raise MovieRootPathAlreadyExistedError(_('Movie root path [{root}] is '
                                                      'already existed.'.format(root=path)))
 
@@ -95,9 +97,10 @@ class MovieRootManager(Manager):
         :rtype: list[MovieRootPathEntity]
         """
 
-        os = self.get_current_os()
+        operating_system = self.get_current_os()
         store = get_current_store()
-        return store.query(MovieRootPathEntity).filter(MovieRootPathEntity.os == os).all()
+        return store.query(MovieRootPathEntity).filter(
+            MovieRootPathEntity.os == operating_system).all()
 
     def get_current_os(self, **options):
         """
@@ -123,3 +126,27 @@ class MovieRootManager(Manager):
             return MovieRootPathEntity.OSEnum.JAVA
 
         raise OSTypeIsUnknownError(_('Operating system is unknown.'))
+
+    def get_full_path(self, directory, **options):
+        """
+        gets the full path for given movie directory name.
+
+        it returns a list of paths if any found.
+        it may return None if nothing found.
+
+        :param str directory: movie directory name.
+
+        :rtype: list[str]
+        """
+
+        results = []
+        roots = self.get_all(**options)
+        for item in roots:
+            full_path = os.path.join(item.path, directory)
+            if os.path.exists(full_path):
+                results.append(full_path)
+
+        if len(results) > 0:
+            return results
+
+        return None

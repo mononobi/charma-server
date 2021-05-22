@@ -62,3 +62,18 @@ def get_current_os(**options):
     """
 
     return get_component(MovieRootPackage.COMPONENT_NAME).get_current_os(**options)
+
+
+def get_full_path(directory, **options):
+    """
+    gets the full path for given movie directory name.
+
+    it returns a list of paths if any found.
+    it may return None if nothing found.
+
+    :param str directory: movie directory name.
+
+    :rtype: list[str]
+    """
+
+    return get_component(MovieRootPackage.COMPONENT_NAME).get_full_path(directory, **options)
