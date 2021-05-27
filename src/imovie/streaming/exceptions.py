@@ -67,3 +67,31 @@ class StreamDoesNotExistError(CoreNotFoundError, StreamingBusinessException):
     stream does not exist error.
     """
     pass
+
+
+class MovieDirectoryNotFoundError(StreamingBusinessException):
+    """
+    movie directory not found error.
+    """
+    pass
+
+
+class MultipleMovieDirectoriesFoundError(StreamingBusinessException):
+    """
+    multiple movie directories found error.
+    """
+    pass
+
+
+class MovieFileNotFoundError(StreamingBusinessException):
+    """
+    movie file not found error.
+    """
+    pass
+
+
+class MultipleMovieFilesFoundError(StreamingBusinessException):
+    """
+    multiple movie files found error.
+    """
+    pass

@@ -499,7 +499,7 @@ class MoviesCollectorManager(Manager):
 
         it may return None if no valid movie file is available in given directory.
 
-        :param str directory: directory name of movie.
+        :param str directory: full directory path of movie.
 
         :keyword bool force: specifies that the provided files must be forcefully
                              considered as movie even if the size or runtime
@@ -508,19 +508,14 @@ class MoviesCollectorManager(Manager):
         :rtype: list[str]
         """
 
-        paths = movie_root_services.get_full_path(directory)
-        if paths is None:
-            return None
-
         results = []
-        for folder in paths:
-            movies = path_utils.get_files(folder, *self._video_extensions)
-            for item in movies:
-                movie_info = self._get_movie_info(item, **options)
-                if movie_info is None:
-                    continue
-                else:
-                    results.append(item)
+        movies = path_utils.get_files(directory, *self._video_extensions)
+        for item in movies:
+            movie_info = self._get_movie_info(item, **options)
+            if movie_info is None:
+                continue
+            else:
+                results.append(item)
 
         if len(results) > 0:
             return results

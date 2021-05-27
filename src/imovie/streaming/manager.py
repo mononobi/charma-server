@@ -25,7 +25,9 @@ from imovie.streaming.enumerations import TranscodingStatusEnum, StreamProviderE
 from imovie.streaming.interface import AbstractStreamProvider
 from imovie.streaming.exceptions import StreamDirectoryNotExistedError, \
     InvalidTranscodingStatusError, InvalidStreamProviderTypeError, \
-    StreamProviderDoesNotExistError, DuplicateStreamProviderError, StreamDoesNotExistError
+    StreamProviderDoesNotExistError, DuplicateStreamProviderError, StreamDoesNotExistError, \
+    MovieDirectoryNotFoundError, MultipleMovieDirectoriesFoundError, MovieFileNotFoundError, \
+    MultipleMovieFilesFoundError
 
 
 class StreamingManager(Manager):
@@ -35,8 +37,11 @@ class StreamingManager(Manager):
 
     package_class = StreamingPackage
 
-    # how many seconds to wait after starting transcoding.
-    SLEEP_SECONDS = 4
+    # how many seconds to wait for manifest file on each try.
+    INTERVAL = 1
+
+    # how many times to check for manifest file creation before giving up.
+    RETRY = 10
 
     def __init__(self):
         """
@@ -182,10 +187,22 @@ class StreamingManager(Manager):
 
         :param uuid.UUID movie_id: movie id to be transcoded.
 
+        :keyword str directory: movie directory path.
+                                it will only be used if more than
+                                one directory found for given movie.
+
+        :keyword str file: movie file path.
+                           it will only be used if more than
+                           one file found for given movie.
+
         :keyword str subtitle: subtitle file path.
         :keyword int threads: number of threads to be used.
         :keyword str preset: transcoding preset name.
 
+        :raises MovieDirectoryNotFoundError: movie directory not found error.
+        :raises MultipleMovieDirectoriesFoundError: multiple movie directories found error.
+        :raises MovieFileNotFoundError: movie file not found error.
+        :raises MultipleMovieFilesFoundError: multiple movie files found error.
         :raises TranscodeError: transcode error.
 
         :returns: tuple[str stream_directory, str output_file]
@@ -201,26 +218,68 @@ class StreamingManager(Manager):
 
         path_utils.remove_directory(stream_path)
         movie = movie_services.get(movie_id)
-        paths = movie_root_services.get_full_path(movie.directory_name)
-        if not paths:
-            raise Exception('No movie found.')
+        movie_paths = movie_root_services.get_full_path(movie.directory_name)
+        if not movie_paths:
+            raise MovieDirectoryNotFoundError(_('Movie directory [{directory}] not found.')
+                                              .format(directory=movie.library_title))
 
-        SINGLE_PATH = paths[0]
-        FILES = movie_collector_services.get_movie_files(SINGLE_PATH, force=movie.forced)
+        found_directory = None
+        if len(movie_paths) > 1:
+            directory = options.get('directory')
+            if directory in movie_paths:
+                found_directory = directory
+        else:
+            found_directory = movie_paths[0]
 
-        if not FILES:
-            raise Exception('No movie files found.')
+        if found_directory is None:
+            raise MultipleMovieDirectoriesFoundError(_('Multiple movie directories '
+                                                       'found for movie [{directory}].')
+                                                     .format(directory=movie.library_title))
 
-        SINGLE_FILE = FILES[0]
+        movie_files = movie_collector_services.get_movie_files(found_directory,
+                                                               force=movie.forced)
+
+        if not movie_files:
+            raise MovieFileNotFoundError(_('No movie files found for movie [{directory}].')
+                                         .format(directory=movie.library_title))
+
+        found_file = None
+        if len(movie_files) > 1:
+            file = options.get('file')
+            if file in movie_files:
+                found_file = file
+        else:
+            found_file = movie_files[0]
+
+        if found_file is None:
+            raise MultipleMovieFilesFoundError(_('Multiple movie files found '
+                                                 'for movie [{directory}].')
+                                               .format(directory=movie.library_title))
 
         self._create_stream_directory(stream_path)
         options.update(threads=self._threads, preset=self._preset)
-        stream.transcode(SINGLE_FILE, stream_path, **options)
+        stream.transcode(found_file, stream_path, **options)
 
         # we have to wait here for manifest file to become available.
-        sleep(self.SLEEP_SECONDS)
+        self._wait_for_manifest(stream_path, stream.output_file,
+                                self.RETRY, self.INTERVAL)
 
         return stream_path, stream.output_file
+
+    def _wait_for_manifest(self, stream_path, manifest, retry, interval):
+        """
+        sleeps current thread and checks if manifest file is created on specific intervals.
+
+        :param str stream_path: stream directory path to look for manifest file.
+        :param str manifest: manifest file name.
+        :param int retry: number of retries to check if manifest file is created.
+        :param float interval: number of seconds to wait between each interval.
+        """
+
+        full_path = os.path.join(stream_path, manifest)
+        while not path_utils.exists(full_path) and retry > 0:
+            retry = retry - 1
+            sleep(interval)
 
     def _send_stream(self, stream, file, **options):
         """
