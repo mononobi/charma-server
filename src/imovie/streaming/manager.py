@@ -36,7 +36,7 @@ class StreamingManager(Manager):
     package_class = StreamingPackage
 
     # how many seconds to wait after starting transcoding.
-    SLEEP_SECONDS = 1.5
+    SLEEP_SECONDS = 4
 
     def __init__(self):
         """
@@ -216,6 +216,10 @@ class StreamingManager(Manager):
         self._create_stream_directory(stream_path)
         options.update(threads=self._threads, preset=self._preset)
         stream.transcode(SINGLE_FILE, stream_path, **options)
+
+        # we have to wait here for manifest file to become available.
+        sleep(self.SLEEP_SECONDS)
+
         return stream_path, stream.output_file
 
     def _send_stream(self, stream, file, **options):
@@ -371,7 +375,6 @@ class StreamingManager(Manager):
         """
 
         directory, file = self._transcode(movie_id, **options)
-        sleep(self.SLEEP_SECONDS)
         return self._send_stream(directory, file)
 
     def continue_stream(self, movie_id, file, **options):
