@@ -41,7 +41,7 @@ class StreamProviderBase(AbstractStreamProvider):
     _default_threads = 1
 
     # output file name.
-    _output_file_name = None
+    _output_file = None
 
     def _get_transcoding_configs(self):
         """
@@ -63,7 +63,7 @@ class StreamProviderBase(AbstractStreamProvider):
         :rtype: str
         """
 
-        return os.path.join(output_directory, self._output_file_name)
+        return os.path.join(output_directory, self._output_file)
 
     def transcode(self, input_file, output_directory, **options):
         """
@@ -124,4 +124,4 @@ class StreamProviderBase(AbstractStreamProvider):
         :rtype: str
         """
 
-        return self._output_file_name
+        return self._output_file

@@ -22,4 +22,4 @@ class DASHStream(StreamProviderBase):
     _default_preset = TranscoderPresetEnum.FAST
     _format = FormatEnum.DASH
     _default_threads = 2
-    _output_file_name = 'dash.mpd'
+    _output_file = 'dash.mpd'

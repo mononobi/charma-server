@@ -22,4 +22,4 @@ class HLSStream(StreamProviderBase):
     _default_preset = TranscoderPresetEnum.FAST
     _format = FormatEnum.HLS
     _default_threads = 2
-    _output_file_name = 'hls.m3u8'
+    _output_file = 'hls.m3u8'
