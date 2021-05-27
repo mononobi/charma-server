@@ -43,6 +43,28 @@ class StreamProviderBase(AbstractStreamProvider):
     # output file name.
     _output_file_name = None
 
+    def _get_transcoding_configs(self):
+        """
+        gets a dict containing custom transcoding configs.
+
+        this method is intended to be overridden in subclasses.
+
+        :rtype: dict
+        """
+
+        return dict()
+
+    def _get_output_path(self, output_directory, **options):
+        """
+        gets output file name.
+
+        :param str output_directory: output directory path.
+
+        :rtype: str
+        """
+
+        return os.path.join(output_directory, self._output_file_name)
+
     def transcode(self, input_file, output_directory, **options):
         """
         transcodes a video file to output folder.
@@ -69,7 +91,8 @@ class StreamProviderBase(AbstractStreamProvider):
         stream = ffmpeg.output(stream, output_path,
                                loop=0, threads=threads, preset=preset,
                                format=self._format, vcodec=self._video_codec,
-                               acodec=self._audio_codec)
+                               acodec=self._audio_codec,
+                               **self._get_transcoding_configs())
 
         process = ffmpeg.run_async(stream, overwrite_output=True)
         stream_services.set_process_id(output_directory, process.pid)
@@ -82,17 +105,6 @@ class StreamProviderBase(AbstractStreamProvider):
         #                          .format(file=input_file, details=stderr))
         # else:
         #     stream_services.set_finished(output_directory)
-
-    def _get_output_path(self, output_directory, **options):
-        """
-        gets output file name.
-
-        :param str output_directory: output directory path.
-
-        :rtype: str
-        """
-
-        return os.path.join(output_directory, self._output_file_name)
 
     @property
     def name(self):
