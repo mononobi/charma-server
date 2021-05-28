@@ -34,7 +34,7 @@ class AbstractStreamProvider(CoreObject, metaclass=StreamProviderSingletonMeta):
         :param str input_file: file path to be transcoded.
         :param str output_directory: output directory path.
 
-        :keyword str subtitle: subtitle file path.
+        :keyword list[str] subtitles: subtitle file paths.
         :keyword int threads: number of threads to be used.
         :keyword str preset: transcoding preset name.
 

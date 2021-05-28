@@ -29,10 +29,6 @@ def start_stream(movie_id, **options):
 
     :param uuid.UUID movie_id: movie id to be streamed.
 
-    :keyword str subtitle: subtitle file path.
-    :keyword int threads: number of threads to be used.
-    :keyword str preset: transcoding preset name.
-
     :raises MovieDirectoryNotFoundError: movie directory not found error.
     :raises MultipleMovieDirectoriesFoundError: multiple movie directories found error.
     :raises MovieFileNotFoundError: movie file not found error.

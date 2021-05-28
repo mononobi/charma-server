@@ -106,18 +106,18 @@ class StreamProviderBase(AbstractStreamProvider):
         :param str input_file: file path to be transcoded.
         :param str output_directory: output directory path.
 
-        :keyword str subtitle: subtitle file path.
+        :keyword list[str] subtitles: subtitle file paths.
         :keyword int threads: number of threads to be used.
         :keyword str preset: transcoding preset name.
         """
 
         preset = options.get('preset') or self._default_preset
         threads = options.get('threads') or self._default_threads
-        subtitle = options.get('subtitle')
+        subtitles = options.get('subtitles')
 
         stream = ffmpeg.input(input_file)
-        if subtitle is not None:
-            stream = ffmpeg.filter(stream, 'subtitles', subtitle)
+        if subtitles is not None:
+            stream = ffmpeg.filter(stream, 'subtitles', subtitles)
 
         output_path = self._get_output_path(output_directory, **options)
         stream = ffmpeg.output(stream, output_path,

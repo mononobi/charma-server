@@ -20,6 +20,7 @@ from pyrin.core.structs import Manager, Context
 import imovie.movies.services as movie_services
 import imovie.movies.collector.services as movie_collector_services
 import imovie.movies.root.services as movie_root_services
+import imovie.subtitles.services as subtitle_services
 
 from imovie.streaming import StreamingPackage
 from imovie.streaming.enumerations import TranscodingStatusEnum, StreamProviderEnum
@@ -273,10 +274,6 @@ class StreamingManager(Manager):
                            it will only be used if more than
                            one file found for given movie.
 
-        :keyword str subtitle: subtitle file path.
-        :keyword int threads: number of threads to be used.
-        :keyword str preset: transcoding preset name.
-
         :raises MovieDirectoryNotFoundError: movie directory not found error.
         :raises MultipleMovieDirectoriesFoundError: multiple movie directories found error.
         :raises MovieFileNotFoundError: movie file not found error.
@@ -296,8 +293,9 @@ class StreamingManager(Manager):
         path_utils.remove_directory(stream_path)
         found_directory = self._get_movie_directory(movie_id, **options)
         found_file = self._get_movie_file(movie_id, found_directory, **options)
+        subtitles = subtitle_services.get_subtitles(found_directory)
         self._create_stream_directory(stream_path)
-        options.update(threads=self._threads, preset=self._preset)
+        options.update(threads=self._threads, preset=self._preset, subtitles=subtitles)
         stream.transcode(found_file, stream_path, **options)
 
         # we have to wait here for manifest file to become available.
@@ -485,10 +483,6 @@ class StreamingManager(Manager):
         it returns the related manifest file of the stream.
 
         :param uuid.UUID movie_id: movie id to be streamed.
-
-        :keyword str subtitle: subtitle file path.
-        :keyword int threads: number of threads to be used.
-        :keyword str preset: transcoding preset name.
 
         :raises MovieDirectoryNotFoundError: movie directory not found error.
         :raises MultipleMovieDirectoriesFoundError: multiple movie directories found error.
