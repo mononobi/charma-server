@@ -175,6 +175,83 @@ class StreamingManager(Manager):
 
         return os.path.join(self._stream_directory, str(movie_id))
 
+    def _get_movie_directory(self, movie_id, **options):
+        """
+        gets given movie's directory path if possible.
+
+        :param uuid.UUID movie_id: movie id to get its directory path.
+
+        :keyword str directory: movie directory path.
+                                it will only be used if more than
+                                one directory found for given movie.
+
+        :raises MovieDirectoryNotFoundError: movie directory not found error.
+        :raises MultipleMovieDirectoriesFoundError: multiple movie directories found error.
+
+        :rtype: str
+        """
+
+        movie = movie_services.get(movie_id)
+        movie_paths = movie_root_services.get_full_path(movie.directory_name)
+        if not movie_paths:
+            raise MovieDirectoryNotFoundError(_('Movie directory [{directory}] not found.')
+                                              .format(directory=movie.library_title))
+
+        found_directory = None
+        if len(movie_paths) > 1:
+            directory = options.get('directory')
+            if directory in movie_paths:
+                found_directory = directory
+        else:
+            found_directory = movie_paths[0]
+
+        if found_directory is None:
+            raise MultipleMovieDirectoriesFoundError(_('Multiple movie directories '
+                                                       'found for movie [{directory}].')
+                                                     .format(directory=movie.library_title))
+
+        return found_directory
+
+    def _get_movie_file(self, movie_id, directory_path, **options):
+        """
+        gets given movie's file path if possible.
+
+        :param uuid.UUID movie_id: movie id to get its file path.
+        :param str directory_path: movie directory path.
+
+        :keyword str file: movie file path.
+                           it will only be used if more than
+                           one file found for given movie.
+
+        :raises MovieFileNotFoundError: movie file not found error.
+        :raises MultipleMovieFilesFoundError: multiple movie files found error.
+
+        :rtype: str
+        """
+
+        movie = movie_services.get(movie_id)
+        movie_files = movie_collector_services.get_movie_files(directory_path,
+                                                               force=movie.forced)
+
+        if not movie_files:
+            raise MovieFileNotFoundError(_('No movie files found for movie [{directory}].')
+                                         .format(directory=movie.library_title))
+
+        found_file = None
+        if len(movie_files) > 1:
+            file = options.get('file')
+            if file in movie_files:
+                found_file = file
+        else:
+            found_file = movie_files[0]
+
+        if found_file is None:
+            raise MultipleMovieFilesFoundError(_('Multiple movie files found '
+                                                 'for movie [{directory}].')
+                                               .format(directory=movie.library_title))
+
+        return found_file
+
     def _transcode(self, movie_id, **options):
         """
         transcodes a movie file to stream directory.
@@ -217,45 +294,8 @@ class StreamingManager(Manager):
             return stream_path, stream.output_file
 
         path_utils.remove_directory(stream_path)
-        movie = movie_services.get(movie_id)
-        movie_paths = movie_root_services.get_full_path(movie.directory_name)
-        if not movie_paths:
-            raise MovieDirectoryNotFoundError(_('Movie directory [{directory}] not found.')
-                                              .format(directory=movie.library_title))
-
-        found_directory = None
-        if len(movie_paths) > 1:
-            directory = options.get('directory')
-            if directory in movie_paths:
-                found_directory = directory
-        else:
-            found_directory = movie_paths[0]
-
-        if found_directory is None:
-            raise MultipleMovieDirectoriesFoundError(_('Multiple movie directories '
-                                                       'found for movie [{directory}].')
-                                                     .format(directory=movie.library_title))
-
-        movie_files = movie_collector_services.get_movie_files(found_directory,
-                                                               force=movie.forced)
-
-        if not movie_files:
-            raise MovieFileNotFoundError(_('No movie files found for movie [{directory}].')
-                                         .format(directory=movie.library_title))
-
-        found_file = None
-        if len(movie_files) > 1:
-            file = options.get('file')
-            if file in movie_files:
-                found_file = file
-        else:
-            found_file = movie_files[0]
-
-        if found_file is None:
-            raise MultipleMovieFilesFoundError(_('Multiple movie files found '
-                                                 'for movie [{directory}].')
-                                               .format(directory=movie.library_title))
-
+        found_directory = self._get_movie_directory(movie_id, **options)
+        found_file = self._get_movie_file(movie_id, found_directory, **options)
         self._create_stream_directory(stream_path)
         options.update(threads=self._threads, preset=self._preset)
         stream.transcode(found_file, stream_path, **options)
