@@ -119,7 +119,6 @@ def start_stream(movie_id, **options):
     :raises MultipleMovieDirectoriesFoundError: multiple movie directories found error.
     :raises MovieFileNotFoundError: movie file not found error.
     :raises MultipleMovieFilesFoundError: multiple movie files found error.
-    :raises TranscodeError: transcode error.
     :raises StreamDoesNotExistError: stream does not exist error.
 
     :rtype: bytes

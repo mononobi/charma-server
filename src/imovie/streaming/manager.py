@@ -280,7 +280,6 @@ class StreamingManager(Manager):
         :raises MultipleMovieDirectoriesFoundError: multiple movie directories found error.
         :raises MovieFileNotFoundError: movie file not found error.
         :raises MultipleMovieFilesFoundError: multiple movie files found error.
-        :raises TranscodeError: transcode error.
 
         :returns: tuple[str stream_directory, str output_file]
         :rtype: tuple[str, str]
@@ -471,7 +470,6 @@ class StreamingManager(Manager):
         :raises MultipleMovieDirectoriesFoundError: multiple movie directories found error.
         :raises MovieFileNotFoundError: movie file not found error.
         :raises MultipleMovieFilesFoundError: multiple movie files found error.
-        :raises TranscodeError: transcode error.
         :raises StreamDoesNotExistError: stream does not exist error.
 
         :rtype: bytes

@@ -55,13 +55,6 @@ class StreamProviderDoesNotExistError(StreamingBusinessException):
     pass
 
 
-class TranscodeError(StreamingException):
-    """
-    transcode error.
-    """
-    pass
-
-
 class StreamDoesNotExistError(CoreNotFoundError, StreamingBusinessException):
     """
     stream does not exist error.

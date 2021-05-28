@@ -10,7 +10,6 @@ import ffmpeg
 import imovie.streaming.services as stream_services
 
 from imovie.streaming.enumerations import TranscoderPresetEnum
-from imovie.streaming.exceptions import TranscodeError
 from imovie.streaming.interface import AbstractStreamProvider
 
 
@@ -75,8 +74,6 @@ class StreamProviderBase(AbstractStreamProvider):
         :keyword str subtitle: subtitle file path.
         :keyword int threads: number of threads to be used.
         :keyword str preset: transcoding preset name.
-
-        :raises TranscodeError: transcode error.
         """
 
         preset = options.get('preset') or self._default_preset
