@@ -45,7 +45,7 @@ def start_stream(movie_id, **options):
 @api('/stream/<uuid:movie_id>/<file>', authenticated=False)
 def continue_stream(movie_id, file, **options):
     """
-    continues the streaming of given movie id.
+    continues the streaming of given movie.
 
     :param uuid.UUID movie_id: movie id to be streamed.
     :param str file: stream file name to be returned.
