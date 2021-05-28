@@ -4,6 +4,7 @@ streaming manager module.
 """
 
 import os
+import time
 
 from time import sleep
 
@@ -41,7 +42,7 @@ class StreamingManager(Manager):
     INTERVAL = 1
 
     # how many times to check for manifest file creation before giving up.
-    RETRY = 10
+    RETRY = 20
 
     def __init__(self):
         """
@@ -414,6 +415,8 @@ class StreamingManager(Manager):
         sets the given stream as started transcoding.
 
         :param str directory: directory path of stream.
+
+        :raises StreamDirectoryNotExistedError: stream directory not existed error.
         """
 
         self._set_status(directory, TranscodingStatusEnum.STARTED)
@@ -423,6 +426,8 @@ class StreamingManager(Manager):
         sets the given stream as finished transcoding.
 
         :param str directory: directory path of stream.
+
+        :raises StreamDirectoryNotExistedError: stream directory not existed error.
         """
 
         self._set_status(directory, TranscodingStatusEnum.FINISHED)
@@ -432,6 +437,8 @@ class StreamingManager(Manager):
         sets the given stream as failed transcoding.
 
         :param str directory: directory path of stream.
+
+        :raises StreamDirectoryNotExistedError: stream directory not existed error.
         """
 
         self._set_status(directory, TranscodingStatusEnum.FAILED)
@@ -453,6 +460,23 @@ class StreamingManager(Manager):
         file_name = os.path.join(directory, 'pid')
         with open(file_name, mode='w') as file:
             file.write(str(process_id))
+
+    def set_access_time(self, directory):
+        """
+        sets the last access time for given stream.
+
+        :param str directory: directory path of stream.
+
+        :raises StreamDirectoryNotExistedError: stream directory not existed error.
+        """
+
+        if not self.exists(directory):
+            raise StreamDirectoryNotExistedError('Stream directory [{directory}] does not exist.'
+                                                 .format(directory=directory))
+
+        file_name = os.path.join(directory, 'access')
+        with open(file_name, mode='w') as file:
+            file.write(str(time.time()))
 
     def start_stream(self, movie_id, **options):
         """
@@ -476,6 +500,7 @@ class StreamingManager(Manager):
         """
 
         directory, file = self._transcode(movie_id, **options)
+        self.set_access_time(directory)
         return self._send_stream(directory, file)
 
     def continue_stream(self, movie_id, file, **options):
@@ -491,4 +516,5 @@ class StreamingManager(Manager):
         """
 
         directory = self._get_stream_path(movie_id)
+        self.set_access_time(directory)
         return self._send_stream(directory, file)

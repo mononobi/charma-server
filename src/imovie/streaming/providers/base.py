@@ -5,7 +5,11 @@ streaming providers base module.
 
 import os
 
+from multiprocessing import Process
+
 import ffmpeg
+
+import pyrin.logging.services as logging_services
 
 import imovie.streaming.services as stream_services
 
@@ -17,6 +21,8 @@ class StreamProviderBase(AbstractStreamProvider):
     """
     stream provider base class.
     """
+
+    LOGGER = logging_services.get_logger('streaming')
 
     # name of this stream provider.
     _name = None
@@ -64,6 +70,35 @@ class StreamProviderBase(AbstractStreamProvider):
 
         return os.path.join(output_directory, self._output_file)
 
+    def _transcode(self, stream, input_file, output_directory, **options):
+        """
+        transcodes the given stream.
+
+        :param ffmpeg.nodes.OutputStream stream: stream to be transcoded.
+        :param str input_file: file path to be transcoded.
+        :param str output_directory: output directory path.
+        """
+
+        stream_services.set_started(output_directory)
+        stream_services.set_access_time(output_directory)
+        process = ffmpeg.run_async(stream, overwrite_output=True,
+                                   pipe_stderr=True, pipe_stdout=True)
+        stream_services.set_process_id(output_directory, process.pid)
+        stdout, stderr = process.communicate()
+        return_code = process.poll()
+        if stdout:
+            self.LOGGER.info('Transcoding info for file [{file}]: [{details}]'
+                             .format(file=input_file, details=stdout))
+
+        if return_code:
+            stream_services.set_failed(output_directory)
+            self.LOGGER.error('Transcoding failed for file [{file}]: [{details}]'
+                              .format(file=input_file, details=stderr))
+        else:
+            stream_services.set_finished(output_directory)
+            self.LOGGER.info('Transcoding finished for file [{file}].'
+                             .format(file=input_file))
+
     def transcode(self, input_file, output_directory, **options):
         """
         transcodes a video file to output folder.
@@ -91,17 +126,9 @@ class StreamProviderBase(AbstractStreamProvider):
                                acodec=self._audio_codec,
                                **self._get_transcoding_configs())
 
-        process = ffmpeg.run_async(stream, overwrite_output=True)
-        stream_services.set_process_id(output_directory, process.pid)
-        stream_services.set_started(output_directory)
-        # stdout, stderr = process.communicate()
-        # return_code = process.poll()
-        # if return_code:
-        #     stream_services.set_failed(output_directory)
-        #     raise TranscodeError('Transcoding failed for file [{file}]: [{details}]'
-        #                          .format(file=input_file, details=stderr))
-        # else:
-        #     stream_services.set_finished(output_directory)
+        process = Process(target=self._transcode,
+                          args=(stream, input_file, output_directory))
+        process.start()
 
     @property
     def name(self):

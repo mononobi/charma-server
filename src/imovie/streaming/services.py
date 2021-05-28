@@ -64,6 +64,8 @@ def set_started(directory):
     sets the given stream as started transcoding.
 
     :param str directory: directory path of stream.
+
+    :raises StreamDirectoryNotExistedError: stream directory not existed error.
     """
 
     return get_component(StreamingPackage.COMPONENT_NAME).set_started(directory)
@@ -74,6 +76,8 @@ def set_finished(directory):
     sets the given stream as finished transcoding.
 
     :param str directory: directory path of stream.
+
+    :raises StreamDirectoryNotExistedError: stream directory not existed error.
     """
 
     return get_component(StreamingPackage.COMPONENT_NAME).set_finished(directory)
@@ -84,6 +88,8 @@ def set_failed(directory):
     sets the given stream as failed transcoding.
 
     :param str directory: directory path of stream.
+
+    :raises StreamDirectoryNotExistedError: stream directory not existed error.
     """
 
     return get_component(StreamingPackage.COMPONENT_NAME).set_failed(directory)
@@ -101,6 +107,18 @@ def set_process_id(directory, process_id):
 
     return get_component(StreamingPackage.COMPONENT_NAME).set_process_id(directory,
                                                                          process_id)
+
+
+def set_access_time(directory):
+    """
+    sets the last access time for given stream.
+
+    :param str directory: directory path of stream.
+
+    :raises StreamDirectoryNotExistedError: stream directory not existed error.
+    """
+
+    return get_component(StreamingPackage.COMPONENT_NAME).set_access_time(directory)
 
 
 def start_stream(movie_id, **options):
