@@ -195,7 +195,7 @@ class StreamingManager(Manager):
         movie_paths = movie_root_services.get_full_path(movie.directory_name)
         if not movie_paths:
             raise MovieDirectoryNotFoundError(_('Movie directory [{directory}] not found.')
-                                              .format(directory=movie.library_title))
+                                              .format(directory=movie.directory_name))
 
         found_directory = None
         if len(movie_paths) > 1:
@@ -208,7 +208,7 @@ class StreamingManager(Manager):
         if found_directory is None:
             raise MultipleMovieDirectoriesFoundError(_('Multiple movie directories '
                                                        'found for movie [{directory}].')
-                                                     .format(directory=movie.library_title))
+                                                     .format(directory=movie.directory_name))
 
         return found_directory
 
@@ -235,7 +235,7 @@ class StreamingManager(Manager):
 
         if not movie_files:
             raise MovieFileNotFoundError(_('No movie files found for movie [{directory}].')
-                                         .format(directory=movie.library_title))
+                                         .format(directory=movie.directory_name))
 
         found_file = None
         if len(movie_files) > 1:
@@ -248,7 +248,7 @@ class StreamingManager(Manager):
         if found_file is None:
             raise MultipleMovieFilesFoundError(_('Multiple movie files found '
                                                  'for movie [{directory}].')
-                                               .format(directory=movie.library_title))
+                                               .format(directory=movie.directory_name))
 
         return found_file
 
@@ -318,7 +318,7 @@ class StreamingManager(Manager):
 
         full_path = os.path.join(stream_path, manifest)
         while not path_utils.exists(full_path) and retry > 0:
-            retry = retry - 1
+            retry -= 1
             sleep(interval)
 
     def _send_stream(self, stream, file, **options):
