@@ -83,16 +83,17 @@ def set_finished(directory):
     return get_component(StreamingPackage.COMPONENT_NAME).set_finished(directory)
 
 
-def set_failed(directory):
+def set_failed(directory, error):
     """
     sets the given stream as failed transcoding.
 
     :param str directory: directory path of stream.
+    :param str error: error message.
 
     :raises StreamDirectoryNotExistedError: stream directory not existed error.
     """
 
-    return get_component(StreamingPackage.COMPONENT_NAME).set_failed(directory)
+    return get_component(StreamingPackage.COMPONENT_NAME).set_failed(directory, error)
 
 
 def set_process_id(directory, process_id):

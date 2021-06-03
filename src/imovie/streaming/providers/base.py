@@ -10,6 +10,7 @@ from multiprocessing import Process
 import ffmpeg
 
 import pyrin.logging.services as logging_services
+import pyrin.utils.path as path_utils
 
 import imovie.streaming.services as stream_services
 
@@ -70,6 +71,45 @@ class StreamProviderBase(AbstractStreamProvider):
 
         return os.path.join(output_directory, self._output_file)
 
+    def _decode(self, value):
+        """
+        gets the string equivalent of given byte string.
+
+        :param bytes value: value to be decoded.
+
+        :rtype: str
+        """
+
+        if value is None:
+            return None
+
+        return value.decode('utf-8')
+
+    def _get_subtitle_file(self, output_directory, **options):
+        """
+        gets the subtitle file path from inputs.
+
+        it may return None if no subtitle file is available.
+
+        :param str output_directory: output directory path.
+
+        :keyword list[str] subtitles: subtitle file paths.
+
+        :rtype: str
+        """
+
+        subtitles = options.get('subtitles')
+        if subtitles:
+            original_subtitle = subtitles[0]
+            if not os.path.exists(original_subtitle):
+                return None
+
+            name = os.path.join(output_directory, 'subtitle.srt')
+            path_utils.copy_file(original_subtitle, name)
+            return name
+
+        return None
+
     def _transcode(self, stream, input_file, output_directory, **options):
         """
         transcodes the given stream.
@@ -81,19 +121,21 @@ class StreamProviderBase(AbstractStreamProvider):
 
         stream_services.set_started(output_directory)
         stream_services.set_access_time(output_directory)
-        process = ffmpeg.run_async(stream, overwrite_output=True,
+        process = ffmpeg.run_async(stream,
+                                   overwrite_output=True,
                                    pipe_stderr=True, pipe_stdout=True)
         stream_services.set_process_id(output_directory, process.pid)
         stdout, stderr = process.communicate()
         return_code = process.poll()
         if stdout:
             self.LOGGER.info('Transcoding info for file [{file}]: [{details}]'
-                             .format(file=input_file, details=stdout))
+                             .format(file=input_file, details=self._decode(stdout)))
 
         if return_code:
-            stream_services.set_failed(output_directory)
+            error = self._decode(stderr)
+            stream_services.set_failed(output_directory, error)
             self.LOGGER.error('Transcoding failed for file [{file}]: [{details}]'
-                              .format(file=input_file, details=stderr))
+                              .format(file=input_file, details=error))
         else:
             stream_services.set_finished(output_directory)
             self.LOGGER.info('Transcoding finished for file [{file}].'
@@ -113,17 +155,18 @@ class StreamProviderBase(AbstractStreamProvider):
 
         preset = options.get('preset') or self._default_preset
         threads = options.get('threads') or self._default_threads
-        subtitles = options.get('subtitles')
 
         stream = ffmpeg.input(input_file)
-        if subtitles is not None:
-            stream = ffmpeg.filter(stream, 'subtitles', subtitles)
+        audio = stream.audio
+        subtitle = self._get_subtitle_file(output_directory, **options)
+        if subtitle is not None:
+            stream = ffmpeg.filter(stream, 'subtitles', subtitle)
 
         output_path = self._get_output_path(output_directory, **options)
-        stream = ffmpeg.output(stream, output_path,
+        stream = ffmpeg.output(audio, stream, output_path,
                                loop=0, threads=threads, preset=preset,
                                format=self._format, vcodec=self._video_codec,
-                               acodec=self._audio_codec,
+                               acodec=self._audio_codec, scodec=self._subtitle_codec,
                                **self._get_transcoding_configs())
 
         process = Process(target=self._transcode,

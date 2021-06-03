@@ -105,7 +105,7 @@ class StreamingManager(Manager):
         finished_file = self._get_status_file_name(directory, TranscodingStatusEnum.FINISHED)
         return os.path.exists(finished_file)
 
-    def _set_status(self, directory, status):
+    def _set_status(self, directory, status, **options):
         """
         sets the transcoding status of given stream directory.
 
@@ -116,6 +116,8 @@ class StreamingManager(Manager):
             STARTED = 'started'
             FINISHED = 'finished'
             FAILED = 'failed'
+
+        :keyword str message: message to be written to file.
 
         :raises StreamDirectoryNotExistedError: stream directory not existed error.
         :raises InvalidTranscodingStatusError: invalid transcoding status error.
@@ -129,10 +131,14 @@ class StreamingManager(Manager):
             raise InvalidTranscodingStatusError('Transcoding status [{status}] is invalid.'
                                                 .format(status=status))
 
+        message = options.get('message')
         file_name = self._get_status_file_name(directory, status)
         with open(file_name, mode='w') as file:
             now = datetime_services.get_current_timestamp()
             file.write(now)
+            if message not in (None, ''):
+                message = '\n{message}'.format(message=message)
+                file.write(message)
 
     def _get_status_file_name(self, directory, status):
         """
@@ -430,16 +436,17 @@ class StreamingManager(Manager):
 
         self._set_status(directory, TranscodingStatusEnum.FINISHED)
 
-    def set_failed(self, directory):
+    def set_failed(self, directory, error):
         """
         sets the given stream as failed transcoding.
 
         :param str directory: directory path of stream.
+        :param str error: error message.
 
         :raises StreamDirectoryNotExistedError: stream directory not existed error.
         """
 
-        self._set_status(directory, TranscodingStatusEnum.FAILED)
+        self._set_status(directory, TranscodingStatusEnum.FAILED, message=error)
 
     def set_process_id(self, directory, process_id):
         """
