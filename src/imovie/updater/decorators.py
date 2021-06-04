@@ -8,7 +8,7 @@ import imovie.updater.services as updater_services
 
 def updater(*args, **kwargs):
     """
-    decorator to register a updater.
+    decorator to register an updater.
 
     :param object args: updater class constructor arguments.
     :param object kwargs: updater class constructor keyword arguments.
