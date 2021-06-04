@@ -47,7 +47,6 @@ class MetaScoreUpdaterHigh(MetaScoreUpdaterBase):
     meta score updater high class.
     """
 
-    _category = UpdaterCategoryEnum.META_SCORE
     _META_SCORE_CONTAINER_CLASS = 'metacriticScore score_favorable titleReviewBarSubItem'
 
 
@@ -57,7 +56,6 @@ class MetaScoreUpdaterMiddle(MetaScoreUpdaterBase):
     meta score updater middle class.
     """
 
-    _category = UpdaterCategoryEnum.META_SCORE
     _META_SCORE_CONTAINER_CLASS = 'metacriticScore score_mixed titleReviewBarSubItem'
 
 
@@ -67,5 +65,35 @@ class MetaScoreUpdaterLow(MetaScoreUpdaterBase):
     meta score updater low class.
     """
 
-    _category = UpdaterCategoryEnum.META_SCORE
     _META_SCORE_CONTAINER_CLASS = 'metacriticScore score_unfavorable titleReviewBarSubItem'
+
+
+@updater()
+class MetaScoreUpdaterV2(UpdaterBase):
+    """
+    meta score updater v2 class.
+    """
+
+    _category = UpdaterCategoryEnum.META_SCORE
+
+    def _fetch(self, content, **options):
+        """
+        fetches data from given content.
+
+        :param bs4.BeautifulSoup content: the html content of imdb page.
+
+        :keyword bs4.BeautifulSoup credits: the html content of credits page.
+                                            this is only needed by person updaters.
+
+        :returns: imdb meta score.
+        :rtype: int
+        """
+
+        meta_score = None
+        meta_score_tag = content.find('span', class_='score-meta')
+        if meta_score_tag is not None:
+            result = meta_score_tag.get_text(strip=True)
+            if result.isdigit():
+                meta_score = int(result)
+
+        return meta_score
