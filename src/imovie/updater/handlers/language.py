@@ -45,3 +45,38 @@ class LanguageUpdater(UpdaterBase):
                     break
 
         return languages or None
+
+
+@updater()
+class LanguageUpdaterV2(UpdaterBase):
+    """
+    language updater v2 class.
+    """
+
+    _category = UpdaterCategoryEnum.LANGUAGE
+
+    def _fetch(self, content, **options):
+        """
+        fetches data from given content.
+
+        :param bs4.BeautifulSoup content: the html content of imdb page.
+
+        :keyword bs4.BeautifulSoup credits: the html content of credits page.
+                                            this is only needed by person updaters.
+
+        :returns: list of imdb languages.
+        :rtype: list[str]
+        """
+
+        languages = []
+        language_section = content.find('li', {'data-testid': 'title-details-languages'})
+        if language_section is not None:
+            language_list = language_section.find('ul', class_=True)
+            if language_list is not None:
+                language_tags = language_list.find_all('a', href=True)
+                for item in language_tags:
+                    name = item.get_text(strip=True)
+                    if len(name) > 0:
+                        languages.append(name)
+
+        return languages or None
