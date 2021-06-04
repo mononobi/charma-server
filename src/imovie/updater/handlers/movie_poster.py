@@ -43,10 +43,12 @@ class MoviePosterUpdater(UpdaterBase):
 
 
 @updater()
-class MoviePosterUpdaterV2(MoviePosterUpdater, ImageSetFetcherMixin):
+class MoviePosterUpdaterV2(UpdaterBase, ImageSetFetcherMixin):
     """
     movie poster updater v2 class.
     """
+
+    _category = UpdaterCategoryEnum.POSTER_NAME
 
     def _fetch(self, content, **options):
         """
