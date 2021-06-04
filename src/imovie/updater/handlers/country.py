@@ -45,3 +45,38 @@ class CountryUpdater(UpdaterBase):
                     break
 
         return countries or None
+
+
+@updater()
+class CountryUpdaterV2(UpdaterBase):
+    """
+    country updater v2 class.
+    """
+
+    _category = UpdaterCategoryEnum.COUNTRY
+
+    def _fetch(self, content, **options):
+        """
+        fetches data from given content.
+
+        :param bs4.BeautifulSoup content: the html content of imdb page.
+
+        :keyword bs4.BeautifulSoup credits: the html content of credits page.
+                                            this is only needed by person updaters.
+
+        :returns: list of imdb countries.
+        :rtype: list[str]
+        """
+
+        countries = []
+        country_section = content.find('li', {'data-testid': 'title-details-origin'})
+        if country_section is not None:
+            country_list = country_section.find('ul', class_=True)
+            if country_list is not None:
+                country_tags = country_list.find_all('a', class_=True, href=True)
+                for item in country_tags:
+                    name = item.get_text(strip=True)
+                    if len(name) > 0:
+                        countries.append(name)
+
+        return countries or None
