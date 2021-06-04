@@ -15,10 +15,9 @@ import imovie.scraper.services as scraper_services
 from imovie.updater.decorators import updater
 from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
-from imovie.updater.handlers.mixin import IMDBHighQualityImageFetcherMixin
 
 
-class PersonUpdaterBase(UpdaterBase, IMDBHighQualityImageFetcherMixin):
+class PersonUpdaterBase(UpdaterBase):
     """
     person updater class.
     """

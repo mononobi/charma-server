@@ -5,12 +5,14 @@ updater handlers mixin module.
 
 import re
 
+import pyrin.utils.regex as regex_utils
+
 from pyrin.core.structs import CoreObject
 
 
-class IMDBHighQualityImageFetcherMixin(CoreObject):
+class HighQualityImageFetcherMixin(CoreObject):
     """
-    imdb high quality image fetcher mixin.
+    high quality image fetcher mixin.
     """
 
     IMAGE_URL_REGEX = re.compile(r'(https?://([^/]+/)+[^/]+\._V1_)[^/]*(\.[^/]+)$',
@@ -33,5 +35,31 @@ class IMDBHighQualityImageFetcherMixin(CoreObject):
                 base = matched.group(1)
                 extension = matched.group(3)
                 return '{base}{extension}'.format(base=base, extension=extension)
+
+        return None
+
+
+class ImageSetFetcherMixin(CoreObject):
+    """
+    image set fetcher mixin.
+    """
+
+    IMAGE_SET_URL_REGEX = re.compile(r'https?://[^ ]+[.][a-z]{3}', re.IGNORECASE)
+
+    def get_highest_quality_image_url(self, image_set):
+        """
+        gets the highest quality image url from given image set.
+
+        it may return None if it could not extract any urls.
+
+        :param str image_set: image urls set.
+
+        :rtype: str
+        """
+
+        if image_set is not None:
+            matches = regex_utils.matches(self.IMAGE_SET_URL_REGEX, image_set)
+            if len(matches) > 0:
+                return matches[-1]
 
         return None
