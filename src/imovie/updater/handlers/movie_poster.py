@@ -64,10 +64,7 @@ class MoviePosterUpdaterV2(UpdaterBase, ImageSetFetcherMixin):
         """
 
         image_url = None
-        url_container = content.find('div', class_='ipc-media ipc-media--poster '
-                                                   'ipc-image-media-ratio--poster '
-                                                   'ipc-media--baseAlt ipc-media--poster-l '
-                                                   'ipc-poster__poster-image ipc-media__img')
+        url_container = content.find('div', {'data-testid': 'hero-media__poster'})
         if url_container is not None:
             image_tag = url_container.find('img', srcset=True)
             if image_tag is not None:
