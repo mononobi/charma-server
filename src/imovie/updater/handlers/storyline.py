@@ -39,3 +39,36 @@ class StoryLineUpdater(UpdaterBase):
                     storyline = storyline_tag.get_text(strip=True)
 
         return storyline
+
+
+@updater()
+class StoryLineUpdaterV2(UpdaterBase):
+    """
+    storyline updater v2 class.
+    """
+
+    _category = UpdaterCategoryEnum.STORYLINE
+
+    def _fetch(self, content, **options):
+        """
+        fetches data from given content.
+
+        :param bs4.BeautifulSoup content: the html content of imdb page.
+
+        :keyword bs4.BeautifulSoup credits: the html content of credits page.
+                                            this is only needed by person updaters.
+
+        :returns: imdb storyline.
+        :rtype: str
+        """
+
+        storyline = None
+        storyline_section = content.find('div', {'data-testid': 'storyline-plot-summary'})
+        if storyline_section is not None:
+            storyline_container = storyline_section.find('div', class_=False)
+            if storyline_container is not None:
+                result = self._get_text(storyline_container)
+                if result is not None:
+                    storyline = result
+
+        return storyline
