@@ -41,7 +41,7 @@ class TitleUpdater(UpdaterBase):
 @updater()
 class TitleUpdaterV2(UpdaterBase):
     """
-    title updater class.
+    title updater v2 class.
     """
 
     _category = UpdaterCategoryEnum.TITLE
