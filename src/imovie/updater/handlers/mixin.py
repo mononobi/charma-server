@@ -63,12 +63,3 @@ class ImageSetFetcherMixin(CoreObject):
                 return matches[-1]
 
         return None
-
-
-class MetadataContainerMixin(CoreObject):
-    """
-    metadata Container Mixin.
-    """
-
-    META_DATA_CONTAINER_REGEX = re.compile(r'^TitleBlock__TitleMetaDataContainer.*',
-                                           re.IGNORECASE)

@@ -8,7 +8,6 @@ import re
 from imovie.updater.decorators import updater
 from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
-from imovie.updater.handlers.mixin import MetadataContainerMixin
 
 
 @updater()
@@ -42,7 +41,7 @@ class ContentRateUpdater(UpdaterBase):
 
 
 @updater()
-class ContentRateUpdaterV2(UpdaterBase, MetadataContainerMixin):
+class ContentRateUpdaterV2(UpdaterBase):
     """
     content rate updater v2 class.
     """
@@ -64,11 +63,10 @@ class ContentRateUpdaterV2(UpdaterBase, MetadataContainerMixin):
         """
 
         content_rate = None
-        content_rate_container = content.find('div', class_=self.META_DATA_CONTAINER_REGEX)
-        if content_rate_container is not None:
-            metadata_list = content_rate_container.find('ul', class_=True)
-            if metadata_list is not None:
-                content_rate_tag = metadata_list.find('a', href=self.PARENT_GUID_URL_REGEX)
+        metadata_list = content.find('ul', {'data-testid': 'hero-title-block__metadata'})
+        if metadata_list is not None:
+            content_rate_tag = metadata_list.find('a', href=self.PARENT_GUID_URL_REGEX)
+            if content_rate_tag is not None:
                 content_rate = content_rate_tag.get_text(strip=True)
 
         return content_rate or None
