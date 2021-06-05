@@ -36,3 +36,32 @@ class TitleUpdater(UpdaterBase):
             title = self._get_text(title_tag, **options)
 
         return title
+
+
+@updater()
+class TitleUpdaterV2(UpdaterBase):
+    """
+    title updater class.
+    """
+
+    _category = UpdaterCategoryEnum.TITLE
+
+    def _fetch(self, content, **options):
+        """
+        fetches data from given content.
+
+        :param bs4.BeautifulSoup content: the html content of imdb page.
+
+        :keyword bs4.BeautifulSoup credits: the html content of credits page.
+                                            this is only needed by person updaters.
+
+        :returns: imdb title.
+        :rtype: str
+        """
+
+        title = None
+        title_tag = content.find('h1', {'data-testid': 'hero-title-block__title'})
+        if title_tag is not None:
+            title = title_tag.get_text(strip=True)
+
+        return title or None
