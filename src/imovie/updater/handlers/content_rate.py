@@ -10,13 +10,19 @@ from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 
 
-@updater()
-class ContentRateUpdater(UpdaterBase):
+class ContentRateUpdaterBase(UpdaterBase):
     """
-    content rate updater class.
+    content rate updater base class.
     """
 
     _category = UpdaterCategoryEnum.CONTENT_RATE
+
+
+@updater()
+class ContentRateUpdater(ContentRateUpdaterBase):
+    """
+    content rate updater class.
+    """
 
     def _fetch(self, content, **options):
         """
@@ -41,12 +47,11 @@ class ContentRateUpdater(UpdaterBase):
 
 
 @updater()
-class ContentRateUpdaterV2(UpdaterBase):
+class ContentRateUpdaterV2(ContentRateUpdaterBase):
     """
     content rate updater v2 class.
     """
 
-    _category = UpdaterCategoryEnum.CONTENT_RATE
     PARENT_GUID_URL_REGEX = re.compile(r'^.+/parentalguide.*', re.IGNORECASE)
 
     def _fetch(self, content, **options):

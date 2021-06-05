@@ -14,6 +14,13 @@ class MetaScoreUpdaterBase(UpdaterBase):
     """
 
     _category = UpdaterCategoryEnum.META_SCORE
+
+
+class MetaScoreUpdater(MetaScoreUpdaterBase):
+    """
+    meta score updater class.
+    """
+
     _META_SCORE_CONTAINER_CLASS = None
 
     def _fetch(self, content, **options):
@@ -42,7 +49,7 @@ class MetaScoreUpdaterBase(UpdaterBase):
 
 
 @updater()
-class MetaScoreUpdaterHigh(MetaScoreUpdaterBase):
+class MetaScoreUpdaterHigh(MetaScoreUpdater):
     """
     meta score updater high class.
     """
@@ -51,7 +58,7 @@ class MetaScoreUpdaterHigh(MetaScoreUpdaterBase):
 
 
 @updater()
-class MetaScoreUpdaterMiddle(MetaScoreUpdaterBase):
+class MetaScoreUpdaterMiddle(MetaScoreUpdater):
     """
     meta score updater middle class.
     """
@@ -60,7 +67,7 @@ class MetaScoreUpdaterMiddle(MetaScoreUpdaterBase):
 
 
 @updater()
-class MetaScoreUpdaterLow(MetaScoreUpdaterBase):
+class MetaScoreUpdaterLow(MetaScoreUpdater):
     """
     meta score updater low class.
     """
@@ -69,12 +76,10 @@ class MetaScoreUpdaterLow(MetaScoreUpdaterBase):
 
 
 @updater()
-class MetaScoreUpdaterV2(UpdaterBase):
+class MetaScoreUpdaterV2(MetaScoreUpdaterBase):
     """
     meta score updater v2 class.
     """
-
-    _category = UpdaterCategoryEnum.META_SCORE
 
     def _fetch(self, content, **options):
         """

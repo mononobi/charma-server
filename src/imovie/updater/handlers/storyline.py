@@ -8,13 +8,19 @@ from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 
 
-@updater()
-class StoryLineUpdater(UpdaterBase):
+class StoryLineUpdaterBase(UpdaterBase):
     """
-    storyline updater class.
+    storyline updater base class.
     """
 
     _category = UpdaterCategoryEnum.STORYLINE
+
+
+@updater()
+class StoryLineUpdater(StoryLineUpdaterBase):
+    """
+    storyline updater class.
+    """
 
     def _fetch(self, content, **options):
         """
@@ -42,12 +48,10 @@ class StoryLineUpdater(UpdaterBase):
 
 
 @updater()
-class StoryLineUpdaterV2(UpdaterBase):
+class StoryLineUpdaterV2(StoryLineUpdaterBase):
     """
     storyline updater v2 class.
     """
-
-    _category = UpdaterCategoryEnum.STORYLINE
 
     def _fetch(self, content, **options):
         """

@@ -8,13 +8,19 @@ from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 
 
-@updater()
-class LanguageUpdater(UpdaterBase):
+class LanguageUpdaterBase(UpdaterBase):
     """
-    language updater class.
+    language updater base class.
     """
 
     _category = UpdaterCategoryEnum.LANGUAGE
+
+
+@updater()
+class LanguageUpdater(LanguageUpdaterBase):
+    """
+    language updater class.
+    """
 
     def _fetch(self, content, **options):
         """
@@ -48,12 +54,10 @@ class LanguageUpdater(UpdaterBase):
 
 
 @updater()
-class LanguageUpdaterV2(UpdaterBase):
+class LanguageUpdaterV2(LanguageUpdaterBase):
     """
     language updater v2 class.
     """
-
-    _category = UpdaterCategoryEnum.LANGUAGE
 
     def _fetch(self, content, **options):
         """

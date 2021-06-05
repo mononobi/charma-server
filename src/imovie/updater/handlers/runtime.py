@@ -12,13 +12,19 @@ from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 
 
-@updater()
-class RuntimeUpdater(UpdaterBase):
+class RuntimeUpdaterBase(UpdaterBase):
     """
-    runtime updater class.
+    runtime updater base class.
     """
 
     _category = UpdaterCategoryEnum.RUNTIME
+
+
+@updater()
+class RuntimeUpdater(RuntimeUpdaterBase):
+    """
+    runtime updater class.
+    """
 
     def _fetch(self, content, **options):
         """
@@ -45,12 +51,11 @@ class RuntimeUpdater(UpdaterBase):
 
 
 @updater()
-class RuntimeUpdaterV2(UpdaterBase):
+class RuntimeUpdaterV2(RuntimeUpdaterBase):
     """
     runtime updater v2 class.
     """
 
-    _category = UpdaterCategoryEnum.RUNTIME
     RUNTIME_REGEX = re.compile(r'^(\d+h)( \d+min)?$|^(\d+min)$', re.IGNORECASE)
 
     def _fetch(self, content, **options):

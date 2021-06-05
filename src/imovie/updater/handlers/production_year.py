@@ -12,13 +12,19 @@ from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 
 
-@updater()
-class ProductionYearUpdater(UpdaterBase):
+class ProductionYearUpdaterBase(UpdaterBase):
     """
-    production year updater class.
+    production year updater base class.
     """
 
     _category = UpdaterCategoryEnum.PRODUCTION_YEAR
+
+
+@updater()
+class ProductionYearUpdater(ProductionYearUpdaterBase):
+    """
+    production year updater class.
+    """
 
     def _fetch(self, content, **options):
         """
@@ -45,12 +51,11 @@ class ProductionYearUpdater(UpdaterBase):
 
 
 @updater()
-class ProductionYearUpdaterV2(UpdaterBase):
+class ProductionYearUpdaterV2(ProductionYearUpdaterBase):
     """
     production year updater v2 class.
     """
 
-    _category = UpdaterCategoryEnum.PRODUCTION_YEAR
     RELEASE_INFO_URL_REGEX = re.compile(r'^.+/releaseinfo.*', re.IGNORECASE)
 
     def _fetch(self, content, **options):

@@ -6,16 +6,24 @@ updater handlers movie poster module.
 from imovie.updater.decorators import updater
 from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
-from imovie.updater.handlers.mixin import ImageSetFetcherMixin
+from imovie.updater.handlers.mixin import ImageFetcherMixin
 
 
-@updater()
-class MoviePosterUpdater(UpdaterBase):
+class MoviePosterUpdaterBase(UpdaterBase, ImageFetcherMixin):
     """
-    movie poster updater class.
+    movie poster updater base class.
     """
 
     _category = UpdaterCategoryEnum.POSTER_NAME
+    IMAGE_WIDTH = 380
+    IMAGE_HEIGHT = 562
+
+
+@updater()
+class MoviePosterUpdater(MoviePosterUpdaterBase):
+    """
+    movie poster updater class.
+    """
 
     def _fetch(self, content, **options):
         """
@@ -37,18 +45,17 @@ class MoviePosterUpdater(UpdaterBase):
             if poster_tag is not None:
                 image_tag = poster_tag.find('img', src=True)
                 if image_tag is not None:
-                    image_url = image_tag.get('src') or None
+                    image_url = self.get_resized_image_url(image_tag.get('src'),
+                                                           self.IMAGE_WIDTH, self.IMAGE_HEIGHT)
 
         return image_url
 
 
 @updater()
-class MoviePosterUpdaterV2(UpdaterBase, ImageSetFetcherMixin):
+class MoviePosterUpdaterV2(MoviePosterUpdaterBase):
     """
     movie poster updater v2 class.
     """
-
-    _category = UpdaterCategoryEnum.POSTER_NAME
 
     def _fetch(self, content, **options):
         """
@@ -66,8 +73,9 @@ class MoviePosterUpdaterV2(UpdaterBase, ImageSetFetcherMixin):
         image_url = None
         url_container = content.find('div', {'data-testid': 'hero-media__poster'})
         if url_container is not None:
-            image_tag = url_container.find('img', srcset=True)
+            image_tag = url_container.find('img', src=True)
             if image_tag is not None:
-                image_url = self.get_highest_quality_image_url(image_tag.get('srcset'))
+                image_url = self.get_resized_image_url(image_tag.get('src'),
+                                                       self.IMAGE_WIDTH, self.IMAGE_HEIGHT)
 
         return image_url

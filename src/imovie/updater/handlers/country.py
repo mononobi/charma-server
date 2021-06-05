@@ -8,13 +8,19 @@ from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 
 
-@updater()
-class CountryUpdater(UpdaterBase):
+class CountryUpdaterBase(UpdaterBase):
     """
-    country updater class.
+    country updater base class.
     """
 
     _category = UpdaterCategoryEnum.COUNTRY
+
+
+@updater()
+class CountryUpdater(CountryUpdaterBase):
+    """
+    country updater class.
+    """
 
     def _fetch(self, content, **options):
         """
@@ -48,12 +54,10 @@ class CountryUpdater(UpdaterBase):
 
 
 @updater()
-class CountryUpdaterV2(UpdaterBase):
+class CountryUpdaterV2(CountryUpdaterBase):
     """
     country updater v2 class.
     """
-
-    _category = UpdaterCategoryEnum.COUNTRY
 
     def _fetch(self, content, **options):
         """

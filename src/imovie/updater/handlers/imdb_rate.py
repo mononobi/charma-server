@@ -8,13 +8,19 @@ from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 
 
-@updater()
-class IMDBRateUpdater(UpdaterBase):
+class IMDBRateUpdaterBase(UpdaterBase):
     """
-    imdb rate updater class.
+    imdb rate updater base class.
     """
 
     _category = UpdaterCategoryEnum.IMDB_RATE
+
+
+@updater()
+class IMDBRateUpdater(IMDBRateUpdaterBase):
+    """
+    imdb rate updater class.
+    """
 
     def _fetch(self, content, **options):
         """
@@ -40,12 +46,10 @@ class IMDBRateUpdater(UpdaterBase):
 
 
 @updater()
-class IMDBRateUpdaterV2(UpdaterBase):
+class IMDBRateUpdaterV2(IMDBRateUpdaterBase):
     """
     imdb rate updater v2 class.
     """
-
-    _category = UpdaterCategoryEnum.IMDB_RATE
 
     def _fetch(self, content, **options):
         """

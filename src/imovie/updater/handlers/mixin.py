@@ -5,8 +5,6 @@ updater handlers mixin module.
 
 import re
 
-import pyrin.utils.regex as regex_utils
-
 from pyrin.core.structs import CoreObject
 
 
@@ -64,6 +62,8 @@ class ImageFetcherMixin(CoreObject):
         """
         gets the resized image from given url.
 
+        it may return None if it could not extract original url.
+
         :param str url: image url.
         :param int width: width of requested image.
         :param int height: height of requested image.
@@ -79,29 +79,3 @@ class ImageFetcherMixin(CoreObject):
                                                            extension=extension)
 
         return resized_url
-
-
-class ImageSetFetcherMixin(CoreObject):
-    """
-    image set fetcher mixin class.
-    """
-
-    IMAGE_SET_URL_REGEX = re.compile(r'https?://[^ ]+[.][a-z]{3}', re.IGNORECASE)
-
-    def get_highest_quality_image_url(self, image_set):
-        """
-        gets the highest quality image url from given image set.
-
-        it may return None if it could not extract any urls.
-
-        :param str image_set: image urls set.
-
-        :rtype: str
-        """
-
-        if image_set is not None:
-            matches = regex_utils.matches(self.IMAGE_SET_URL_REGEX, image_set)
-            if len(matches) > 0:
-                return matches[-1]
-
-        return None

@@ -8,13 +8,19 @@ from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
 
 
-@updater()
-class TitleUpdater(UpdaterBase):
+class TitleUpdaterBase(UpdaterBase):
     """
-    title updater class.
+    title updater base class.
     """
 
     _category = UpdaterCategoryEnum.TITLE
+
+
+@updater()
+class TitleUpdater(TitleUpdaterBase):
+    """
+    title updater class.
+    """
 
     def _fetch(self, content, **options):
         """
@@ -39,12 +45,10 @@ class TitleUpdater(UpdaterBase):
 
 
 @updater()
-class TitleUpdaterV2(UpdaterBase):
+class TitleUpdaterV2(TitleUpdaterBase):
     """
     title updater v2 class.
     """
-
-    _category = UpdaterCategoryEnum.TITLE
 
     def _fetch(self, content, **options):
         """
