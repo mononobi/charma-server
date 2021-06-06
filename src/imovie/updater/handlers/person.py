@@ -7,6 +7,7 @@ import re
 
 from abc import abstractmethod
 
+from pyrin.core.structs import CoreObject
 from pyrin.logging.contexts import suppress
 from pyrin.core.exceptions import CoreNotImplementedError
 
@@ -15,15 +16,18 @@ import imovie.scraper.services as scraper_services
 from imovie.updater.decorators import updater
 from imovie.updater.enumerations import UpdaterCategoryEnum
 from imovie.updater.handlers.base import UpdaterBase
+from imovie.updater.handlers.mixin import ImageFetcherMixin
 
 
-class PersonUpdaterBase(UpdaterBase):
+class PersonUpdaterBase(UpdaterBase, ImageFetcherMixin):
     """
-    person updater class.
+    person updater base class.
     """
 
     BASE_URL = 'https://www.imdb.com'
     PERSON_URL_PATTERN = re.compile(r'^(/name/nm[\d]+)[.]*', flags=re.IGNORECASE)
+    IMAGE_WIDTH = 256
+    IMAGE_HEIGHT = 380
 
     def _fetch(self, content, **options):
         """
@@ -43,29 +47,6 @@ class PersonUpdaterBase(UpdaterBase):
             return
 
         return self._fetch_data(content, credits_content, **options)
-
-    def _get_fullname_and_imdb_page(self, tag, class_):
-        """
-        gets the fullname and imdb page of actor.
-
-        it may return None for each value if it is not available.
-
-        :param bs4.Tag tag: tag to fetch fullname and imdb page from.
-        :param bool | str class_: the class attribute of corresponding `td` tag.
-
-        :returns: tuple[str fullname, str imdb_page]
-        :rtype: tuple[str, str]
-        """
-
-        actor_tag = tag.find('td', class_=class_)
-        if actor_tag is not None:
-            actor_info = actor_tag.find('a', href=True)
-            if actor_info is not None:
-                name = actor_info.get_text(separator=' ', strip=True) or None
-                url = self._get_person_url(actor_info.get('href')) or None
-                return name, url
-
-        return None, None
 
     def _get_person_url(self, url):
         """
@@ -105,13 +86,48 @@ class PersonUpdaterBase(UpdaterBase):
         raise CoreNotImplementedError()
 
 
-@updater()
-class ActorUpdater(PersonUpdaterBase):
+class PersonUpdater(PersonUpdaterBase):
     """
-    actor updater class.
+    person updater class.
+    """
+
+    def _get_fullname_and_imdb_page(self, tag, class_):
+        """
+        gets the fullname and imdb page of actor.
+
+        it may return None for each value if it is not available.
+
+        :param bs4.Tag tag: tag to fetch fullname and imdb page from.
+        :param bool | str class_: the class attribute of corresponding `td` tag.
+
+        :returns: tuple[str fullname, str imdb_page]
+        :rtype: tuple[str, str]
+        """
+
+        actor_tag = tag.find('td', class_=class_)
+        if actor_tag is not None:
+            actor_info = actor_tag.find('a', href=True)
+            if actor_info is not None:
+                name = actor_info.get_text(separator=' ', strip=True) or None
+                url = self._get_person_url(actor_info.get('href')) or None
+                return name, url
+
+        return None, None
+
+
+class ActorUpdaterBase(CoreObject):
+    """
+    actor updater base class.
     """
 
     _category = UpdaterCategoryEnum.ACTORS
+
+
+@updater()
+class ActorUpdater(ActorUpdaterBase, PersonUpdater):
+    """
+    actor updater class.
+    """
 
     def _get_character(self, tag):
         """
@@ -170,7 +186,8 @@ class ActorUpdater(PersonUpdaterBase):
         if photo_container is not None:
             photo_tag = photo_container.find('img', loadlate=True)
             if photo_tag is not None:
-                return photo_tag.get('loadlate') or None
+                return self.get_resized_image_url(photo_tag.get('loadlate'),
+                                                  self.IMAGE_WIDTH, self.IMAGE_HEIGHT)
 
         return None
 
@@ -211,13 +228,19 @@ class ActorUpdater(PersonUpdaterBase):
         return actors or None
 
 
-@updater()
-class DirectorUpdater(PersonUpdaterBase):
+class DirectorUpdaterBase:
     """
-    director updater class.
+    director updater base class.
     """
 
     _category = UpdaterCategoryEnum.DIRECTORS
+
+
+@updater()
+class DirectorUpdater(DirectorUpdaterBase, PersonUpdater):
+    """
+    director updater class.
+    """
 
     def _get_photo_url(self, imdb_page):
         """
@@ -237,7 +260,8 @@ class DirectorUpdater(PersonUpdaterBase):
             content = scraper_services.get_soup(imdb_page)
             poster_tag = content.find('img', id='name-poster', src=True)
             if poster_tag is not None:
-                return poster_tag.get('src') or None
+                return self.get_resized_image_url(poster_tag.get('src'),
+                                                  self.IMAGE_WIDTH, self.IMAGE_HEIGHT)
 
         return None
 
