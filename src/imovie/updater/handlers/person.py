@@ -7,7 +7,6 @@ import re
 
 from abc import abstractmethod
 
-from pyrin.core.structs import CoreObject
 from pyrin.logging.contexts import suppress
 from pyrin.core.exceptions import CoreNotImplementedError
 
@@ -115,12 +114,88 @@ class PersonUpdater(PersonUpdaterBase):
         return None, None
 
 
-class ActorUpdaterBase(CoreObject):
+class ActorUpdaterBase(PersonUpdaterBase):
     """
     actor updater base class.
     """
 
     _category = UpdaterCategoryEnum.ACTORS
+
+    def _get_stars(self, content):
+        """
+        gets imdb page of all star actors.
+
+        :param bs4.BeautifulSoup content: the html content of imdb page.
+
+        :rtype: list[str]
+        """
+
+        stars = self._get_stars_v1(content)
+        if len(stars) <= 0:
+            stars = self._get_stars_v2(content)
+
+        return stars
+
+    def _get_stars_v1(self, content):
+        """
+        gets imdb page of all star actors.
+
+        this method works with old imdb page.
+
+        :param bs4.BeautifulSoup content: the html content of imdb page.
+
+        :rtype: list[str]
+        """
+
+        possible_star_containers = content.find_all('div', class_='credit_summary_item')
+        stars = []
+        for item in possible_star_containers:
+            section_tag = item.find('h4', class_='inline')
+            text = self._get_text(section_tag)
+            if text is not None and 'stars' in text.lower():
+                results = item.find_all('a', href=True)
+                for node in results:
+                    url = self._get_person_url(node.get('href'))
+                    if url is not None:
+                        stars.append(url)
+
+                break
+
+        return stars
+
+    def _get_stars_v2(self, content):
+        """
+        gets imdb page of all star actors.
+
+        this method works with new imdb page.
+
+        :param bs4.BeautifulSoup content: the html content of imdb page.
+
+        :rtype: list[str]
+        """
+
+        star_container = content.find('div', {'data-testid': 'title-pc-wide-screen'})
+        stars = []
+        if star_container is not None:
+            possible_star_containers = star_container.find_all(
+                'li', {'data-testid': 'title-pc-principal-credit'})
+            reversed_containers = reversed(possible_star_containers)
+            for item in reversed_containers:
+                name_tag = item.find('a', href=True, recursive=False)
+                if name_tag is not None:
+                    name = name_tag.get_text(strip=True)
+                    if 'stars' in name.lower():
+                        stars_list = item.find('ul', class_=True)
+                        if stars_list is not None:
+                            results = stars_list.find_all('a', href=True)
+                            for single_star in results:
+                                url = self._get_person_url(single_star.get('href'))
+                                if url is not None:
+                                    stars.append(url)
+
+                        break
+
+        return stars
 
 
 @updater()
@@ -145,31 +220,6 @@ class ActorUpdater(ActorUpdaterBase, PersonUpdater):
             return character_tag.get_text(separator=' ', strip=True) or None
 
         return None
-
-    def _get_stars(self, content):
-        """
-        gets imdb page of all star actors.
-
-        :param bs4.BeautifulSoup content: the html content of imdb page.
-
-        :rtype: list[str]
-        """
-
-        possible_star_containers = content.find_all('div', class_='credit_summary_item')
-        stars = []
-        for item in possible_star_containers:
-            section_tag = item.find('h4', class_='inline')
-            text = self._get_text(section_tag)
-            if text is not None and 'stars' in text.lower():
-                results = item.find_all('a', href=True)
-                for node in results:
-                    url = self._get_person_url(node.get('href'))
-                    if url is not None:
-                        stars.append(url)
-
-                break
-
-        return stars
 
     def _get_photo_url(self, tag):
         """
@@ -228,7 +278,7 @@ class ActorUpdater(ActorUpdaterBase, PersonUpdater):
         return actors or None
 
 
-class DirectorUpdaterBase:
+class DirectorUpdaterBase(PersonUpdaterBase):
     """
     director updater base class.
     """
