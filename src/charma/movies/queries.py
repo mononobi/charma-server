@@ -68,36 +68,33 @@ class MoviesQueries(NormalizerMixin):
         """
 
         validator_services.validate_for_find(MovieEntity, filters)
-        auto_expressions = filtering_services.filter(MovieEntity, filters,
-                                                     MovieEntity.title,
-                                                     MovieEntity.original_title,
-                                                     MovieEntity.library_title,
-                                                     MovieEntity.storyline,
-                                                     MovieEntity.modified_on)
-        expressions.extend(auto_expressions)
 
-        title = filters.get('title')
-        original_title = filters.get('original_title')
-        library_title = filters.get('library_title')
-        storyline = filters.get('storyline')
+        title = filters.pop('title', None)
+        original_title = filters.pop('original_title', None)
+        library_title = filters.pop('library_title', None)
+        storyline = filters.pop('storyline', None)
         from_modified_on = filters.get('from_modified_on')
         to_modified_on = filters.get('to_modified_on')
 
         if title is not None:
             search_title = self.get_normalized_name(title)
-            expressions.append(MovieEntity.search_title.icontains(search_title))
+            filters.update(search_title=search_title)
 
         if original_title is not None:
             search_original_title = self.get_normalized_name(original_title)
-            expressions.append(MovieEntity.search_original_title.icontains(search_original_title))
+            filters.update(search_original_title=search_original_title)
 
         if library_title is not None:
             search_library_title = self.get_normalized_name(library_title)
-            expressions.append(MovieEntity.search_library_title.icontains(search_library_title))
+            filters.update(search_library_title=search_library_title)
 
         if storyline is not None:
             search_storyline = self.get_normalized_name(storyline)
-            expressions.append(MovieEntity.search_storyline.icontains(search_storyline))
+            filters.update(search_storyline=search_storyline)
+
+        auto_expressions = filtering_services.filter(MovieEntity, filters,
+                                                     MovieEntity.modified_on)
+        expressions.extend(auto_expressions)
 
         if from_modified_on is not None or to_modified_on is not None:
             modified_on_range = []
