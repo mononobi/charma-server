@@ -1,0 +1,114 @@
+# -*- coding: utf-8 -*-
+"""
+actors manager module.
+"""
+
+from pyrin.core.globals import _
+from pyrin.core.mixin import HookMixin
+from pyrin.core.structs import Manager
+from pyrin.database.services import get_current_store
+
+from charma.persons.actors import ActorsPackage
+from charma.persons.actors.hooks import ActorHookBase
+from charma.persons.actors.models import ActorEntity
+from charma.persons.models import PersonEntity
+from charma.persons.queries import PersonsQueries
+from charma.persons.actors.exceptions import ActorDoesNotExistError, InvalidActorHookTypeError
+
+
+class ActorsManager(Manager, PersonsQueries, HookMixin):
+    """
+    actors manager class.
+    """
+
+    package_class = ActorsPackage
+    hook_type = ActorHookBase
+    invalid_hook_type_error = InvalidActorHookTypeError
+
+    def _get(self, id):
+        """
+        gets actor with given id.
+
+        it returns None if actor does not exist.
+
+        :param uuid.UUID id: person id.
+
+        :rtype: ActorEntity
+        """
+
+        store = get_current_store()
+        return store.query(PersonEntity)\
+            .filter(self._actor_exists(id), PersonEntity.id == id).one_or_none()
+
+    def _actor_exists(self, id):
+        """
+        gets the required expression to check that given id is related to an actor.
+
+        the result of this method must be used inside a where clause of another query.
+
+        :param uuid.UUID id: person id.
+
+        :returns: exists expression.
+        """
+
+        store = get_current_store()
+        return store.query(ActorEntity.person_id)\
+            .filter(ActorEntity.person_id == id).exists()
+
+    def _prepare_query(self, query):
+        """
+        prepares given query object to limit result to actors only.
+
+        :param CoreQuery query: query object to be prepared.
+
+        :rtype: CoreQuery
+        """
+
+        return query.join(ActorEntity, ActorEntity.person_id == PersonEntity.id)
+
+    def get(self, id):
+        """
+        gets actor with given id.
+
+        it raises an error if actor does not exist.
+
+        :param uuid.UUID id: person id.
+
+        :raises ActorDoesNotExistError: actor does not exist error.
+
+        :rtype: PersonEntity
+        """
+
+        entity = self._get(id)
+        if entity is None:
+            raise ActorDoesNotExistError(_('Actor with id [{id}] does not exist.')
+                                         .format(id=id))
+        return entity
+
+    def create(self, id, **options):
+        """
+        creates a new actor.
+
+        :param uuid.UUID id: person id.
+        """
+
+        entity = ActorEntity()
+        entity.person_id = id
+        entity.save()
+
+    def delete(self, id):
+        """
+        deletes an actor with given id.
+
+        :param uuid.UUID id: person id.
+
+        :returns: count of deleted items.
+        :rtype: int
+        """
+
+        for hook in self._get_hooks():
+            hook.before_delete(id)
+
+        store = get_current_store()
+        return store.query(ActorEntity)\
+            .filter(ActorEntity.person_id == id).delete()

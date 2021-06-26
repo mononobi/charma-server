@@ -3,10 +3,10 @@
 wsgi module.
 """
 
-from imovie import IMovieApplication
+from charma import CharmaApplication
 
 
-app = IMovieApplication()
+app = CharmaApplication()
 
 
 if __name__ == '__main__':

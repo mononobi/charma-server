@@ -26,10 +26,10 @@ from pyrin.cli.services import get_cli_groups
 from pyrin.packaging.services import is_package_loaded
 from pyrin.task_queues.celery.services import get_current_app
 
-from imovie import IMovieApplication
+from charma import CharmaApplication
 
 
-app_instance = IMovieApplication(scripting_mode=True)
+app_instance = CharmaApplication(scripting_mode=True)
 
 if is_package_loaded('pyrin.task_queues.celery') is True:
     celery_app = get_current_app()
