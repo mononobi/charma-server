@@ -6,10 +6,11 @@ movies queries module.
 from sqlalchemy import and_, or_
 
 import pyrin.validator.services as validator_services
+import pyrin.filtering.services as filtering_services
 
 from pyrin.core.globals import SECURE_TRUE
 from pyrin.database.services import get_current_store
-from pyrin.utils.sqlalchemy import add_datetime_range_clause, add_range_clause
+from pyrin.utils.sqlalchemy import add_datetime_range_clause
 
 from charma.common.normalizer.mixin import NormalizerMixin
 from charma.movies.models import MovieEntity, ContentRateEntity
@@ -67,32 +68,18 @@ class MoviesQueries(NormalizerMixin):
         """
 
         validator_services.validate_for_find(MovieEntity, filters)
+        auto_expressions = filtering_services.filter(MovieEntity, filters,
+                                                     MovieEntity.title,
+                                                     MovieEntity.original_title,
+                                                     MovieEntity.library_title,
+                                                     MovieEntity.storyline,
+                                                     MovieEntity.modified_on)
+        expressions.extend(auto_expressions)
 
         title = filters.get('title')
         original_title = filters.get('original_title')
         library_title = filters.get('library_title')
-        production_year = filters.get('production_year')
-        from_production_year = filters.get('from_production_year')
-        to_production_year = filters.get('to_production_year')
-        imdb_rate = filters.get('imdb_rate')
-        from_imdb_rate = filters.get('from_imdb_rate')
-        to_imdb_rate = filters.get('to_imdb_rate')
-        meta_score = filters.get('meta_score')
-        from_meta_score = filters.get('from_meta_score')
-        to_meta_score = filters.get('to_meta_score')
-        from_runtime = filters.get('from_runtime')
-        to_runtime = filters.get('to_runtime')
-        imdb_page = filters.get('imdb_page')
-        poster_name = filters.get('poster_name')
-        directory_name = filters.get('directory_name')
-        is_watched = filters.get('is_watched')
         storyline = filters.get('storyline')
-        from_watched_date = filters.get('from_watched_date')
-        to_watched_date = filters.get('to_watched_date')
-        content_rate_id = filters.get('content_rate_id')
-        resolution = filters.get('resolution')
-        from_created_on = filters.get('from_created_on')
-        to_created_on = filters.get('to_created_on')
         from_modified_on = filters.get('from_modified_on')
         to_modified_on = filters.get('to_modified_on')
 
@@ -108,60 +95,9 @@ class MoviesQueries(NormalizerMixin):
             search_library_title = self.get_normalized_name(library_title)
             expressions.append(MovieEntity.search_library_title.icontains(search_library_title))
 
-        if production_year is not None:
-            expressions.append(MovieEntity.production_year == production_year)
-
-        if from_production_year is not None or to_production_year is not None:
-            add_range_clause(expressions, MovieEntity.production_year,
-                             from_production_year, to_production_year, **filters)
-
-        if imdb_rate is not None:
-            expressions.append(MovieEntity.imdb_rate == imdb_rate)
-
-        if from_imdb_rate is not None or to_imdb_rate is not None:
-            add_range_clause(expressions, MovieEntity.imdb_rate,
-                             from_imdb_rate, to_imdb_rate, **filters)
-
-        if meta_score is not None:
-            expressions.append(MovieEntity.meta_score == meta_score)
-
-        if from_meta_score is not None or to_meta_score is not None:
-            add_range_clause(expressions, MovieEntity.meta_score,
-                             from_meta_score, to_meta_score, **filters)
-
-        if from_runtime is not None or to_runtime is not None:
-            add_range_clause(expressions, MovieEntity.runtime,
-                             from_runtime, to_runtime, **filters)
-
-        if imdb_page is not None:
-            expressions.append(MovieEntity.imdb_page.icontains(imdb_page))
-
-        if poster_name is not None:
-            expressions.append(MovieEntity.poster_name.icontains(poster_name))
-
-        if directory_name is not None:
-            expressions.append(MovieEntity.directory_name.icontains(directory_name))
-
-        if is_watched is not None:
-            expressions.append(MovieEntity.is_watched == is_watched)
-
         if storyline is not None:
             search_storyline = self.get_normalized_name(storyline)
             expressions.append(MovieEntity.search_storyline.icontains(search_storyline))
-
-        if from_watched_date is not None or to_watched_date is not None:
-            add_datetime_range_clause(expressions, MovieEntity.watched_date,
-                                      from_watched_date, to_watched_date, **filters)
-
-        if content_rate_id is not None:
-            expressions.append(MovieEntity.content_rate_id.in_(content_rate_id))
-
-        if resolution is not None:
-            expressions.append(MovieEntity.resolution.in_(resolution))
-
-        if from_created_on is not None or to_created_on is not None:
-            add_datetime_range_clause(expressions, MovieEntity.created_on,
-                                      from_created_on, to_created_on, **filters)
 
         if from_modified_on is not None or to_modified_on is not None:
             modified_on_range = []
