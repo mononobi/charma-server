@@ -1,10 +1,10 @@
-# imovie-server
+# charma-server
 
-Server side application for imovie, personal movie collection manager.
+Server side application for charma, personal movie collection manager.
 
 # prerequisites
 
-create an entry in /etc/hosts with 'imovie.server' value.
+create an entry in /etc/hosts with 'charma.server' value.
 
 # code editing in pycharm
 
