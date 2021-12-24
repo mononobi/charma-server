@@ -8,7 +8,7 @@ movies, identify movie files and download movie details from internet.
 
 * it can scan your computer's hard disks for movie files, identify the movies 
   automatically, and download all basic details about each movie from internet, 
-  and creates a local database of your movies collection.
+  and create a local database of your movies collection.
 
 * open the folder of the movie you desire, directly from the application. 
   you no more need to waste time by searching your computer for movies. 
