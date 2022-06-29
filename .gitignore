@@ -109,4 +109,6 @@ venv.bak/
 # vscode stuff
 /.vscode
 
+/test.xml
+./test.xml
 test.xml
