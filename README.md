@@ -19,7 +19,7 @@ movies, identify movie files and download movie details from internet.
   The details are stored offline so that you don't need to connect to internet everytime.
 
 * search for the title of movie, director, any of actors, genres, etc. 
-  There is an intensive search area for you to work with.
+  There is an extensive search area for you to work with.
 
 * mark a movie as watched, and filter movies that are watched, or not watched, or all.
 
